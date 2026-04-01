@@ -2,21 +2,68 @@
 <html>
 <head>
   <title>MEDIBOT Dashboard</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #2c3e50;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 24px;
+    }
+
+    .container {
+      display: flex;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      margin-right: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 300px;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    .value {
+      font-size: 20px;
+      color: #27ae60;
+    }
+  </style>
 </head>
 
 <body>
 
-<h1>MEDIBOT Dashboard</h1>
+<header>MEDIBOT Dashboard</header>
 
-<h2>Current Patient</h2>
-<p id="name">Name: --</p>
-<p id="hr">Heart Rate: --</p>
-<p id="spo2">SpO2: --</p>
+<div class="container">
+
+  <!-- Current Patient Card -->
+  <div class="card">
+    <h2>Current Patient</h2>
+    <p>Name: <span id="name" class="value">--</span></p>
+    <p>Heart Rate: <span id="hr" class="value">--</span></p>
+    <p>SpO2: <span id="spo2" class="value">--</span></p>
+  </div>
+
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase.js"></script>
 
 <script>
-  // 🔴 CHANGE THIS: Your Firebase config
+  // 🔴 CHANGE THIS
   var firebaseConfig = {
     apiKey: "AIzaSyAA5gXTs0swsOoN2lulPHAIFg-GnD1kze8",              // 🔴 paste your API key
     databaseURL: "https://medbot-59790-default-rtdb.asia-southeast1.firebasedatabase.app/"     // 🔴 paste your DB URL
@@ -26,13 +73,12 @@
 
   var db = firebase.database();
 
-  // 🔥 Read data from Firebase
   db.ref("current_patient").on("value", function(snapshot) {
     var data = snapshot.val();
 
-    document.getElementById("name").innerText = "Name: " + data.name;
-    document.getElementById("hr").innerText = "Heart Rate: " + data.heartRate;
-    document.getElementById("spo2").innerText = "SpO2: " + data.spo2;
+    document.getElementById("name").innerText = data.name;
+    document.getElementById("hr").innerText = data.heartRate;
+    document.getElementById("spo2").innerText = data.spo2;
   });
 </script>
 
