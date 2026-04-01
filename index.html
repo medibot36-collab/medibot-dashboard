@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MEDIBOT Dashboard</title>
+</head>
+
+<body>
+
+<h1>MEDIBOT Dashboard</h1>
+
+<h2>Current Patient</h2>
+<p id="name">Name: --</p>
+<p id="hr">Heart Rate: --</p>
+<p id="spo2">SpO2: --</p>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase.js"></script>
+
+<script>
+  // 🔴 CHANGE THIS: Your Firebase config
+  var firebaseConfig = {
+    apiKey: "YOUR_API_KEY",              // 🔴 paste your API key
+    databaseURL: "YOUR_DATABASE_URL"     // 🔴 paste your DB URL
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  var db = firebase.database();
+
+  // 🔥 Read data from Firebase
+  db.ref("current_patient").on("value", function(snapshot) {
+    var data = snapshot.val();
+
+    document.getElementById("name").innerText = "Name: " + data.name;
+    document.getElementById("hr").innerText = "Heart Rate: " + data.heartRate;
+    document.getElementById("spo2").innerText = "SpO2: " + data.spo2;
+  });
+</script>
+
+</body>
+</html>
