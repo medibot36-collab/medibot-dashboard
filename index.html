@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MedBot Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700;900&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <style>
@@ -18,9 +18,9 @@
       --accent2: #0abfff;
       --warn:    #ffb700;
       --danger:  #ff4060;
-      --text:    #f0f4ff;
-      --text2:   #c8d0e8;
-      --muted:   #6070a0;
+      --text:    #ffffff;
+      --text2:   #e8eeff;
+      --muted:   #8090b8;
       --mono:    'Share Tech Mono', monospace;
       --head:    'Rajdhani', sans-serif;
       --body:    'Exo 2', sans-serif;
@@ -30,6 +30,7 @@
       background: var(--bg);
       color: var(--text);
       font-family: var(--body);
+      font-size: 17px;
       min-height: 100vh;
       overflow-x: hidden;
       background-image:
@@ -37,41 +38,157 @@
         radial-gradient(ellipse 60% 40% at 90% 100%, rgba(0,229,160,0.04) 0%, transparent 60%);
     }
 
-    /* ── TOP BAR ── */
+    /* ════════════════════════════════
+       LOGIN OVERLAY
+    ════════════════════════════════ */
+    .login-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(8,10,16,0.98);
+      backdrop-filter: blur(24px);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .login-box {
+      background: linear-gradient(145deg, var(--card) 0%, var(--card2) 100%);
+      border: 1px solid rgba(10,191,255,0.28);
+      border-radius: 20px; padding: 46px 54px;
+      min-width: 420px; text-align: center;
+      box-shadow: 0 0 70px rgba(10,191,255,0.1), 0 0 140px rgba(0,229,160,0.04);
+      position: relative; overflow: hidden;
+    }
+    .login-box::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background: linear-gradient(90deg, transparent, var(--accent2), var(--accent), transparent);
+    }
+    .login-box::after {
+      content:''; position:absolute; top:-80px; right:-80px;
+      width:200px; height:200px; border-radius:50%;
+      background: radial-gradient(circle, rgba(10,191,255,0.05), transparent 70%);
+      pointer-events:none;
+    }
+    .login-logo {
+      font-family: var(--head); font-size: 2.4rem; font-weight: 900;
+      letter-spacing: 5px; margin-bottom: 4px;
+    }
+    .login-logo .med { color: #ffffff; }
+    .login-logo .bot { color: var(--accent); }
+    .login-sub {
+      font-family: var(--mono); font-size: 0.68rem; color: var(--muted);
+      letter-spacing: 5px; margin-bottom: 34px; text-transform: uppercase;
+    }
+    .login-divider {
+      height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin-bottom: 28px;
+    }
+    .login-field { margin-bottom: 18px; text-align: left; }
+    .login-field label {
+      display: block; font-family: var(--mono); font-size: 0.72rem;
+      color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .login-field input {
+      width: 100%; background: rgba(13,15,22,0.85);
+      border: 1px solid var(--border); border-radius: 9px;
+      color: var(--text); font-family: var(--mono); font-size: 0.98rem;
+      padding: 13px 16px; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .login-field input:focus {
+      border-color: var(--accent2);
+      box-shadow: 0 0 0 3px rgba(10,191,255,0.1);
+    }
+    .login-field input::placeholder { color: #2a3450; }
+    .btn-login {
+      width: 100%; margin-top: 10px;
+      background: linear-gradient(135deg, var(--accent2), #007acc);
+      border: none; border-radius: 9px; color: #fff;
+      font-family: var(--head); font-weight: 700;
+      font-size: 1.05rem; letter-spacing: 2.5px;
+      padding: 14px; cursor: pointer;
+      box-shadow: 0 0 24px rgba(10,191,255,0.35);
+      transition: opacity 0.2s, box-shadow 0.2s;
+    }
+    .btn-login:hover { opacity: 0.9; box-shadow: 0 0 38px rgba(10,191,255,0.55); }
+    .login-error {
+      margin-top: 14px; color: var(--danger);
+      font-family: var(--mono); font-size: 0.8rem; min-height: 20px;
+    }
+    .login-hint {
+      margin-top: 16px; font-family: var(--mono);
+      font-size: 0.65rem; color: #3a4468; line-height: 1.6;
+    }
+
+    /* ════════════════════════════════
+       TOP BAR
+    ════════════════════════════════ */
     .topbar {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 28px; height: 58px;
-      background: rgba(14,17,25,0.95);
+      padding: 0 28px; height: 66px;
+      background: rgba(14,17,25,0.96);
       border-bottom: 1px solid var(--border);
       position: sticky; top: 0; z-index: 100;
       backdrop-filter: blur(12px);
     }
-    .brand { font-family: var(--head); font-size: 1.4rem; font-weight: 700; letter-spacing: 3px; display: flex; align-items: center; gap: 6px; }
-    .brand-icon { color: var(--accent2); margin-right: 4px; font-size: 1.1rem; }
-    .brand span.med { color: var(--text); }
-    .brand span.bot { color: var(--accent); }
-    .brand span.label { font-size: 0.6rem; letter-spacing: 5px; color: var(--muted); font-weight: 400; padding-left: 12px; text-transform: uppercase; }
+    /* — Unique Brand Title — */
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .brand-pill {
+      display: flex; align-items: center; gap: 9px;
+      background: linear-gradient(135deg, rgba(0,229,160,0.07), rgba(10,191,255,0.07));
+      border: 1.5px solid rgba(10,191,255,0.45);
+      border-radius: 13px; padding: 7px 20px;
+      box-shadow: 0 0 26px rgba(10,191,255,0.12),
+                  inset 0 1px 0 rgba(255,255,255,0.04),
+                  inset 0 -1px 0 rgba(0,0,0,0.3);
+      font-family: var(--head); font-size: 1.95rem;
+      font-weight: 900; letter-spacing: 4px;
+      position: relative; overflow: hidden;
+    }
+    .brand-pill::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:1px;
+      background: linear-gradient(90deg, transparent, rgba(10,191,255,0.6), var(--accent), transparent);
+    }
+    .brand-pill .brand-icon { color: var(--accent); font-size: 1.25rem; margin-right: 2px; }
+    .brand-pill .med { color: #ffffff; text-shadow: 0 0 30px rgba(255,255,255,0.15); }
+    .brand-pill .bot { color: var(--accent); text-shadow: 0 0 20px rgba(0,229,160,0.4); }
+    .brand-meta { line-height: 1.35; }
+    .brand-meta .b-title {
+      font-family: var(--head); font-size: 0.82rem; font-weight: 700;
+      color: var(--text2); letter-spacing: 4px; text-transform: uppercase;
+    }
+    .brand-meta .b-sub {
+      font-family: var(--mono); font-size: 0.58rem;
+      color: rgba(10,191,255,0.5); letter-spacing: 3px; text-transform: uppercase;
+    }
     .topbar-right { display: flex; align-items: center; gap: 10px; }
     .server-input {
-      background: rgba(13,15,20,0.8); border: 1px solid var(--border); border-radius: 6px;
-      color: var(--muted); font-family: var(--mono); font-size: 0.75rem;
-      padding: 6px 12px; width: 230px; outline: none;
+      background: rgba(13,15,20,0.8); border: 1px solid var(--border); border-radius: 7px;
+      color: var(--muted); font-family: var(--mono); font-size: 0.82rem;
+      padding: 8px 14px; width: 240px; outline: none;
       transition: border-color 0.2s, color 0.2s;
     }
     .server-input:focus { border-color: var(--accent2); color: var(--text); }
     .btn-connect {
       background: linear-gradient(135deg, var(--accent2), #007acc); color: #fff;
-      border: none; border-radius: 6px; font-family: var(--head); font-weight: 700;
-      font-size: 0.82rem; letter-spacing: 1.5px; padding: 7px 18px; cursor: pointer;
-      transition: opacity 0.2s, box-shadow 0.2s;
+      border: none; border-radius: 7px; font-family: var(--head); font-weight: 700;
+      font-size: 0.9rem; letter-spacing: 1.5px; padding: 9px 20px; cursor: pointer;
       box-shadow: 0 0 12px rgba(10,191,255,0.3);
+      transition: opacity 0.2s, box-shadow 0.2s;
     }
-    .btn-connect:hover { opacity: 0.9; box-shadow: 0 0 20px rgba(10,191,255,0.5); }
-    .sim-badge { display: flex; align-items: center; gap: 7px; font-size: 0.72rem; color: var(--muted); font-family: var(--mono); }
+    .btn-connect:hover { opacity: 0.9; box-shadow: 0 0 22px rgba(10,191,255,0.5); }
+    .sim-badge { display: flex; align-items: center; gap: 7px; font-size: 0.78rem; color: var(--muted); font-family: var(--mono); }
     .sim-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 8px var(--warn); animation: pulse-dot 1.5s infinite; }
-    @keyframes pulse-dot { 0%,100%{opacity:1;}50%{opacity:0.25;} }
+    .btn-logout {
+      background: transparent; border: 1px solid rgba(255,64,96,0.35);
+      color: var(--danger); border-radius: 7px;
+      font-family: var(--head); font-weight: 600;
+      font-size: 0.84rem; letter-spacing: 1px;
+      padding: 8px 15px; cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .btn-logout:hover { background: rgba(255,64,96,0.1); box-shadow: 0 0 12px rgba(255,64,96,0.2); }
+    @keyframes pulse-dot { 0%,100%{opacity:1;}50%{opacity:0.2;} }
 
-    /* ── NAV TABS ── */
+    /* ════════════════════════════════
+       NAV TABS
+    ════════════════════════════════ */
     .nav-tabs {
       display: flex; align-items: center; justify-content: center; gap: 4px;
       padding: 0 28px; background: rgba(14,17,25,0.9);
@@ -79,8 +196,8 @@
     }
     .tab-btn {
       background: none; border: none; border-bottom: 2px solid transparent;
-      color: var(--muted); font-family: var(--head); font-size: 0.88rem; font-weight: 600;
-      letter-spacing: 1.5px; text-transform: uppercase; padding: 14px 22px;
+      color: var(--muted); font-family: var(--head); font-size: 0.95rem; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase; padding: 15px 24px;
       cursor: pointer; transition: color 0.2s, border-color 0.2s;
     }
     .tab-btn:hover { color: var(--text2); }
@@ -88,8 +205,9 @@
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
-    /* ── DASHBOARD GRID ── */
-    /* 3 columns: patient-info | HR | SpO2 */
+    /* ════════════════════════════════
+       DASHBOARD GRID
+    ════════════════════════════════ */
     .dashboard {
       padding: 22px 28px;
       display: grid;
@@ -115,11 +233,11 @@
       pointer-events: none;
     }
     .card-label {
-      font-family: var(--head); font-size: 0.78rem; letter-spacing: 3px;
-      color: var(--muted); text-transform: uppercase; margin-bottom: 12px;
-      display: flex; align-items: center; gap: 8px;
+      font-family: var(--head); font-size: 0.92rem; letter-spacing: 3px;
+      color: var(--muted); text-transform: uppercase; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 9px;
     }
-    .card-label i { font-size: 0.9rem; }
+    .card-label i { font-size: 1rem; }
     .card-label .lbl-hr   { color: var(--danger); }
     .card-label .lbl-spo2 { color: var(--accent); }
     .card-label .lbl-ai   { color: #b080ff; }
@@ -127,66 +245,52 @@
     .card-label .lbl-cam  { color: var(--warn); }
     .card-label .lbl-pat  { color: var(--accent2); }
 
-    /* ── PATIENT INFO CARD ── */
-    .patient-info-card {
-      grid-column: 1;
-      grid-row: 1;
-      min-height: 260px;
-      display: flex; flex-direction: column;
-    }
-    .patient-info-card::before {
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    }
+    /* ── PATIENT INFO ── */
+    .patient-info-card { grid-column: 1; grid-row: 1; min-height: 280px; display: flex; flex-direction: column; }
+    .patient-info-card::before { background: linear-gradient(90deg, transparent, var(--accent), transparent); }
     .patient-avatar {
-      width: 62px; height: 62px; border-radius: 50%;
+      width: 64px; height: 64px; border-radius: 50%;
       background: linear-gradient(135deg, #1a2040, #0e1530);
-      border: 2px solid var(--accent2);
-      box-shadow: 0 0 16px rgba(10,191,255,0.2);
+      border: 2px solid var(--accent2); box-shadow: 0 0 16px rgba(10,191,255,0.2);
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.6rem; color: var(--accent2);
-      margin-bottom: 14px; flex-shrink: 0;
+      font-size: 1.6rem; color: var(--accent2); margin-bottom: 14px; flex-shrink: 0;
     }
-    .patient-name-row {
-      font-family: var(--head); font-size: 1.25rem; font-weight: 700;
-      color: var(--text); margin-bottom: 2px; line-height: 1.2;
-    }
-    .patient-sub {
-      font-family: var(--mono); font-size: 0.68rem; color: var(--accent2);
-      letter-spacing: 2px; margin-bottom: 16px;
-    }
+    .patient-name-row { font-family: var(--head); font-size: 1.4rem; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+    .patient-sub { font-family: var(--mono); font-size: 0.72rem; color: var(--accent2); letter-spacing: 2px; margin-bottom: 16px; }
     .patient-fields { display: flex; flex-direction: column; gap: 9px; flex: 1; }
     .pf-row {
       display: flex; align-items: center; gap: 10px;
-      padding: 7px 10px;
+      padding: 8px 12px;
       background: rgba(10,12,20,0.55);
-      border: 1px solid var(--border);
-      border-radius: 7px;
+      border: 1px solid var(--border); border-radius: 8px;
     }
-    .pf-row i { font-size: 0.75rem; width: 14px; text-align: center; color: var(--accent2); flex-shrink: 0; }
-    .pf-label { font-family: var(--mono); font-size: 0.6rem; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; min-width: 38px; flex-shrink: 0; }
-    .pf-val { font-family: var(--head); font-size: 0.88rem; font-weight: 600; color: var(--text2); }
+    .pf-row i { font-size: 0.8rem; width: 14px; text-align: center; color: var(--accent2); flex-shrink: 0; }
+    .pf-label { font-family: var(--mono); font-size: 0.64rem; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; min-width: 38px; flex-shrink: 0; }
+    .pf-val { font-family: var(--head); font-size: 0.98rem; font-weight: 600; color: var(--text); }
     .patient-status-row {
-      display: flex; align-items: center; gap: 8px;
-      margin-top: 14px; padding: 8px 10px;
-      background: rgba(0,229,160,0.06);
-      border: 1px solid rgba(0,229,160,0.2);
-      border-radius: 8px;
+      display: flex; align-items: center; gap: 8px; margin-top: 14px; padding: 9px 12px;
+      background: rgba(0,229,160,0.06); border: 1px solid rgba(0,229,160,0.2); border-radius: 8px;
     }
     .patient-status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 6px var(--accent); animation: pulse-dot 1.8s infinite; }
-    .patient-status-txt { font-family: var(--head); font-size: 0.8rem; font-weight: 600; letter-spacing: 1.5px; color: var(--accent); }
+    .patient-status-txt { font-family: var(--head); font-size: 0.88rem; font-weight: 600; letter-spacing: 1.5px; color: var(--accent); }
 
-    /* ── VITAL CARDS ── */
-    .vital-card { min-height: 260px; }
+    /* ── VITALS ── */
+    .vital-card { min-height: 280px; }
     .hr-card   { grid-column: 2; grid-row: 1; }
     .spo2-card { grid-column: 3; grid-row: 1; }
     .card-value { font-family: var(--head); font-size: 5rem; font-weight: 700; color: #fff; line-height: 1; }
     .card-value.hr-val   { text-shadow: 0 0 30px rgba(255,64,96,0.4); }
     .card-value.spo2-val { text-shadow: 0 0 30px rgba(0,229,160,0.4); }
-    .card-unit     { font-size: 0.78rem; color: var(--muted); font-family: var(--mono); margin-top: 4px; letter-spacing: 1px; }
-    .card-baseline { font-size: 0.72rem; color: var(--text2); font-family: var(--mono); margin-top: 6px; }
+    .card-unit     { font-size: 0.88rem; color: var(--muted); font-family: var(--mono); margin-top: 5px; letter-spacing: 1px; }
+    .card-baseline { font-size: 0.8rem; color: var(--text2); font-family: var(--mono); margin-top: 6px; min-height: 18px; }
+    .connecting-msg {
+      font-family: var(--mono); font-size: 0.78rem; color: var(--accent2);
+      letter-spacing: 2px; margin-top: 8px;
+      animation: pulse-dot 2s infinite;
+    }
     .chart-wrap { margin-top: 16px; height: 80px; position: relative; }
 
-    /* ── AI RISK CARD ── */
+    /* ── AI RISK ── */
     .ai-card { grid-column: 1 / -1; }
     .ai-inner { display: flex; align-items: center; gap: 32px; }
     .gauge-container { flex-shrink: 0; position: relative; width: 220px; height: 120px; }
@@ -196,120 +300,54 @@
       font-family: var(--head); font-size: 1.6rem; font-weight: 700; color: var(--text);
       text-align: center; line-height: 1; white-space: nowrap; pointer-events: none;
     }
-    .gauge-label-val small { display: block; font-size: 0.6rem; letter-spacing: 3px; color: var(--muted); margin-top: 2px; }
+    .gauge-label-val small { display: block; font-size: 0.62rem; letter-spacing: 3px; color: var(--muted); margin-top: 2px; }
     .ai-details { flex: 1; }
     .risk-badge {
       display: inline-flex; align-items: center; gap: 8px;
-      padding: 6px 18px; border-radius: 24px;
-      font-family: var(--head); font-size: 1rem; font-weight: 700; letter-spacing: 3px; margin-bottom: 14px;
+      padding: 7px 20px; border-radius: 24px;
+      font-family: var(--head); font-size: 1.02rem; font-weight: 700; letter-spacing: 3px; margin-bottom: 14px;
     }
     .risk-badge.normal  { background: rgba(0,229,160,0.12); color: var(--accent); border: 1px solid rgba(0,229,160,0.35); }
     .risk-badge.warning { background: rgba(255,183,0,0.12);  color: var(--warn);   border: 1px solid rgba(255,183,0,0.35); }
     .risk-badge.danger  { background: rgba(255,64,96,0.12);  color: var(--danger); border: 1px solid rgba(255,64,96,0.35); }
     .risk-badge .dot { width: 9px; height: 9px; border-radius: 50%; background: currentColor; box-shadow: 0 0 6px currentColor; }
-    .confidence-label { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); margin-bottom: 12px; }
+    .confidence-label { font-family: var(--mono); font-size: 0.74rem; color: var(--muted); margin-bottom: 12px; }
     .stats-row { display: flex; gap: 12px; margin-bottom: 14px; }
-    .stat-box { flex: 1; background: rgba(13,15,20,0.6); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; text-align: center; }
-    .stat-box .s-label { font-size: 0.62rem; color: var(--muted); font-family: var(--mono); letter-spacing: 1px; }
-    .stat-box .s-val   { font-size: 1rem; font-family: var(--head); font-weight: 700; color: var(--text); margin: 2px 0; }
+    .stat-box { flex: 1; background: rgba(13,15,20,0.6); border: 1px solid var(--border); border-radius: 9px; padding: 12px; text-align: center; }
+    .stat-box .s-label { font-size: 0.68rem; color: var(--muted); font-family: var(--mono); letter-spacing: 1px; }
+    .stat-box .s-val   { font-size: 1.1rem; font-family: var(--head); font-weight: 700; color: var(--text); margin: 3px 0; }
     .btn-buzzer {
       width: 100%;
       background: linear-gradient(135deg, rgba(255,183,0,0.08), rgba(255,100,0,0.08));
       border: 1px solid rgba(255,183,0,0.5); color: var(--warn);
-      border-radius: 8px; font-family: var(--head); font-weight: 700;
-      letter-spacing: 2px; font-size: 0.85rem; padding: 10px; cursor: pointer;
+      border-radius: 9px; font-family: var(--head); font-weight: 700;
+      letter-spacing: 2px; font-size: 0.92rem; padding: 11px; cursor: pointer;
       transition: background 0.2s, box-shadow 0.2s;
     }
     .btn-buzzer:hover { background: rgba(255,183,0,0.18); box-shadow: 0 0 18px rgba(255,183,0,0.3); }
     .btn-buzzer:active { transform: scale(0.97); }
 
-    /* ── CAMERA CARD ── */
-    .cam-card { grid-column: 1 / 2; }
-    .cam-wrap {
-      background: #080a10; border: 1px dashed var(--border); border-radius: 10px;
-      height: 170px; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      color: var(--muted); font-family: var(--mono); font-size: 0.72rem;
-      margin-bottom: 12px; position: relative; overflow: hidden;
+    /* ════════════════════════════════
+       BOTTOM ROW — centered 2-col
+    ════════════════════════════════ */
+    .bottom-row {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      max-width: 960px;
+      margin: 0 auto;
+      width: 100%;
     }
-    .cam-wrap img { width: 100%; height: 100%; object-fit: cover; display: none; border-radius: 10px; }
-    .cam-no-stream { text-align: center; line-height: 2; color: var(--muted); }
-    .cam-controls { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-    .cam-ip {
-      flex: 1; background: rgba(13,15,20,0.8); border: 1px solid var(--border);
-      color: var(--text); font-family: var(--mono); font-size: 0.75rem;
-      padding: 7px 12px; border-radius: 6px; outline: none;
-    }
-    .cam-ip::placeholder { color: var(--muted); }
-    .btn-cam {
-      border: none; border-radius: 6px; font-family: var(--head); font-weight: 700;
-      font-size: 0.75rem; letter-spacing: 1px; padding: 7px 14px; cursor: pointer;
-      transition: box-shadow 0.2s;
-    }
-    .btn-cam.connect    { background: var(--accent); color: #000; box-shadow: 0 0 10px rgba(0,229,160,0.3); }
-    .btn-cam.connect:hover { box-shadow: 0 0 18px rgba(0,229,160,0.5); }
-    .btn-cam.disconnect { background: transparent; border: 1px solid var(--danger); color: var(--danger); }
 
-    /* ── AUDIO CONTROLS ── */
-    .audio-controls {
-      display: flex; align-items: center; gap: 0;
-      background: rgba(10,12,20,0.65);
-      border: 1px solid var(--border); border-radius: 10px;
-      overflow: hidden;
-    }
-    .audio-item {
-      flex: 1; display: flex; align-items: center; gap: 10px;
-      padding: 10px 14px;
-    }
-    .audio-item + .audio-item { border-left: 1px solid var(--border); }
-    .audio-icon-wrap {
-      width: 32px; height: 32px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; font-size: 0.95rem;
-      transition: background 0.3s, box-shadow 0.3s;
-    }
-    .audio-icon-wrap.spk-wrap { background: rgba(10,191,255,0.08); color: var(--accent2); }
-    .audio-icon-wrap.spk-wrap.on { background: rgba(10,191,255,0.18); box-shadow: 0 0 10px rgba(10,191,255,0.3); }
-    .audio-icon-wrap.mic-wrap { background: rgba(176,128,255,0.08); color: #b080ff; }
-    .audio-icon-wrap.mic-wrap.on { background: rgba(176,128,255,0.2); box-shadow: 0 0 10px rgba(176,128,255,0.35); }
-    .audio-text { flex: 1; }
-    .audio-text .a-name { font-family: var(--head); font-size: 0.8rem; font-weight: 600; letter-spacing: 1px; color: var(--text2); }
-    .audio-text .a-status { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 1.5px; margin-top: 1px; transition: color 0.3s; }
-    .audio-text .a-status.off     { color: var(--muted); }
-    .audio-text .a-status.on-spk  { color: var(--accent2); }
-    .audio-text .a-status.on-mic  { color: #b080ff; }
-    /* pill toggle */
-    .audio-pill {
-      width: 46px; height: 24px; border-radius: 12px;
-      border: none; cursor: pointer; position: relative; flex-shrink: 0;
-      background: #1a1e30; transition: background 0.3s, box-shadow 0.3s; outline: none;
-    }
-    .audio-pill::before {
-      content: ''; position: absolute; top: 3px; left: 3px;
-      width: 18px; height: 18px; border-radius: 50%;
-      background: var(--muted); transition: transform 0.3s, background 0.3s;
-    }
-    .audio-pill.on-spk { background: rgba(10,191,255,0.2); box-shadow: 0 0 10px rgba(10,191,255,0.25); }
-    .audio-pill.on-spk::before { transform: translateX(22px); background: var(--accent2); }
-    .audio-pill.on-mic { background: rgba(176,128,255,0.2); box-shadow: 0 0 10px rgba(176,128,255,0.25); }
-    .audio-pill.on-mic::before { transform: translateX(22px); background: #b080ff; }
-    /* live dot */
-    .live-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      margin-left: 4px; display: inline-block; vertical-align: middle;
-      opacity: 0; transition: opacity 0.3s;
-    }
-    .live-dot.vis-spk { opacity: 1; background: var(--accent2); box-shadow: 0 0 5px var(--accent2); animation: pulse-dot 1s infinite; }
-    .live-dot.vis-mic { opacity: 1; background: #b080ff; box-shadow: 0 0 5px #b080ff; animation: pulse-dot 1s infinite; }
-
-    /* ── ROBOT / JOYSTICK CARD ── */
-    .robot-card { grid-column: 2 / 3; }
+    /* ── ROBOT CONTROL (left) ── */
+    .robot-card { }
     .patient-select { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-    .patient-select label { font-size: 0.72rem; font-family: var(--mono); color: var(--muted); }
+    .patient-select label { font-size: 0.8rem; font-family: var(--mono); color: var(--muted); }
     .patient-select select {
       flex: 1; background: rgba(13,15,20,0.8); border: 1px solid var(--border);
-      color: var(--text); font-family: var(--body); font-size: 0.85rem;
-      padding: 7px 12px; border-radius: 6px; outline: none;
+      color: var(--text); font-family: var(--body); font-size: 0.92rem;
+      padding: 9px 12px; border-radius: 7px; outline: none;
     }
     .joystick-area { display: flex; flex-direction: column; align-items: center; gap: 12px; }
     .joystick-outer {
@@ -343,79 +381,138 @@
     }
     .stop-btn {
       background: linear-gradient(135deg, rgba(255,64,96,0.1), rgba(180,0,30,0.15));
-      border: 1px solid rgba(255,64,96,0.5); color: var(--danger); border-radius: 8px;
-      font-family: var(--head); font-weight: 700; letter-spacing: 2px; font-size: 0.82rem;
-      padding: 8px 28px; cursor: pointer; transition: background 0.2s, box-shadow 0.2s;
+      border: 1px solid rgba(255,64,96,0.5); color: var(--danger); border-radius: 9px;
+      font-family: var(--head); font-weight: 700; letter-spacing: 2px; font-size: 0.9rem;
+      padding: 9px 30px; cursor: pointer; transition: background 0.2s, box-shadow 0.2s;
     }
     .stop-btn:hover { background: rgba(255,64,96,0.2); box-shadow: 0 0 14px rgba(255,64,96,0.3); }
     .stop-btn:active { transform: scale(0.96); }
     .speed-row { display: flex; align-items: center; gap: 12px; width: 100%; }
-    .speed-row label { font-size: 0.68rem; font-family: var(--mono); color: var(--muted); white-space: nowrap; }
+    .speed-row label { font-size: 0.72rem; font-family: var(--mono); color: var(--muted); white-space: nowrap; }
     .speed-row input[type=range] { flex: 1; accent-color: var(--accent2); height: 4px; }
-    .speed-val { font-family: var(--mono); font-size: 0.9rem; color: var(--accent2); min-width: 20px; }
-    .move-hint { font-size: 0.62rem; color: var(--muted); font-family: var(--mono); }
+    .speed-val { font-family: var(--mono); font-size: 1rem; color: var(--accent2); min-width: 20px; }
+    .move-hint { font-size: 0.7rem; color: var(--muted); font-family: var(--mono); }
 
-    /* ── LOG ── */
-    .log-section { grid-column: 1 / -1; }
-    .log-header { font-family: var(--head); font-size: 0.75rem; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-    .log-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 0.77rem; }
-    .log-table tbody tr { border-bottom: 1px solid #141825; transition: background 0.15s; }
-    .log-table tbody tr:hover { background: #131623; }
-    .log-table td { padding: 9px 12px; color: var(--text2); }
-    .log-table td:first-child { color: var(--muted); width: 75px; }
-    .log-table td:last-child { width: 70px; text-align: right; }
-    .log-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.65rem; font-weight: 700; letter-spacing: 1.5px; }
-    .log-badge.ok   { background: rgba(0,229,160,0.12); color: var(--accent); }
-    .log-badge.warn { background: rgba(255,183,0,0.12);  color: var(--warn); }
-    .log-badge.err  { background: rgba(255,64,96,0.12);  color: var(--danger); }
+    /* ── CAMERA CARD (right) ── */
+    .cam-card { }
+    .cam-wrap {
+      background: #080a10; border: 1px dashed var(--border); border-radius: 10px;
+      height: 170px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      color: var(--muted); font-family: var(--mono); font-size: 0.78rem;
+      margin-bottom: 12px; position: relative; overflow: hidden;
+    }
+    .cam-wrap img { width: 100%; height: 100%; object-fit: cover; display: none; border-radius: 10px; }
+    .cam-no-stream { text-align: center; line-height: 2; color: var(--muted); }
+    .cam-controls { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+    .cam-ip {
+      flex: 1; background: rgba(13,15,20,0.8); border: 1px solid var(--border);
+      color: var(--text); font-family: var(--mono); font-size: 0.8rem;
+      padding: 8px 12px; border-radius: 7px; outline: none;
+    }
+    .cam-ip::placeholder { color: var(--muted); }
+    .btn-cam {
+      border: none; border-radius: 7px; font-family: var(--head); font-weight: 700;
+      font-size: 0.8rem; letter-spacing: 1px; padding: 8px 14px; cursor: pointer; transition: box-shadow 0.2s;
+    }
+    .btn-cam.connect    { background: var(--accent); color: #000; box-shadow: 0 0 10px rgba(0,229,160,0.3); }
+    .btn-cam.connect:hover { box-shadow: 0 0 20px rgba(0,229,160,0.5); }
+    .btn-cam.disconnect { background: transparent; border: 1px solid var(--danger); color: var(--danger); }
 
-    /* ── PATIENTS TAB ── */
-    .patients-grid { padding: 22px 28px; display: grid; grid-template-columns: repeat(auto-fill, minmax(270px,1fr)); gap: 18px; }
+    /* ── AUDIO — SEPARATE STACKED ON/OFF ── */
+    .audio-section { display: flex; flex-direction: column; gap: 10px; }
+    .audio-device-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 16px;
+      background: rgba(10,12,20,0.65);
+      border: 1px solid var(--border); border-radius: 10px;
+    }
+    .audio-device-info { display: flex; align-items: center; gap: 12px; }
+    .audio-device-icon {
+      width: 38px; height: 38px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center; font-size: 1rem;
+    }
+    .audio-device-icon.spk { background: rgba(10,191,255,0.1); color: var(--accent2); }
+    .audio-device-icon.mic { background: rgba(176,128,255,0.1); color: #b080ff; }
+    .audio-device-name { font-family: var(--head); font-size: 1rem; font-weight: 600; color: var(--text); letter-spacing: 1px; }
+    .audio-state-badge {
+      display: inline-block; margin-top: 3px;
+      font-family: var(--mono); font-size: 0.64rem; letter-spacing: 2px;
+      padding: 2px 9px; border-radius: 10px;
+      background: rgba(13,15,22,0.8); border: 1px solid var(--border);
+      color: var(--muted); transition: all 0.25s;
+    }
+    .audio-state-badge.on-spk { color: var(--accent2); border-color: rgba(10,191,255,0.5); background: rgba(10,191,255,0.08); }
+    .audio-state-badge.on-mic { color: #b080ff; border-color: rgba(176,128,255,0.5); background: rgba(176,128,255,0.08); }
+    .audio-btn-group { display: flex; gap: 8px; }
+    .btn-audio-on, .btn-audio-off {
+      border-radius: 7px; font-family: var(--head); font-weight: 700;
+      font-size: 0.84rem; letter-spacing: 1.5px;
+      padding: 8px 18px; cursor: pointer; transition: all 0.2s; border: 1px solid transparent;
+    }
+    .btn-audio-on  { background: rgba(0,229,160,0.08); color: var(--accent); border-color: rgba(0,229,160,0.25); }
+    .btn-audio-on:hover  { background: rgba(0,229,160,0.18); box-shadow: 0 0 10px rgba(0,229,160,0.2); }
+    .btn-audio-on.active-spk { background: rgba(10,191,255,0.18); color: var(--accent2); border-color: var(--accent2); box-shadow: 0 0 12px rgba(10,191,255,0.25); }
+    .btn-audio-on.active-mic { background: rgba(176,128,255,0.18); color: #b080ff; border-color: #b080ff; box-shadow: 0 0 12px rgba(176,128,255,0.25); }
+    .btn-audio-off { background: rgba(255,64,96,0.07); color: var(--danger); border-color: rgba(255,64,96,0.22); }
+    .btn-audio-off:hover { background: rgba(255,64,96,0.16); }
+
+    /* ════════════════════════════════
+       PATIENTS TAB
+    ════════════════════════════════ */
+    .patients-grid { padding: 22px 28px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 18px; }
     .patient-card-list {
       background: linear-gradient(145deg, var(--card), var(--card2));
       border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px;
       cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s;
     }
     .patient-card-list:hover { border-color: var(--accent2); box-shadow: 0 0 20px rgba(10,191,255,0.1); }
-    .patient-card-list .p-id   { font-family: var(--mono); font-size: 0.7rem; color: var(--accent2); letter-spacing: 2px; margin-bottom: 6px; }
-    .patient-card-list .p-name { font-family: var(--head); font-size: 1.15rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-    .patient-card-list .p-bed  { font-size: 0.75rem; color: var(--muted); margin-bottom: 14px; }
+    .patient-card-list .p-id   { font-family: var(--mono); font-size: 0.75rem; color: var(--accent2); letter-spacing: 2px; margin-bottom: 6px; }
+    .patient-card-list .p-name { font-family: var(--head); font-size: 1.25rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .patient-card-list .p-bed  { font-size: 0.8rem; color: var(--muted); margin-bottom: 14px; }
     .patient-vitals { display: flex; gap: 12px; }
-    .patient-vital { flex: 1; text-align: center; background: rgba(13,15,20,0.7); border: 1px solid var(--border); border-radius: 8px; padding: 8px 0; }
-    .patient-vital .pv-label { font-size: 0.6rem; color: var(--muted); font-family: var(--mono); }
-    .patient-vital .pv-val   { font-size: 1.15rem; font-family: var(--head); font-weight: 700; }
+    .patient-vital { flex: 1; text-align: center; background: rgba(13,15,20,0.7); border: 1px solid var(--border); border-radius: 9px; padding: 10px 0; }
+    .patient-vital .pv-label { font-size: 0.68rem; color: var(--muted); font-family: var(--mono); }
+    .patient-vital .pv-val   { font-size: 1.2rem; font-family: var(--head); font-weight: 700; }
     .add-patient-btn {
       background: transparent; border: 2px dashed var(--border); border-radius: 14px;
-      color: var(--muted); font-family: var(--head); font-size: 0.9rem; letter-spacing: 1px;
+      color: var(--muted); font-family: var(--head); font-size: 1rem; letter-spacing: 1px;
       display: flex; align-items: center; justify-content: center; gap: 8px;
       min-height: 130px; cursor: pointer; transition: border-color 0.2s, color 0.2s;
     }
     .add-patient-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-    /* ── HELP TAB ── */
+    /* ════════════════════════════════
+       HELP TAB
+    ════════════════════════════════ */
     .help-section { padding: 26px 28px; max-width: 940px; }
-    .help-section h2 { font-family: var(--head); font-size: 1.4rem; font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 22px; }
+    .help-section h2 { font-family: var(--head); font-size: 1.55rem; font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 22px; }
     .help-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .help-card { background: linear-gradient(145deg, var(--card), var(--card2)); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; }
-    .help-card h3 { font-family: var(--head); font-size: 1rem; font-weight: 700; color: var(--accent2); letter-spacing: 1px; margin-bottom: 10px; }
-    .help-card p, .help-card li { font-size: 0.83rem; color: var(--text2); line-height: 1.75; }
+    .help-card h3 { font-family: var(--head); font-size: 1.08rem; font-weight: 700; color: var(--accent2); letter-spacing: 1px; margin-bottom: 10px; }
+    .help-card p, .help-card li { font-size: 0.9rem; color: var(--text2); line-height: 1.8; }
     .help-card ul { padding-left: 18px; }
     .help-card li { margin-bottom: 4px; }
 
-    /* ── SETTINGS TAB ── */
+    /* ════════════════════════════════
+       SETTINGS TAB
+    ════════════════════════════════ */
     .settings-section { padding: 26px 28px; max-width: 620px; }
-    .settings-section h2 { font-family: var(--head); font-size: 1.4rem; font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 22px; }
-    .setting-row { background: linear-gradient(145deg, var(--card), var(--card2)); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-    .setting-row label { font-family: var(--head); font-size: 0.92rem; font-weight: 600; color: var(--text); }
-    .setting-row .s-desc { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
-    .setting-row input[type=number], .setting-row select { background: rgba(13,15,20,0.8); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: var(--mono); font-size: 0.85rem; padding: 6px 12px; width: 100px; outline: none; }
-    .toggle { position: relative; width: 42px; height: 24px; }
+    .settings-section h2 { font-family: var(--head); font-size: 1.55rem; font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 22px; }
+    .setting-row { background: linear-gradient(145deg, var(--card), var(--card2)); border: 1px solid var(--border); border-radius: 11px; padding: 17px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .setting-row label { font-family: var(--head); font-size: 1rem; font-weight: 600; color: var(--text); }
+    .setting-row .s-desc { font-size: 0.76rem; color: var(--muted); margin-top: 3px; }
+    .setting-row input[type=number], .setting-row select { background: rgba(13,15,20,0.8); border: 1px solid var(--border); border-radius: 7px; color: var(--text); font-family: var(--mono); font-size: 0.9rem; padding: 7px 12px; width: 100px; outline: none; }
+    .toggle { position: relative; width: 44px; height: 24px; }
     .toggle input { opacity: 0; width: 0; height: 0; }
     .toggle-slider { position: absolute; inset: 0; background: #1a1e30; border-radius: 24px; cursor: pointer; transition: background 0.3s; }
     .toggle-slider::before { content: ''; position: absolute; width: 17px; height: 17px; left: 3.5px; top: 3.5px; background: var(--muted); border-radius: 50%; transition: transform 0.3s, background 0.3s; }
     .toggle input:checked + .toggle-slider { background: rgba(0,229,160,0.2); }
-    .toggle input:checked + .toggle-slider::before { transform: translateX(18px); background: var(--accent); }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(20px); background: var(--accent); }
 
+    /* ════════════════════════════════
+       UTILITIES / KEYFRAMES
+    ════════════════════════════════ */
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: #1e2438; border-radius: 5px; }
@@ -425,7 +522,6 @@
     .card:nth-child(1){animation-delay:0.04s;} .card:nth-child(2){animation-delay:0.08s;}
     .card:nth-child(3){animation-delay:0.12s;} .card:nth-child(4){animation-delay:0.16s;}
     .card:nth-child(5){animation-delay:0.20s;} .card:nth-child(6){animation-delay:0.24s;}
-    .card:nth-child(7){animation-delay:0.28s;}
 
     @keyframes glowDanger { 0%,100%{box-shadow:0 0 0 rgba(255,64,96,0);}50%{box-shadow:0 0 22px rgba(255,64,96,0.35);} }
     .card.danger-pulse { animation: glowDanger 1.2s infinite; }
@@ -433,24 +529,54 @@
 </head>
 <body>
 
-<!-- ── TOP BAR ── -->
+<!-- ══════════════ LOGIN OVERLAY ══════════════ -->
+<div id="loginOverlay" class="login-overlay">
+  <div class="login-box">
+    <div class="login-logo"><span class="med">MED</span><span class="bot">BOT</span></div>
+    <div class="login-sub">Secure Access Portal</div>
+    <div class="login-divider"></div>
+    <div class="login-field">
+      <label><i class="fas fa-id-badge"></i> &nbsp;Doctor ID</label>
+      <input type="text" id="doctorID" placeholder="e.g. DOC001" autocomplete="username"/>
+    </div>
+    <div class="login-field">
+      <label><i class="fas fa-lock"></i> &nbsp;Password</label>
+      <input type="password" id="doctorPass" placeholder="Enter your password"
+             autocomplete="current-password"
+             onkeydown="if(event.key==='Enter')doLogin()"/>
+    </div>
+    <button class="btn-login" onclick="doLogin()">
+      <i class="fas fa-sign-in-alt"></i> &nbsp;SECURE LOGIN
+    </button>
+    <div class="login-error" id="loginError"></div>
+    <div class="login-hint">Demo credentials &nbsp;·&nbsp; ID: DOC001 &nbsp;·&nbsp; Password: medbot2024</div>
+  </div>
+</div>
+
+<!-- ══════════════ TOP BAR ══════════════ -->
 <header class="topbar">
   <div class="brand">
-    <i class="fas fa-heartbeat brand-icon"></i>
-    <span class="med">Med</span><span class="bot">Bot</span>
-    <span class="label">Dashboard</span>
+    <div class="brand-pill">
+      <i class="fas fa-heartbeat brand-icon"></i>
+      <span class="med">MED</span><span class="bot">BOT</span>
+    </div>
+    <div class="brand-meta">
+      <div class="b-title">Patient Dashboard</div>
+      <div class="b-sub">Hospital Monitoring System</div>
+    </div>
   </div>
   <div class="topbar-right">
-    <input class="server-input" id="serverIP" placeholder="Server IP (e.g. 192.168.1.5:5000)" />
+    <input class="server-input" id="serverIP" placeholder="Server IP (e.g. 192.168.1.5:5000)"/>
     <button class="btn-connect" onclick="connectServer()">Connect</button>
     <div class="sim-badge">
-      <div class="sim-dot"></div>
-      <span id="simLabel">Simulating</span>
+      <div class="sim-dot" id="simDot"></div>
+      <span id="simLabel">Connecting...</span>
     </div>
+    <button class="btn-logout" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
   </div>
 </header>
 
-<!-- ── NAV TABS ── -->
+<!-- ══════════════ NAV TABS ══════════════ -->
 <nav class="nav-tabs">
   <button class="tab-btn active" onclick="switchTab('home',this)">🏠 Home</button>
   <button class="tab-btn" onclick="switchTab('patients',this)">👥 Patients List</button>
@@ -462,38 +588,18 @@
 <div id="tab-home" class="tab-panel active">
   <div class="dashboard">
 
-    <!-- PATIENT INFO CARD (col 1, row 1) -->
+    <!-- PATIENT INFO (col 1, row 1) -->
     <div class="card patient-info-card">
       <div class="card-label"><i class="fas fa-id-card lbl-pat"></i> Current Patient</div>
       <div class="patient-avatar"><i class="fas fa-user"></i></div>
       <div class="patient-name-row" id="piName">Ravi Kumar</div>
       <div class="patient-sub" id="piID">PID · P001-2024</div>
       <div class="patient-fields">
-        <div class="pf-row">
-          <i class="fas fa-hashtag"></i>
-          <span class="pf-label">Age</span>
-          <span class="pf-val" id="piAge">34 yrs</span>
-        </div>
-        <div class="pf-row">
-          <i class="fas fa-venus-mars"></i>
-          <span class="pf-label">Gender</span>
-          <span class="pf-val" id="piGender">Male</span>
-        </div>
-        <div class="pf-row">
-          <i class="fas fa-envelope"></i>
-          <span class="pf-label">Email</span>
-          <span class="pf-val" id="piEmail" style="font-size:0.78rem;">ravi.kumar@gmail.com</span>
-        </div>
-        <div class="pf-row">
-          <i class="fas fa-calendar-alt"></i>
-          <span class="pf-label">Date</span>
-          <span class="pf-val" id="piDate">03 Apr 2026</span>
-        </div>
-        <div class="pf-row">
-          <i class="fas fa-bed"></i>
-          <span class="pf-label">Bed</span>
-          <span class="pf-val" id="piBed">Ward A · Bed 1</span>
-        </div>
+        <div class="pf-row"><i class="fas fa-hashtag"></i><span class="pf-label">Age</span><span class="pf-val" id="piAge">34 yrs</span></div>
+        <div class="pf-row"><i class="fas fa-venus-mars"></i><span class="pf-label">Gender</span><span class="pf-val" id="piGender">Male</span></div>
+        <div class="pf-row"><i class="fas fa-envelope"></i><span class="pf-label">Email</span><span class="pf-val" id="piEmail" style="font-size:0.84rem;">ravi.kumar@gmail.com</span></div>
+        <div class="pf-row"><i class="fas fa-calendar-alt"></i><span class="pf-label">Date</span><span class="pf-val" id="piDate">—</span></div>
+        <div class="pf-row"><i class="fas fa-bed"></i><span class="pf-label">Bed</span><span class="pf-val" id="piBed">Ward A · Bed 1</span></div>
       </div>
       <div class="patient-status-row">
         <div class="patient-status-dot"></div>
@@ -504,18 +610,20 @@
     <!-- HEART RATE (col 2, row 1) -->
     <div class="card vital-card hr-card">
       <div class="card-label"><i class="fas fa-heart lbl-hr"></i> Heart Rate</div>
-      <div class="card-value hr-val" id="hrVal">--</div>
+      <div class="card-value hr-val" id="hrVal">—</div>
       <div class="card-unit">beats per minute</div>
-      <div class="card-baseline" id="hrBase">Baseline: learning...</div>
+      <div class="card-baseline" id="hrBase"></div>
+      <div class="connecting-msg" id="hrConnect">⬤ Awaiting sensor data...</div>
       <div class="chart-wrap"><canvas id="hrChart"></canvas></div>
     </div>
 
     <!-- SPO2 (col 3, row 1) -->
     <div class="card vital-card spo2-card">
       <div class="card-label"><i class="fas fa-lungs lbl-spo2"></i> SpO₂</div>
-      <div class="card-value spo2-val" id="spo2Val">--</div>
+      <div class="card-value spo2-val" id="spo2Val">—</div>
       <div class="card-unit">% oxygen saturation</div>
-      <div class="card-baseline" id="spo2Base">Baseline: learning...</div>
+      <div class="card-baseline" id="spo2Base"></div>
+      <div class="connecting-msg" id="spo2Connect">⬤ Awaiting sensor data...</div>
       <div class="chart-wrap"><canvas id="spo2Chart"></canvas></div>
     </div>
 
@@ -536,11 +644,11 @@
             <text x="89"  y="15"  font-family="'Share Tech Mono'" font-size="9" fill="rgba(255,183,0,0.7)" text-anchor="middle">WARN</text>
             <text x="194" y="125" font-family="'Share Tech Mono'" font-size="9" fill="rgba(255,64,96,0.7)" text-anchor="end">HIGH</text>
           </svg>
-          <div class="gauge-label-val" id="gaugeLabelVal">0<small>RISK SCORE</small></div>
+          <div class="gauge-label-val" id="gaugeLabelVal">—<small>RISK SCORE</small></div>
         </div>
         <div class="ai-details">
-          <div class="risk-badge normal" id="riskBadge"><span class="dot"></span><span id="riskLabel">NORMAL</span></div>
-          <div class="confidence-label" id="confLabel">Confidence —</div>
+          <div class="risk-badge normal" id="riskBadge"><span class="dot"></span><span id="riskLabel">AWAITING DATA</span></div>
+          <div class="confidence-label" id="confLabel">Connect ESP32 to begin assessment</div>
           <div class="stats-row">
             <div class="stat-box">
               <div class="s-label">HR Z-score</div>
@@ -554,7 +662,7 @@
             </div>
             <div class="stat-box">
               <div class="s-label">Anomaly</div>
-              <div class="s-val" id="anomaly" style="font-size:0.78rem;">No</div>
+              <div class="s-val" id="anomaly" style="font-size:0.85rem;">—</div>
               <div class="s-label">detected</div>
             </div>
           </div>
@@ -565,89 +673,101 @@
       </div>
     </div>
 
-    <!-- CAMERA FEED (col 1) -->
-    <div class="card cam-card">
-      <div class="card-label"><i class="fas fa-video lbl-cam"></i> Camera Feed (ESP32-CAM)</div>
-      <div class="cam-wrap" id="camWrap">
-        <img id="camStream" src="" alt="stream"/>
-        <div class="cam-no-stream" id="camNoStream">
-          <i class="fas fa-camera" style="font-size:1.8rem;margin-bottom:8px;color:var(--border)"></i><br/>
-          No stream connected<br/>Enter ESP32-CAM IP below
+    <!-- BOTTOM ROW: Robot (left) | Camera (right) — CENTERED & SWAPPED -->
+    <div class="bottom-row">
+
+      <!-- ROBOT CONTROL (left — was right) -->
+      <div class="card robot-card">
+        <div class="card-label"><i class="fas fa-robot lbl-rob"></i> Robot Control</div>
+        <div class="patient-select">
+          <label>Patient</label>
+          <select id="patientSelect">
+            <option>P001 — Bed 1</option>
+            <option>P002 — Bed 2</option>
+            <option>P003 — Bed 3</option>
+            <option>P004 — Bed 4</option>
+          </select>
         </div>
-      </div>
-      <div class="cam-controls">
-        <input class="cam-ip" id="camIP" placeholder="ESP32-CAM IP (e.g. 192.168.1.20)"/>
-        <button class="btn-cam connect" onclick="connectCam()">Connect</button>
-        <button class="btn-cam disconnect" onclick="disconnectCam()">Disconnect</button>
+        <div class="joystick-area">
+          <div class="joystick-outer" id="joystickOuter"
+               onmousedown="joystickStart(event)"
+               ontouchstart="joystickTouchStart(event)">
+            <span class="jzone top"    id="jTop"><i class="fas fa-chevron-up"></i></span>
+            <span class="jzone bottom" id="jBot"><i class="fas fa-chevron-down"></i></span>
+            <span class="jzone left"   id="jLft"><i class="fas fa-chevron-left"></i></span>
+            <span class="jzone right"  id="jRgt"><i class="fas fa-chevron-right"></i></span>
+            <div class="joystick-knob" id="joystickKnob"></div>
+          </div>
+          <button class="stop-btn" onclick="stopRobot()"><i class="fas fa-stop-circle"></i> &nbsp;STOP</button>
+          <div class="speed-row">
+            <label>Speed</label>
+            <input type="range" min="1" max="10" value="5" id="speedSlider"
+                   oninput="document.getElementById('speedVal').textContent=this.value"/>
+            <span class="speed-val" id="speedVal">5</span>
+          </div>
+          <div class="move-hint">Drag joystick or use arrow keys to move</div>
+        </div>
       </div>
 
-      <!-- AUDIO CONTROLS -->
-      <div class="audio-controls">
-        <!-- Speaker -->
-        <div class="audio-item">
-          <div class="audio-icon-wrap spk-wrap" id="spkIconWrap">
-            <i class="fas fa-volume-up" id="spkIcon"></i>
+      <!-- CAMERA FEED (right — was left) -->
+      <div class="card cam-card">
+        <div class="card-label"><i class="fas fa-video lbl-cam"></i> Camera Feed (ESP32-CAM)</div>
+        <div class="cam-wrap" id="camWrap">
+          <img id="camStream" src="" alt="stream"/>
+          <div class="cam-no-stream" id="camNoStream">
+            <i class="fas fa-camera" style="font-size:1.8rem;margin-bottom:8px;color:var(--border)"></i><br/>
+            No stream connected<br/>Enter ESP32-CAM IP below
           </div>
-          <div class="audio-text">
-            <div class="a-name">Speaker <span class="live-dot" id="spkDot"></span></div>
-            <div class="a-status off" id="spkStatus">OFF</div>
-          </div>
-          <button class="audio-pill" id="spkPill" onclick="toggleAudio('spk')" title="Toggle Speaker"></button>
         </div>
-        <!-- Mic -->
-        <div class="audio-item">
-          <div class="audio-icon-wrap mic-wrap" id="micIconWrap">
-            <i class="fas fa-microphone-slash" id="micIcon"></i>
-          </div>
-          <div class="audio-text">
-            <div class="a-name">Microphone <span class="live-dot" id="micDot"></span></div>
-            <div class="a-status off" id="micStatus">OFF</div>
-          </div>
-          <button class="audio-pill" id="micPill" onclick="toggleAudio('mic')" title="Toggle Microphone"></button>
+        <div class="cam-controls">
+          <input class="cam-ip" id="camIP" placeholder="ESP32-CAM IP (e.g. 192.168.1.20)"/>
+          <button class="btn-cam connect" onclick="connectCam()">Connect</button>
+          <button class="btn-cam disconnect" onclick="disconnectCam()">Disconnect</button>
         </div>
-      </div>
-    </div>
 
-    <!-- ROBOT CONTROL (col 2) -->
-    <div class="card robot-card">
-      <div class="card-label"><i class="fas fa-robot lbl-rob"></i> Robot Control</div>
-      <div class="patient-select">
-        <label>Patient</label>
-        <select id="patientSelect">
-          <option>P001 — Bed 1</option>
-          <option>P002 — Bed 2</option>
-          <option>P003 — Bed 3</option>
-          <option>P004 — Bed 4</option>
-        </select>
-      </div>
-      <div class="joystick-area">
-        <div class="joystick-outer" id="joystickOuter"
-             onmousedown="joystickStart(event)"
-             ontouchstart="joystickTouchStart(event)">
-          <span class="jzone top"    id="jTop"><i class="fas fa-chevron-up"></i></span>
-          <span class="jzone bottom" id="jBot"><i class="fas fa-chevron-down"></i></span>
-          <span class="jzone left"   id="jLft"><i class="fas fa-chevron-left"></i></span>
-          <span class="jzone right"  id="jRgt"><i class="fas fa-chevron-right"></i></span>
-          <div class="joystick-knob" id="joystickKnob"></div>
-        </div>
-        <button class="stop-btn" onclick="stopRobot()"><i class="fas fa-stop-circle"></i> &nbsp;STOP</button>
-        <div class="speed-row">
-          <label>Speed</label>
-          <input type="range" min="1" max="10" value="5" id="speedSlider"
-                 oninput="document.getElementById('speedVal').textContent=this.value"/>
-          <span class="speed-val" id="speedVal">5</span>
-        </div>
-        <div class="move-hint">Drag joystick or use arrow keys to move</div>
-      </div>
-    </div>
+        <!-- AUDIO — separate stacked ON/OFF buttons per device -->
+        <div class="audio-section">
 
-    <!-- LIVE ACTIVITY LOG -->
-    <div class="card log-section">
-      <div class="log-header"><i class="fas fa-list-ul"></i> &nbsp;Live Activity Log</div>
-      <table class="log-table"><tbody id="logBody"></tbody></table>
-    </div>
+          <!-- Speaker -->
+          <div class="audio-device-row">
+            <div class="audio-device-info">
+              <div class="audio-device-icon spk">
+                <i class="fas fa-volume-mute" id="spkIcon"></i>
+              </div>
+              <div>
+                <div class="audio-device-name">Speaker</div>
+                <span class="audio-state-badge" id="spkState">OFF</span>
+              </div>
+            </div>
+            <div class="audio-btn-group">
+              <button class="btn-audio-on" id="spkOnBtn" onclick="setAudio('spk', true)">ON</button>
+              <button class="btn-audio-off" onclick="setAudio('spk', false)">OFF</button>
+            </div>
+          </div>
 
-  </div>
+          <!-- Microphone -->
+          <div class="audio-device-row">
+            <div class="audio-device-info">
+              <div class="audio-device-icon mic">
+                <i class="fas fa-microphone-slash" id="micIcon"></i>
+              </div>
+              <div>
+                <div class="audio-device-name">Microphone</div>
+                <span class="audio-state-badge" id="micState">OFF</span>
+              </div>
+            </div>
+            <div class="audio-btn-group">
+              <button class="btn-audio-on" id="micOnBtn" onclick="setAudio('mic', true)">ON</button>
+              <button class="btn-audio-off" onclick="setAudio('mic', false)">OFF</button>
+            </div>
+          </div>
+
+        </div><!-- end .audio-section -->
+      </div><!-- end .cam-card -->
+
+    </div><!-- end .bottom-row -->
+
+  </div><!-- end .dashboard -->
 </div>
 
 <!-- ══════════════ PATIENTS TAB ══════════════ -->
@@ -660,7 +780,7 @@
       <div class="patient-vitals">
         <div class="patient-vital"><div class="pv-label">HR</div><div class="pv-val" style="color:var(--accent2)" id="p1hr">—</div></div>
         <div class="patient-vital"><div class="pv-label">SpO₂</div><div class="pv-val" style="color:var(--accent)" id="p1spo2">—</div></div>
-        <div class="patient-vital"><div class="pv-label">Status</div><div class="pv-val" style="color:var(--accent);font-size:0.75rem" id="p1status">OK</div></div>
+        <div class="patient-vital"><div class="pv-label">Status</div><div class="pv-val" style="color:var(--muted);font-size:0.78rem" id="p1status">—</div></div>
       </div>
     </div>
     <div class="patient-card-list">
@@ -668,9 +788,9 @@
       <div class="p-name">Anita Sharma</div>
       <div class="p-bed">Ward A · Room 102</div>
       <div class="patient-vitals">
-        <div class="patient-vital"><div class="pv-label">HR</div><div class="pv-val" style="color:var(--accent2)">72</div></div>
-        <div class="patient-vital"><div class="pv-label">SpO₂</div><div class="pv-val" style="color:var(--accent)">98.1</div></div>
-        <div class="patient-vital"><div class="pv-label">Status</div><div class="pv-val" style="color:var(--accent);font-size:0.75rem">OK</div></div>
+        <div class="patient-vital"><div class="pv-label">HR</div><div class="pv-val" style="color:var(--accent2)">—</div></div>
+        <div class="patient-vital"><div class="pv-label">SpO₂</div><div class="pv-val" style="color:var(--accent)">—</div></div>
+        <div class="patient-vital"><div class="pv-label">Status</div><div class="pv-val" style="color:var(--muted);font-size:0.78rem">—</div></div>
       </div>
     </div>
     <div class="patient-card-list">
@@ -678,9 +798,9 @@
       <div class="p-name">Mohan Das</div>
       <div class="p-bed">Ward B · Room 201</div>
       <div class="patient-vitals">
-        <div class="patient-vital"><div class="pv-label">HR</div><div class="pv-val" style="color:var(--warn)">108</div></div>
-        <div class="patient-vital"><div class="pv-label">SpO₂</div><div class="pv-val" style="color:var(--warn)">93.5</div></div>
-        <div class="patient-vital"><div class="pv-label">Status</div><div class="pv-val" style="color:var(--warn);font-size:0.75rem">WARN</div></div>
+        <div class="patient-vital"><div class="pv-label">HR</div><div class="pv-val" style="color:var(--accent2)">—</div></div>
+        <div class="patient-vital"><div class="pv-label">SpO₂</div><div class="pv-val" style="color:var(--accent)">—</div></div>
+        <div class="patient-vital"><div class="pv-label">Status</div><div class="pv-val" style="color:var(--muted);font-size:0.78rem">—</div></div>
       </div>
     </div>
     <button class="add-patient-btn">＋ Add Patient</button>
@@ -707,7 +827,7 @@
           <li>Use an ESP32-CAM module with the CameraWebServer sketch.</li>
           <li>Ensure it's on the same Wi-Fi as your computer.</li>
           <li>Enter its IP in the Camera Feed section and click <b>Connect</b>.</li>
-          <li>Toggle Speaker/Mic to enable two-way audio.</li>
+          <li>Use Speaker/Mic ON buttons to enable two-way audio.</li>
         </ul>
       </div>
       <div class="help-card">
@@ -753,10 +873,6 @@
       <label class="toggle"><input type="checkbox" id="autoBuzzer"/><span class="toggle-slider"></span></label>
     </div>
     <div class="setting-row">
-      <div><label>Simulation Mode</label><div class="s-desc">Use fake data when no ESP32 is connected</div></div>
-      <label class="toggle"><input type="checkbox" id="simMode" checked onchange="toggleSim(this)"/><span class="toggle-slider"></span></label>
-    </div>
-    <div class="setting-row">
       <div><label>Data Backend</label><div class="s-desc">Where to send and fetch sensor data</div></div>
       <select><option>Firebase</option><option>Flask/SQLite</option><option>Google Sheets</option></select>
     </div>
@@ -765,7 +881,34 @@
 
 <!-- ══════════════ SCRIPTS ══════════════ -->
 <script>
-/* ── TAB SWITCH ── */
+/* ════════════════════════════════
+   LOGIN
+════════════════════════════════ */
+function doLogin() {
+  const id  = document.getElementById('doctorID').value.trim();
+  const pw  = document.getElementById('doctorPass').value;
+  const err = document.getElementById('loginError');
+  if (!id || !pw) { err.textContent = 'Please enter both Doctor ID and password.'; return; }
+  // Replace with real authentication in production
+  if (id === 'DOC001' && pw === 'medbot2024') {
+    document.getElementById('loginOverlay').style.display = 'none';
+    initDashboard();
+  } else {
+    err.textContent = '⚠ Invalid Doctor ID or password.';
+    document.getElementById('doctorPass').value = '';
+  }
+}
+function doLogout() {
+  if (!confirm('Log out of MedBot Dashboard?')) return;
+  document.getElementById('doctorID').value   = '';
+  document.getElementById('doctorPass').value = '';
+  document.getElementById('loginError').textContent = '';
+  document.getElementById('loginOverlay').style.display = 'flex';
+}
+
+/* ════════════════════════════════
+   TABS
+════════════════════════════════ */
 function switchTab(name, btn) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -773,16 +916,13 @@ function switchTab(name, btn) {
   btn.classList.add('active');
 }
 
-/* ── SET TODAY'S DATE ── */
-(function() {
-  const d = new Date();
-  const opts = { day:'2-digit', month:'short', year:'numeric' };
-  document.getElementById('piDate').textContent = d.toLocaleDateString('en-GB', opts);
-})();
+/* ════════════════════════════════
+   CHARTS
+════════════════════════════════ */
+let hrChartObj, spo2ChartObj;
 
-/* ── CHART.JS LINE CHARTS ── */
 function makeLineChart(canvasId, color) {
-  const ctx = document.getElementById(canvasId).getContext('2d');
+  const ctx  = document.getElementById(canvasId).getContext('2d');
   const grad = ctx.createLinearGradient(0, 0, 0, 80);
   grad.addColorStop(0, color + '55');
   grad.addColorStop(1, color + '00');
@@ -793,16 +933,13 @@ function makeLineChart(canvasId, color) {
       datasets: [{ data: Array(30).fill(null), borderColor: color, borderWidth: 2, backgroundColor: grad, fill: true, tension: 0.4, pointRadius: 0, pointHoverRadius: 0 }]
     },
     options: {
-      animation: { duration: 300 },
+      animation: { duration: 200 },
       responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false }, tooltip: { enabled: false } },
       scales: { x: { display: false }, y: { display: false, grace: '5%' } }
     }
   });
 }
-const hrChartObj   = makeLineChart('hrChart',   '#ff4060');
-const spo2ChartObj = makeLineChart('spo2Chart', '#00e5a0');
-
 function pushChart(chartObj, val) {
   const ds = chartObj.data.datasets[0];
   ds.data.push(val);
@@ -810,23 +947,11 @@ function pushChart(chartObj, val) {
   chartObj.update('none');
 }
 
-/* ── COUNT-UP ── */
-function countUp(el, target, decimals) {
-  const start = parseFloat(el.textContent) || 0;
-  const diff = target - start, dur = 500, step = 16;
-  let elapsed = 0;
-  const timer = setInterval(() => {
-    elapsed += step;
-    const t = Math.min(elapsed / dur, 1);
-    const ease = 1 - Math.pow(1 - t, 3);
-    el.textContent = decimals ? (start + diff * ease).toFixed(decimals) : Math.round(start + diff * ease);
-    if (elapsed >= dur) clearInterval(timer);
-  }, step);
-}
-
-/* ── GAUGE ── */
+/* ════════════════════════════════
+   GAUGE
+════════════════════════════════ */
 function setGauge(score) {
-  const pct = Math.min(Math.max(score, 0), 100) / 100;
+  const pct      = Math.min(Math.max(score, 0), 100) / 100;
   const sweepDeg = pct * 180;
   const endAngle = (180 - sweepDeg) * Math.PI / 180;
   const ex = 110 + 90 * Math.cos(endAngle);
@@ -836,69 +961,83 @@ function setGauge(score) {
   const arc = document.getElementById('gaugeArc');
   arc.setAttribute('d', `M 20 110 A 90 90 0 ${large} 1 ${ex.toFixed(2)} ${ey.toFixed(2)}`);
   arc.setAttribute('stroke', color);
-  const nLen = 78;
-  const nX = 110 + nLen * Math.cos(endAngle);
-  const nY = 110 - nLen * Math.sin(endAngle);
-  const needle = document.getElementById('gaugeNeedle');
-  needle.setAttribute('x2', nX.toFixed(2));
-  needle.setAttribute('y2', nY.toFixed(2));
-  document.getElementById('gaugeLabelVal').childNodes[0].textContent = Math.round(score);
+  const nX = 110 + 78 * Math.cos(endAngle);
+  const nY = 110 - 78 * Math.sin(endAngle);
+  document.getElementById('gaugeNeedle').setAttribute('x2', nX.toFixed(2));
+  document.getElementById('gaugeNeedle').setAttribute('y2', nY.toFixed(2));
+  document.getElementById('gaugeLabelVal').childNodes[0].textContent = score === 0 ? '—' : Math.round(score);
 }
 
-/* ── SIMULATION ── */
-let simRunning = true, simInterval = null;
+/* ════════════════════════════════
+   VITALS & RISK
+════════════════════════════════ */
 let hrHistory = [], spo2History = [];
 let hrBaseline = null, spo2Baseline = null;
 
-function mean(arr) { return arr.reduce((a,b)=>a+b,0)/arr.length; }
-function std(arr)  { const m=mean(arr); return Math.sqrt(arr.reduce((a,b)=>a+(b-m)**2,0)/arr.length); }
+function mean(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
+function std(arr)  { const m = mean(arr); return Math.sqrt(arr.reduce((a, b) => a + (b - m) ** 2, 0) / arr.length); }
 
 function updateRisk(hr, spo2) {
-  const hrZN  = hrHistory.length > 5   ? (hr - mean(hrHistory)) / (std(hrHistory) || 1) : 0;
+  const hrZN  = hrHistory.length   > 5 ? (hr   - mean(hrHistory))   / (std(hrHistory)   || 1) : 0;
   const s2ZN  = spo2History.length > 5 ? (spo2 - mean(spo2History)) / (std(spo2History) || 1) : 0;
-  document.getElementById('hrZ').textContent   = hrHistory.length > 5 ? hrZN.toFixed(2) : '—';
+  document.getElementById('hrZ').textContent   = hrHistory.length   > 5 ? hrZN.toFixed(2) : '—';
   document.getElementById('spo2Z').textContent = spo2History.length > 5 ? s2ZN.toFixed(2) : '—';
-  const hrThresh  = parseInt(document.getElementById('hrThresh')?.value || 110);
-  const spo2Thr   = parseInt(document.getElementById('spo2Thresh')?.value || 94);
-  const badge = document.getElementById('riskBadge'), lbl = document.getElementById('riskLabel');
-  const anomEl = document.getElementById('anomaly'), aiCard = document.getElementById('aiCard');
-  const confLabel = document.getElementById('confLabel');
-  const hrDev = Math.abs(hrZN), spo2Dev = Math.abs(s2ZN);
+
+  const hrThr   = parseInt(document.getElementById('hrThresh')?.value   || 110);
+  const spo2Thr = parseInt(document.getElementById('spo2Thresh')?.value || 94);
+  const badge   = document.getElementById('riskBadge');
+  const lbl     = document.getElementById('riskLabel');
+  const anomEl  = document.getElementById('anomaly');
+  const aiCard  = document.getElementById('aiCard');
+  const confLbl = document.getElementById('confLabel');
+  const hrDev   = Math.abs(hrZN), spo2Dev = Math.abs(s2ZN);
   let score = 0;
-  if (hr > hrThresh || spo2 < spo2Thr || hrDev > 3 || spo2Dev > 3) {
+
+  if (hr > hrThr || spo2 < spo2Thr || hrDev > 3 || spo2Dev > 3) {
     badge.className = 'risk-badge danger'; lbl.textContent = 'DANGER';
     anomEl.textContent = 'Yes'; anomEl.style.color = 'var(--danger)';
-    aiCard.classList.add('danger-pulse'); confLabel.textContent = 'Confidence — HIGH';
-    score = 75 + Math.min(hrDev, 3) * 8 + Math.random() * 5;
+    aiCard.classList.add('danger-pulse'); confLbl.textContent = 'Confidence — HIGH';
+    score = 75 + Math.min(hrDev, 3) * 8;
     if (document.getElementById('autoBuzzer')?.checked) soundBuzzer();
-  } else if (hr > hrThresh - 10 || spo2 < spo2Thr + 2 || hrDev > 2 || spo2Dev > 2) {
+  } else if (hr > hrThr - 10 || spo2 < spo2Thr + 2 || hrDev > 2 || spo2Dev > 2) {
     badge.className = 'risk-badge warning'; lbl.textContent = 'WARNING';
     anomEl.textContent = 'Maybe'; anomEl.style.color = 'var(--warn)';
-    aiCard.classList.remove('danger-pulse'); confLabel.textContent = 'Confidence — MEDIUM';
-    score = 40 + Math.min(hrDev, 2) * 10 + Math.random() * 5;
+    aiCard.classList.remove('danger-pulse'); confLbl.textContent = 'Confidence — MEDIUM';
+    score = 40 + Math.min(hrDev, 2) * 10;
   } else {
     badge.className = 'risk-badge normal'; lbl.textContent = 'NORMAL';
     anomEl.textContent = 'No'; anomEl.style.color = 'var(--text2)';
-    aiCard.classList.remove('danger-pulse'); confLabel.textContent = 'Confidence — LOW RISK';
-    score = Math.max(5, hrDev * 8 + spo2Dev * 6 + Math.random() * 5);
+    aiCard.classList.remove('danger-pulse'); confLbl.textContent = 'Confidence — LOW RISK';
+    score = Math.max(5, hrDev * 8 + spo2Dev * 6);
   }
   setGauge(Math.min(score, 100));
+
   const status = lbl.textContent;
   const p1s = document.getElementById('p1status');
-  p1s.textContent = status;
-  p1s.style.color = status==='NORMAL'?'var(--accent)':status==='WARNING'?'var(--warn)':'var(--danger)';
+  if (p1s) {
+    p1s.textContent = status;
+    p1s.style.color = status === 'NORMAL' ? 'var(--accent)' : status === 'WARNING' ? 'var(--warn)' : 'var(--danger)';
+  }
 }
 
+/* Push one stable reading from ESP32 (no random noise) */
 function pushReading(hr, spo2) {
-  countUp(document.getElementById('hrVal'), hr, 0);
-  countUp(document.getElementById('spo2Val'), spo2, 1);
-  document.getElementById('p1hr').textContent   = hr;
-  document.getElementById('p1spo2').textContent = spo2.toFixed(1);
-  pushChart(hrChartObj, hr);
+  document.getElementById('hrVal').textContent   = hr;
+  document.getElementById('spo2Val').textContent = spo2.toFixed(1);
+  document.getElementById('hrConnect').style.display   = 'none';
+  document.getElementById('spo2Connect').style.display = 'none';
+
+  const p1hr   = document.getElementById('p1hr');
+  const p1spo2 = document.getElementById('p1spo2');
+  if (p1hr)   p1hr.textContent   = hr;
+  if (p1spo2) p1spo2.textContent = spo2.toFixed(1);
+
+  pushChart(hrChartObj,   hr);
   pushChart(spo2ChartObj, spo2);
-  hrHistory.push(hr); spo2History.push(spo2);
-  if (hrHistory.length > 30) hrHistory.shift();
+  hrHistory.push(hr);   spo2History.push(spo2);
+  if (hrHistory.length   > 30) hrHistory.shift();
   if (spo2History.length > 30) spo2History.shift();
+
   if (hrHistory.length >= 10 && !hrBaseline) {
     hrBaseline   = mean(hrHistory).toFixed(0);
     spo2Baseline = mean(spo2History).toFixed(1);
@@ -906,180 +1045,203 @@ function pushReading(hr, spo2) {
     document.getElementById('spo2Base').textContent = `Baseline: ${spo2Baseline}%`;
   }
   updateRisk(hr, spo2);
-  addLog(hr, spo2);
 }
 
-function addLog(hr, spo2) {
-  const body = document.getElementById('logBody');
-  const time = new Date().toTimeString().split(' ')[0];
-  const risk = document.getElementById('riskLabel').textContent;
-  const bc   = risk==='NORMAL'?'ok':risk==='WARNING'?'warn':'err';
-  const tr   = document.createElement('tr');
-  tr.innerHTML = `<td>${time}</td><td>Simulated reading — HR: ${hr} bpm | SpO₂: ${spo2.toFixed(1)}%</td><td><span class="log-badge ${bc}">${risk}</span></td>`;
-  body.insertBefore(tr, body.firstChild);
-  if (body.children.length > 20) body.removeChild(body.lastChild);
+/* ════════════════════════════════
+   SERVER CONNECTION
+════════════════════════════════ */
+let fetchInterval = null;
+
+function startFetching(ip) {
+  if (fetchInterval) clearInterval(fetchInterval);
+  const rate = parseInt(document.getElementById('refreshRate')?.value || 2) * 1000;
+  function doFetch() {
+    fetch(`http://${ip}/vitals`)
+      .then(r => r.json())
+      .then(d => { if (d.hr !== undefined && d.spo2 !== undefined) pushReading(d.hr, d.spo2); })
+      .catch(() => {});
+  }
+  doFetch();
+  fetchInterval = setInterval(doFetch, rate);
 }
 
-function simTick() { pushReading(Math.round(70 + Math.random()*40), 95 + Math.random()*4); }
-function startSim() { simRunning = true; simTick(); simInterval = setInterval(simTick, 2000); }
-function stopSim()  { simRunning = false; clearInterval(simInterval); }
-function toggleSim(el) { el.checked ? startSim() : stopSim(); }
-
-/* ── CONNECT SERVER ── */
 function connectServer() {
-  const ip = document.getElementById('serverIP').value.trim();
+  const ip  = document.getElementById('serverIP').value.trim();
   if (!ip) return;
-  document.getElementById('simLabel').textContent = 'Connected';
-  document.querySelector('.sim-dot').style.background = 'var(--accent)';
-  document.querySelector('.sim-dot').style.boxShadow  = '0 0 8px var(--accent)';
-  alert(`Attempting to connect to http://${ip} …\n(Wire up your fetch() call here)`);
+  const dot = document.getElementById('simDot');
+  document.getElementById('simLabel').textContent = 'Connecting...';
+  dot.style.background = 'var(--warn)';
+  dot.style.boxShadow  = '0 0 8px var(--warn)';
+  fetch(`http://${ip}/vitals`)
+    .then(r => r.json())
+    .then(d => {
+      document.getElementById('simLabel').textContent = 'Connected';
+      dot.style.background = 'var(--accent)';
+      dot.style.boxShadow  = '0 0 8px var(--accent)';
+      startFetching(ip);
+    })
+    .catch(() => {
+      document.getElementById('simLabel').textContent = 'Failed';
+      dot.style.background = 'var(--danger)';
+      dot.style.boxShadow  = '0 0 8px var(--danger)';
+    });
 }
 
-/* ── AUDIO CONTROLS ── */
-let spkOn = false, micOn = false;
-let spkStream = null, micStream = null;
+/* ════════════════════════════════
+   AUDIO — separate ON / OFF
+════════════════════════════════ */
+let spkOn = false, micOn = false, micStream = null;
 
-function toggleAudio(type) {
+function setAudio(type, state) {
   if (type === 'spk') {
-    spkOn = !spkOn;
-    document.getElementById('spkPill').className       = 'audio-pill' + (spkOn ? ' on-spk' : '');
-    document.getElementById('spkIconWrap').className   = 'audio-icon-wrap spk-wrap' + (spkOn ? ' on' : '');
-    document.getElementById('spkIcon').className       = spkOn ? 'fas fa-volume-up' : 'fas fa-volume-mute';
-    document.getElementById('spkStatus').textContent   = spkOn ? 'ON' : 'OFF';
-    document.getElementById('spkStatus').className     = 'a-status' + (spkOn ? ' on-spk' : ' off');
-    document.getElementById('spkDot').className        = 'live-dot' + (spkOn ? ' vis-spk' : '');
-    const ip = document.getElementById('serverIP').value.trim();
-    if (ip) fetch(`http://${ip}/speaker?state=${spkOn?1:0}`).catch(()=>{});
-    addAudioLog('Speaker', spkOn);
+    spkOn = state;
+    document.getElementById('spkState').textContent = state ? 'ON' : 'OFF';
+    document.getElementById('spkState').className   = 'audio-state-badge' + (state ? ' on-spk' : '');
+    document.getElementById('spkIcon').className    = state ? 'fas fa-volume-up' : 'fas fa-volume-mute';
+    document.getElementById('spkOnBtn').className   = 'btn-audio-on' + (state ? ' active-spk' : '');
   } else {
-    micOn = !micOn;
-    document.getElementById('micPill').className       = 'audio-pill' + (micOn ? ' on-mic' : '');
-    document.getElementById('micIconWrap').className   = 'audio-icon-wrap mic-wrap' + (micOn ? ' on' : '');
-    document.getElementById('micIcon').className       = micOn ? 'fas fa-microphone' : 'fas fa-microphone-slash';
-    document.getElementById('micStatus').textContent   = micOn ? 'ON' : 'OFF';
-    document.getElementById('micStatus').className     = 'a-status' + (micOn ? ' on-mic' : ' off');
-    document.getElementById('micDot').className        = 'live-dot' + (micOn ? ' vis-mic' : '');
-    if (micOn) {
+    micOn = state;
+    document.getElementById('micState').textContent = state ? 'ON' : 'OFF';
+    document.getElementById('micState').className   = 'audio-state-badge' + (state ? ' on-mic' : '');
+    document.getElementById('micIcon').className    = state ? 'fas fa-microphone' : 'fas fa-microphone-slash';
+    document.getElementById('micOnBtn').className   = 'btn-audio-on' + (state ? ' active-mic' : '');
+    if (state) {
       navigator.mediaDevices?.getUserMedia({ audio: true })
-        .then(s => { micStream = s; })
-        .catch(() => {});
+        .then(s => { micStream = s; }).catch(() => {});
     } else {
       if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
     }
-    const ip = document.getElementById('serverIP').value.trim();
-    if (ip) fetch(`http://${ip}/mic?state=${micOn?1:0}`).catch(()=>{});
-    addAudioLog('Microphone', micOn);
   }
+  const ip = document.getElementById('serverIP').value.trim();
+  if (ip) fetch(`http://${ip}/${type === 'spk' ? 'speaker' : 'mic'}?state=${state ? 1 : 0}`).catch(() => {});
 }
 
-function addAudioLog(device, state) {
-  const body = document.getElementById('logBody');
-  const time = new Date().toTimeString().split(' ')[0];
-  const tr   = document.createElement('tr');
-  const bc   = state ? 'ok' : 'warn';
-  tr.innerHTML = `<td>${time}</td><td>${device} turned ${state?'ON':'OFF'}</td><td><span class="log-badge ${bc}">${state?'ON':'OFF'}</span></td>`;
-  body.insertBefore(tr, body.firstChild);
-  if (body.children.length > 20) body.removeChild(body.lastChild);
-}
-
-/* ── JOYSTICK ── */
+/* ════════════════════════════════
+   JOYSTICK
+════════════════════════════════ */
 let joystickActive = false, currentDir = 'S';
 
 function getJoystickDir(rx, ry, radius) {
-  if (Math.sqrt(rx*rx+ry*ry) < radius*0.25) return 'S';
-  const a = Math.atan2(-ry, rx)*180/Math.PI;
-  if (a>=-45&&a<45)  return 'R';
-  if (a>=45&&a<135)  return 'F';
-  if (a>=135||a<-135) return 'L';
+  if (Math.sqrt(rx*rx + ry*ry) < radius*0.25) return 'S';
+  const a = Math.atan2(-ry, rx) * 180 / Math.PI;
+  if (a >= -45 && a < 45)  return 'R';
+  if (a >= 45  && a < 135) return 'F';
+  if (a >= 135 || a < -135) return 'L';
   return 'B';
 }
 function highlightJoystick(dir) {
-  ['jTop','jBot','jLft','jRgt'].forEach(id=>document.getElementById(id).classList.remove('active'));
-  const map={F:'jTop',B:'jBot',L:'jLft',R:'jRgt'};
-  if(map[dir]) document.getElementById(map[dir]).classList.add('active');
-  document.getElementById('joystickKnob').classList.toggle('active', dir!=='S');
+  ['jTop','jBot','jLft','jRgt'].forEach(id => document.getElementById(id).classList.remove('active'));
+  const map = { F:'jTop', B:'jBot', L:'jLft', R:'jRgt' };
+  if (map[dir]) document.getElementById(map[dir]).classList.add('active');
+  document.getElementById('joystickKnob').classList.toggle('active', dir !== 'S');
 }
 function updateKnobPos(rx, ry, radius) {
-  const dist = Math.sqrt(rx*rx+ry*ry);
-  const cap  = Math.min(dist, radius*0.38)/(dist||1);
-  document.getElementById('joystickKnob').style.transform = `translate(calc(-50% + ${rx*cap}px), calc(-50% + ${ry*cap}px))`;
+  const dist = Math.sqrt(rx*rx + ry*ry);
+  const cap  = Math.min(dist, radius*0.38) / (dist || 1);
+  document.getElementById('joystickKnob').style.transform =
+    `translate(calc(-50% + ${rx*cap}px), calc(-50% + ${ry*cap}px))`;
 }
-function resetKnob() { document.getElementById('joystickKnob').style.transform='translate(-50%,-50%)'; highlightJoystick('S'); }
-
+function resetKnob() {
+  document.getElementById('joystickKnob').style.transform = 'translate(-50%,-50%)';
+  highlightJoystick('S');
+}
 function joystickStart(e) {
   joystickActive = true;
   const outer = document.getElementById('joystickOuter');
   const rect  = outer.getBoundingClientRect();
-  const cx = rect.left+rect.width/2, cy = rect.top+rect.height/2;
+  const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
   function onMove(me) {
     if (!joystickActive) return;
-    const px=me.clientX!==undefined?me.clientX:me.touches[0].clientX;
-    const py=me.clientY!==undefined?me.clientY:me.touches[0].clientY;
-    const rx=px-cx, ry=py-cy;
-    updateKnobPos(rx,ry,rect.width/2);
-    const dir=getJoystickDir(rx,ry,rect.width/2);
-    if(dir!==currentDir){currentDir=dir;move(dir);highlightJoystick(dir);}
+    const px = me.clientX !== undefined ? me.clientX : me.touches[0].clientX;
+    const py = me.clientY !== undefined ? me.clientY : me.touches[0].clientY;
+    const rx = px - cx, ry = py - cy;
+    updateKnobPos(rx, ry, rect.width/2);
+    const dir = getJoystickDir(rx, ry, rect.width/2);
+    if (dir !== currentDir) { currentDir = dir; move(dir); highlightJoystick(dir); }
   }
   function onEnd() {
-    joystickActive=false; currentDir='S'; move('S'); resetKnob();
-    document.removeEventListener('mousemove',onMove); document.removeEventListener('mouseup',onEnd);
+    joystickActive = false; currentDir = 'S'; move('S'); resetKnob();
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onEnd);
   }
-  document.addEventListener('mousemove',onMove); document.addEventListener('mouseup',onEnd); onMove(e);
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('mouseup', onEnd);
+  onMove(e);
 }
 function joystickTouchStart(e) {
   e.preventDefault(); joystickStart(e.touches[0]);
-  const outer=document.getElementById('joystickOuter');
-  const rect=outer.getBoundingClientRect();
-  const cx=rect.left+rect.width/2, cy=rect.top+rect.height/2;
+  const outer = document.getElementById('joystickOuter');
+  const rect  = outer.getBoundingClientRect();
+  const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
   function onMove(me) {
-    if(!joystickActive)return;
-    const rx=me.touches[0].clientX-cx, ry=me.touches[0].clientY-cy;
-    updateKnobPos(rx,ry,rect.width/2);
-    const dir=getJoystickDir(rx,ry,rect.width/2);
-    if(dir!==currentDir){currentDir=dir;move(dir);highlightJoystick(dir);}
+    if (!joystickActive) return;
+    const rx = me.touches[0].clientX - cx, ry = me.touches[0].clientY - cy;
+    updateKnobPos(rx, ry, rect.width/2);
+    const dir = getJoystickDir(rx, ry, rect.width/2);
+    if (dir !== currentDir) { currentDir = dir; move(dir); highlightJoystick(dir); }
   }
-  function onEnd(){joystickActive=false;currentDir='S';move('S');resetKnob();document.removeEventListener('touchmove',onMove);document.removeEventListener('touchend',onEnd);}
-  document.addEventListener('touchmove',onMove,{passive:false}); document.addEventListener('touchend',onEnd);
+  function onEnd() {
+    joystickActive = false; currentDir = 'S'; move('S'); resetKnob();
+    document.removeEventListener('touchmove', onMove);
+    document.removeEventListener('touchend', onEnd);
+  }
+  document.addEventListener('touchmove', onMove, { passive: false });
+  document.addEventListener('touchend', onEnd);
 }
-function stopRobot(){move('S');resetKnob();joystickActive=false;currentDir='S';}
-function move(dir){
-  const speed=document.getElementById('speedSlider').value;
-  const ip=document.getElementById('serverIP').value.trim();
-  console.log(`Move:${dir} Speed:${speed}`);
-  if(ip) fetch(`http://${ip}/move?dir=${dir}&speed=${speed}`).catch(()=>{});
+function stopRobot() { move('S'); resetKnob(); joystickActive = false; currentDir = 'S'; }
+function move(dir) {
+  const speed = document.getElementById('speedSlider').value;
+  const ip    = document.getElementById('serverIP').value.trim();
+  if (ip) fetch(`http://${ip}/move?dir=${dir}&speed=${speed}`).catch(() => {});
 }
-document.addEventListener('keydown',e=>{
-  const map={ArrowUp:'F',ArrowDown:'B',ArrowLeft:'L',ArrowRight:'R'};
-  if(map[e.key]){e.preventDefault();move(map[e.key]);highlightJoystick(map[e.key]);}
+document.addEventListener('keydown', e => {
+  const map = { ArrowUp:'F', ArrowDown:'B', ArrowLeft:'L', ArrowRight:'R' };
+  if (map[e.key]) { e.preventDefault(); move(map[e.key]); highlightJoystick(map[e.key]); }
 });
-document.addEventListener('keyup',e=>{
-  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){move('S');highlightJoystick('S');}
+document.addEventListener('keyup', e => {
+  if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) { move('S'); highlightJoystick('S'); }
 });
 
-/* ── CAMERA ── */
+/* ════════════════════════════════
+   CAMERA
+════════════════════════════════ */
 function connectCam() {
-  const ip=document.getElementById('camIP').value.trim(); if(!ip)return;
-  const img=document.getElementById('camStream');
-  img.src=`http://${ip}:81/stream`; img.style.display='block';
-  document.getElementById('camNoStream').style.display='none';
+  const ip = document.getElementById('camIP').value.trim(); if (!ip) return;
+  const img = document.getElementById('camStream');
+  img.src = `http://${ip}:81/stream`; img.style.display = 'block';
+  document.getElementById('camNoStream').style.display = 'none';
 }
 function disconnectCam() {
-  document.getElementById('camStream').src=''; document.getElementById('camStream').style.display='none';
-  document.getElementById('camNoStream').style.display='flex';
+  document.getElementById('camStream').src = '';
+  document.getElementById('camStream').style.display = 'none';
+  document.getElementById('camNoStream').style.display = 'flex';
 }
 
-/* ── BUZZER ── */
+/* ════════════════════════════════
+   BUZZER
+════════════════════════════════ */
 function soundBuzzer() {
-  const ip=document.getElementById('serverIP').value.trim();
-  const btn=document.getElementById('buzzerBtn');
-  btn.style.background='rgba(255,183,0,0.3)'; btn.style.boxShadow='0 0 24px rgba(255,183,0,0.5)';
-  setTimeout(()=>{btn.style.background='';btn.style.boxShadow='';},1000);
-  if(ip) fetch(`http://${ip}/buzzer`).catch(()=>{});
+  const ip  = document.getElementById('serverIP').value.trim();
+  const btn = document.getElementById('buzzerBtn');
+  btn.style.background = 'rgba(255,183,0,0.3)';
+  btn.style.boxShadow  = '0 0 24px rgba(255,183,0,0.5)';
+  setTimeout(() => { btn.style.background = ''; btn.style.boxShadow = ''; }, 1000);
+  if (ip) fetch(`http://${ip}/buzzer`).catch(() => {});
 }
 
-/* ── INIT ── */
-setGauge(0);
-startSim();
+/* ════════════════════════════════
+   INIT (called after successful login)
+════════════════════════════════ */
+function initDashboard() {
+  // Set today's date dynamically
+  const d = new Date();
+  document.getElementById('piDate').textContent =
+    d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+  // Init charts & gauge at zero
+  hrChartObj   = makeLineChart('hrChart',   '#ff4060');
+  spo2ChartObj = makeLineChart('spo2Chart', '#00e5a0');
+  setGauge(0);
+}
 </script>
 </body>
 </html>
