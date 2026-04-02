@@ -5,18 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MedBot Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <style>
     :root {
-      --bg:        #0d0f14;
-      --surface:   #13161e;
-      --card:      #181c26;
-      --border:    #232840;
+      --bg:        #080a10;
+      --surface:   #0e1119;
+      --card:      #111520;
+      --card2:     #131826;
+      --border:    #1e2438;
       --accent:    #00e5a0;
       --accent2:   #0abfff;
       --warn:      #ffb700;
       --danger:    #ff4060;
-      --text:      #dde3f0;
-      --muted:     #5a6080;
+      --text:      #f0f4ff;
+      --text2:     #c8d0e8;
+      --muted:     #6070a0;
       --mono:      'Share Tech Mono', monospace;
       --head:      'Rajdhani', sans-serif;
       --body:      'Exo 2', sans-serif;
@@ -30,6 +34,9 @@
       font-family: var(--body);
       min-height: 100vh;
       overflow-x: hidden;
+      background-image:
+        radial-gradient(ellipse 80% 60% at 10% 0%, rgba(10,191,255,0.04) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 90% 100%, rgba(0,229,160,0.04) 0%, transparent 60%);
     }
 
     /* ── TOP BAR ── */
@@ -37,79 +44,82 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 24px;
-      height: 54px;
-      background: var(--surface);
+      padding: 0 28px;
+      height: 58px;
+      background: rgba(14,17,25,0.95);
       border-bottom: 1px solid var(--border);
       position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(12px);
     }
     .brand {
       font-family: var(--head);
-      font-size: 1.3rem;
+      font-size: 1.4rem;
       font-weight: 700;
-      letter-spacing: 2px;
+      letter-spacing: 3px;
       display: flex; align-items: center; gap: 6px;
     }
+    .brand-icon { color: var(--accent2); margin-right: 4px; font-size: 1.1rem; }
     .brand span.med { color: var(--text); }
     .brand span.bot { color: var(--accent); }
     .brand span.label {
-      font-size: 0.65rem; letter-spacing: 4px;
+      font-size: 0.6rem; letter-spacing: 5px;
       color: var(--muted); font-weight: 400;
-      padding-left: 10px; text-transform: uppercase;
+      padding-left: 12px; text-transform: uppercase;
     }
-
     .topbar-right {
       display: flex; align-items: center; gap: 10px;
     }
     .server-input {
-      background: #0d0f14;
+      background: rgba(13,15,20,0.8);
       border: 1px solid var(--border);
-      border-radius: 5px;
+      border-radius: 6px;
       color: var(--muted);
       font-family: var(--mono);
       font-size: 0.75rem;
-      padding: 5px 10px;
-      width: 220px;
+      padding: 6px 12px;
+      width: 230px;
       outline: none;
+      transition: border-color 0.2s, color 0.2s;
     }
     .server-input:focus { border-color: var(--accent2); color: var(--text); }
     .btn-connect {
-      background: var(--accent2);
-      color: #000;
+      background: linear-gradient(135deg, var(--accent2), #007acc);
+      color: #fff;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       font-family: var(--head);
       font-weight: 700;
-      font-size: 0.8rem;
-      letter-spacing: 1px;
-      padding: 6px 16px;
+      font-size: 0.82rem;
+      letter-spacing: 1.5px;
+      padding: 7px 18px;
       cursor: pointer;
-      transition: opacity 0.2s;
+      transition: opacity 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 12px rgba(10,191,255,0.3);
     }
-    .btn-connect:hover { opacity: 0.85; }
+    .btn-connect:hover { opacity: 0.9; box-shadow: 0 0 20px rgba(10,191,255,0.5); }
     .sim-badge {
-      display: flex; align-items: center; gap: 6px;
+      display: flex; align-items: center; gap: 7px;
       font-size: 0.72rem; color: var(--muted);
       font-family: var(--mono);
     }
     .sim-dot {
       width: 8px; height: 8px; border-radius: 50%;
       background: var(--warn);
-      box-shadow: 0 0 6px var(--warn);
+      box-shadow: 0 0 8px var(--warn);
       animation: pulse-dot 1.5s infinite;
     }
-    @keyframes pulse-dot {
-      0%,100% { opacity:1; } 50% { opacity: 0.3; }
-    }
+    @keyframes pulse-dot { 0%,100% { opacity:1; } 50% { opacity: 0.25; } }
 
     /* ── NAV TABS ── */
     .nav-tabs {
       display: flex;
       align-items: center;
-      gap: 2px;
-      padding: 0 24px;
-      background: var(--surface);
+      justify-content: center;
+      gap: 4px;
+      padding: 0 28px;
+      background: rgba(14,17,25,0.9);
       border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(8px);
     }
     .tab-btn {
       background: none;
@@ -117,19 +127,16 @@
       border-bottom: 2px solid transparent;
       color: var(--muted);
       font-family: var(--head);
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       font-weight: 600;
       letter-spacing: 1.5px;
       text-transform: uppercase;
-      padding: 12px 18px;
+      padding: 14px 22px;
       cursor: pointer;
       transition: color 0.2s, border-color 0.2s;
     }
-    .tab-btn:hover { color: var(--text); }
-    .tab-btn.active {
-      color: var(--accent);
-      border-bottom-color: var(--accent);
-    }
+    .tab-btn:hover { color: var(--text2); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
 
     /* ── TAB CONTENT ── */
     .tab-panel { display: none; }
@@ -137,309 +144,383 @@
 
     /* ── MAIN GRID ── */
     .dashboard {
-      padding: 20px 24px;
+      padding: 22px 28px;
       display: grid;
-      grid-template-columns: 1fr 1fr 1.2fr;
-      grid-template-rows: auto auto auto;
-      gap: 16px;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto auto auto;
+      gap: 18px;
     }
 
     /* ── CARD ── */
     .card {
-      background: var(--card);
+      background: linear-gradient(145deg, var(--card) 0%, var(--card2) 100%);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 18px 20px;
+      border-radius: 14px;
+      padding: 22px 24px;
       position: relative;
       overflow: hidden;
+      animation: fadeUp 0.45s ease both;
     }
     .card::before {
       content: '';
       position: absolute; top: 0; left: 0; right: 0;
       height: 2px;
       background: linear-gradient(90deg, transparent, var(--accent2), transparent);
-      opacity: 0.4;
+      opacity: 0.5;
     }
+    .card::after {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(10,191,255,0.04), transparent 70%);
+      pointer-events: none;
+    }
+
     .card-label {
-      font-family: var(--mono);
-      font-size: 0.65rem;
+      font-family: var(--head);
+      font-size: 0.78rem;
       letter-spacing: 3px;
       color: var(--muted);
       text-transform: uppercase;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
+      display: flex; align-items: center; gap: 8px;
     }
+    .card-label i { font-size: 0.9rem; }
+    .card-label .lbl-hr   { color: var(--danger); }
+    .card-label .lbl-spo2 { color: var(--accent); }
+    .card-label .lbl-ai   { color: #b080ff; }
+    .card-label .lbl-rob  { color: var(--accent2); }
+    .card-label .lbl-cam  { color: var(--warn); }
+    .card-label .lbl-log  { color: var(--muted); }
+
     .card-value {
       font-family: var(--head);
-      font-size: 3rem;
+      font-size: 5rem;
       font-weight: 700;
       color: var(--text);
       line-height: 1;
+      text-shadow: 0 0 30px rgba(10,191,255,0.3);
     }
+    .card-value.hr-val { text-shadow: 0 0 30px rgba(255,64,96,0.35); color: #fff; }
+    .card-value.spo2-val { text-shadow: 0 0 30px rgba(0,229,160,0.35); color: #fff; }
     .card-unit {
-      font-size: 0.75rem;
-      color: var(--muted);
-      font-family: var(--mono);
-      margin-top: 2px;
-    }
-    .card-baseline {
-      font-size: 0.7rem;
+      font-size: 0.78rem;
       color: var(--muted);
       font-family: var(--mono);
       margin-top: 4px;
+      letter-spacing: 1px;
+    }
+    .card-baseline {
+      font-size: 0.72rem;
+      color: var(--text2);
+      font-family: var(--mono);
+      margin-top: 6px;
     }
 
-    /* ── CHART ── */
-    .chart-wrap { margin-top: 12px; height: 50px; position: relative; }
-    canvas.mini-chart { width: 100%; height: 100%; }
+    /* ── VITAL CARDS TOP ROW ── */
+    .vital-card {
+      min-height: 260px;
+    }
+    .chart-wrap {
+      margin-top: 16px;
+      height: 80px;
+      position: relative;
+    }
 
-    /* ── AI RISK ── */
+    /* ── AI RISK GAUGE ── */
+    .ai-card {
+      grid-column: 1 / -1;
+    }
+    .ai-inner {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .gauge-container {
+      flex-shrink: 0;
+      position: relative;
+      width: 220px;
+      height: 120px;
+    }
+    .gauge-svg { width: 220px; height: 120px; overflow: visible; }
+    .gauge-label-val {
+      position: absolute;
+      bottom: 6px; left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--head);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+      line-height: 1;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .gauge-label-val small {
+      display: block;
+      font-size: 0.6rem;
+      letter-spacing: 3px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .ai-details { flex: 1; }
     .risk-badge {
       display: inline-flex; align-items: center;
       gap: 8px;
-      padding: 5px 14px;
-      border-radius: 20px;
+      padding: 6px 18px;
+      border-radius: 24px;
       font-family: var(--head);
-      font-size: 0.9rem;
+      font-size: 1rem;
       font-weight: 700;
-      letter-spacing: 2px;
-      margin-bottom: 10px;
+      letter-spacing: 3px;
+      margin-bottom: 14px;
     }
-    .risk-badge.normal { background: rgba(0,229,160,0.15); color: var(--accent); border: 1px solid rgba(0,229,160,0.4);}
-    .risk-badge.warning { background: rgba(255,183,0,0.15); color: var(--warn); border: 1px solid rgba(255,183,0,0.4);}
-    .risk-badge.danger  { background: rgba(255,64,96,0.15);  color: var(--danger); border: 1px solid rgba(255,64,96,0.4);}
-    .risk-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
-    .confidence-label {
-      font-family: var(--mono); font-size: 0.65rem; color: var(--muted);
-      margin-bottom: 10px;
-    }
-    .stats-row {
-      display: flex; gap: 14px;
-      margin-bottom: 12px;
-    }
+    .risk-badge.normal  { background: rgba(0,229,160,0.12); color: var(--accent); border: 1px solid rgba(0,229,160,0.35);}
+    .risk-badge.warning { background: rgba(255,183,0,0.12); color: var(--warn); border: 1px solid rgba(255,183,0,0.35);}
+    .risk-badge.danger  { background: rgba(255,64,96,0.12);  color: var(--danger); border: 1px solid rgba(255,64,96,0.35);}
+    .risk-badge .dot { width: 9px; height: 9px; border-radius: 50%; background: currentColor; box-shadow: 0 0 6px currentColor; }
+    .confidence-label { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); margin-bottom: 12px; }
+    .stats-row { display: flex; gap: 12px; margin-bottom: 14px; }
     .stat-box {
       flex: 1;
-      background: #0d0f14;
+      background: rgba(13,15,20,0.6);
       border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 8px 10px;
+      border-radius: 8px;
+      padding: 10px 12px;
       text-align: center;
     }
-    .stat-box .s-label { font-size: 0.6rem; color: var(--muted); font-family: var(--mono); letter-spacing: 1px; }
-    .stat-box .s-val   { font-size: 0.85rem; font-family: var(--head); font-weight: 600; color: var(--text); }
+    .stat-box .s-label { font-size: 0.62rem; color: var(--muted); font-family: var(--mono); letter-spacing: 1px; }
+    .stat-box .s-val   { font-size: 1rem; font-family: var(--head); font-weight: 700; color: var(--text); margin: 2px 0; }
     .btn-buzzer {
       width: 100%;
-      background: linear-gradient(135deg, #1a0a00, #3a1500);
-      border: 1px solid var(--warn);
+      background: linear-gradient(135deg, rgba(255,183,0,0.08), rgba(255,100,0,0.08));
+      border: 1px solid rgba(255,183,0,0.5);
       color: var(--warn);
-      border-radius: 6px;
+      border-radius: 8px;
       font-family: var(--head);
       font-weight: 700;
       letter-spacing: 2px;
-      font-size: 0.82rem;
-      padding: 9px;
+      font-size: 0.85rem;
+      padding: 10px;
       cursor: pointer;
       transition: background 0.2s, box-shadow 0.2s;
     }
-    .btn-buzzer:hover {
-      background: rgba(255,183,0,0.15);
-      box-shadow: 0 0 12px rgba(255,183,0,0.3);
-    }
+    .btn-buzzer:hover { background: rgba(255,183,0,0.18); box-shadow: 0 0 18px rgba(255,183,0,0.3); }
     .btn-buzzer:active { transform: scale(0.97); }
 
-    /* ── ROBOT CONTROL ── */
-    .patient-select {
-      display: flex; align-items: center; gap: 10px;
-      margin-bottom: 14px;
-    }
-    .patient-select label { font-size: 0.7rem; font-family: var(--mono); color: var(--muted); }
-    .patient-select select {
-      flex: 1;
-      background: #0d0f14;
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-family: var(--body);
-      font-size: 0.82rem;
-      padding: 6px 10px;
-      border-radius: 5px;
-      outline: none;
-    }
-    .dpad {
-      display: grid;
-      grid-template-columns: repeat(3, 48px);
-      grid-template-rows: repeat(3, 48px);
-      gap: 6px;
-      justify-content: center;
-      margin-bottom: 12px;
-    }
-    .dpad-btn {
-      background: #0d0f14;
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      color: var(--text);
-      font-size: 1.1rem;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.15s, border-color 0.15s, transform 0.1s;
-      user-select: none;
-    }
-    .dpad-btn:hover  { background: #1e2336; border-color: var(--accent2); }
-    .dpad-btn:active { transform: scale(0.92); background: #111520; }
-    .dpad-btn.stop {
-      background: rgba(255,64,96,0.12);
-      border-color: var(--danger);
-      color: var(--danger);
-      font-family: var(--head);
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-    }
-    .dpad-btn.empty { visibility: hidden; pointer-events: none; }
-    .speed-row {
-      display: flex; align-items: center; gap: 10px;
-    }
-    .speed-row label { font-size: 0.68rem; font-family: var(--mono); color: var(--muted); }
-    .speed-row input[type=range] {
-      flex: 1; accent-color: var(--accent2);
-      height: 3px;
-    }
-    .speed-val { font-family: var(--mono); font-size: 0.85rem; color: var(--accent2); min-width: 20px; }
-    .move-hint { font-size: 0.6rem; color: var(--muted); font-family: var(--mono); text-align: center; margin-top: 6px; }
-
-    /* ── CAMERA ── */
+    /* ── CAMERA CARD ── */
+    .cam-card { grid-column: 1 / 2; }
     .cam-wrap {
-      background: #0a0c12;
+      background: #080a10;
       border: 1px dashed var(--border);
-      border-radius: 7px;
-      height: 150px;
+      border-radius: 10px;
+      height: 180px;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       color: var(--muted);
       font-family: var(--mono);
       font-size: 0.72rem;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       position: relative;
       overflow: hidden;
     }
-    .cam-wrap img { width: 100%; height: 100%; object-fit: cover; display: none; border-radius: 7px; }
-    .cam-no-stream { text-align: center; line-height: 1.8; }
-    .cam-controls {
-      display: flex; align-items: center; gap: 8px;
-    }
+    .cam-wrap img { width: 100%; height: 100%; object-fit: cover; display: none; border-radius: 10px; }
+    .cam-no-stream { text-align: center; line-height: 2; color: var(--muted); }
+    .cam-controls { display: flex; align-items: center; gap: 8px; }
     .cam-ip {
       flex: 1;
-      background: #0d0f14;
+      background: rgba(13,15,20,0.8);
       border: 1px solid var(--border);
       color: var(--text);
       font-family: var(--mono);
       font-size: 0.75rem;
-      padding: 6px 10px;
-      border-radius: 5px;
+      padding: 7px 12px;
+      border-radius: 6px;
       outline: none;
     }
     .cam-ip::placeholder { color: var(--muted); }
     .btn-cam {
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       font-family: var(--head);
       font-weight: 700;
       font-size: 0.75rem;
       letter-spacing: 1px;
-      padding: 6px 12px;
+      padding: 7px 14px;
       cursor: pointer;
+      transition: opacity 0.2s, box-shadow 0.2s;
     }
-    .btn-cam.connect { background: var(--accent); color: #000; }
+    .btn-cam.connect    { background: var(--accent); color: #000; box-shadow: 0 0 10px rgba(0,229,160,0.3); }
+    .btn-cam.connect:hover { box-shadow: 0 0 18px rgba(0,229,160,0.5); }
     .btn-cam.disconnect { background: transparent; border: 1px solid var(--danger); color: var(--danger); }
 
-    /* ── ACTIVITY LOG ── */
-    .log-section {
-      grid-column: 1 / -1;
+    /* ── ROBOT / JOYSTICK CARD ── */
+    .robot-card { grid-column: 2 / 3; }
+    .patient-select {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 16px;
     }
+    .patient-select label { font-size: 0.72rem; font-family: var(--mono); color: var(--muted); }
+    .patient-select select {
+      flex: 1;
+      background: rgba(13,15,20,0.8);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--body);
+      font-size: 0.85rem;
+      padding: 7px 12px;
+      border-radius: 6px;
+      outline: none;
+    }
+
+    /* Joystick */
+    .joystick-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .joystick-outer {
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #1e2540, #0c0f18);
+      border: 2px solid var(--border);
+      box-shadow: 0 0 20px rgba(10,191,255,0.08), inset 0 2px 8px rgba(0,0,0,0.5);
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+      transition: box-shadow 0.2s;
+    }
+    .joystick-outer:hover {
+      box-shadow: 0 0 28px rgba(10,191,255,0.18), inset 0 2px 8px rgba(0,0,0,0.5);
+    }
+    /* direction zones */
+    .jzone {
+      position: absolute;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+      transition: color 0.15s;
+      pointer-events: none;
+    }
+    .jzone.top    { top: 10px; left: 50%; transform: translateX(-50%); }
+    .jzone.bottom { bottom: 10px; left: 50%; transform: translateX(-50%); }
+    .jzone.left   { left: 10px; top: 50%; transform: translateY(-50%); }
+    .jzone.right  { right: 10px; top: 50%; transform: translateY(-50%); }
+    .jzone.active { color: var(--accent2); text-shadow: 0 0 8px var(--accent2); }
+
+    .joystick-knob {
+      width: 58px; height: 58px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #2a3060, #131830);
+      border: 2px solid rgba(10,191,255,0.4);
+      box-shadow: 0 0 16px rgba(10,191,255,0.25), inset 0 1px 4px rgba(255,255,255,0.08);
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      transition: box-shadow 0.15s, border-color 0.15s;
+      pointer-events: none;
+    }
+    .joystick-knob.active {
+      box-shadow: 0 0 24px rgba(10,191,255,0.5), inset 0 1px 4px rgba(255,255,255,0.1);
+      border-color: var(--accent2);
+    }
+    .joystick-knob::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--accent2), rgba(10,191,255,0.3));
+      box-shadow: 0 0 10px var(--accent2);
+    }
+
+    .stop-btn {
+      background: linear-gradient(135deg, rgba(255,64,96,0.1), rgba(180,0,30,0.15));
+      border: 1px solid rgba(255,64,96,0.5);
+      color: var(--danger);
+      border-radius: 8px;
+      font-family: var(--head);
+      font-weight: 700;
+      letter-spacing: 2px;
+      font-size: 0.82rem;
+      padding: 8px 28px;
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .stop-btn:hover { background: rgba(255,64,96,0.2); box-shadow: 0 0 14px rgba(255,64,96,0.3); }
+    .stop-btn:active { transform: scale(0.96); }
+
+    .speed-row {
+      display: flex; align-items: center; gap: 12px;
+      width: 100%;
+    }
+    .speed-row label { font-size: 0.68rem; font-family: var(--mono); color: var(--muted); white-space: nowrap; }
+    .speed-row input[type=range] { flex: 1; accent-color: var(--accent2); height: 4px; }
+    .speed-val { font-family: var(--mono); font-size: 0.9rem; color: var(--accent2); min-width: 20px; }
+    .move-hint { font-size: 0.62rem; color: var(--muted); font-family: var(--mono); }
+
+    /* ── ACTIVITY LOG ── */
+    .log-section { grid-column: 1 / -1; }
     .log-header {
-      font-family: var(--mono);
-      font-size: 0.65rem;
+      font-family: var(--head);
+      font-size: 0.75rem;
       letter-spacing: 3px;
       color: var(--muted);
       text-transform: uppercase;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      display: flex; align-items: center; gap: 8px;
     }
-    .log-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: var(--mono);
-      font-size: 0.75rem;
-    }
-    .log-table tbody tr {
-      border-bottom: 1px solid #1a1e2a;
-      transition: background 0.15s;
-    }
-    .log-table tbody tr:hover { background: #151825; }
-    .log-table td { padding: 8px 10px; color: var(--text); }
-    .log-table td:first-child { color: var(--muted); width: 70px; }
-    .log-table td:last-child { width: 60px; text-align: right; }
+    .log-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 0.77rem; }
+    .log-table tbody tr { border-bottom: 1px solid #141825; transition: background 0.15s; }
+    .log-table tbody tr:hover { background: #131623; }
+    .log-table td { padding: 9px 12px; color: var(--text2); }
+    .log-table td:first-child { color: var(--muted); width: 75px; }
+    .log-table td:last-child { width: 70px; text-align: right; }
     .log-badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 1px;
+      display: inline-block; padding: 3px 10px;
+      border-radius: 12px; font-size: 0.65rem;
+      font-weight: 700; letter-spacing: 1.5px;
     }
-    .log-badge.ok   { background: rgba(0,229,160,0.15); color: var(--accent); }
-    .log-badge.warn { background: rgba(255,183,0,0.15);  color: var(--warn); }
-    .log-badge.err  { background: rgba(255,64,96,0.15);  color: var(--danger); }
+    .log-badge.ok   { background: rgba(0,229,160,0.12); color: var(--accent); }
+    .log-badge.warn { background: rgba(255,183,0,0.12);  color: var(--warn); }
+    .log-badge.err  { background: rgba(255,64,96,0.12);  color: var(--danger); }
 
     /* ── PATIENTS TAB ── */
     .patients-grid {
-      padding: 20px 24px;
+      padding: 22px 28px;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 18px;
     }
     .patient-card {
-      background: var(--card);
+      background: linear-gradient(145deg, var(--card), var(--card2));
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 18px 20px;
+      border-radius: 14px;
+      padding: 20px 22px;
       cursor: pointer;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .patient-card:hover {
-      border-color: var(--accent2);
-      box-shadow: 0 0 16px rgba(10,191,255,0.08);
-    }
-    .patient-card .p-id {
-      font-family: var(--mono); font-size: 0.7rem; color: var(--accent2);
-      letter-spacing: 2px; margin-bottom: 6px;
-    }
-    .patient-card .p-name {
-      font-family: var(--head); font-size: 1.1rem; font-weight: 700;
-      margin-bottom: 4px;
-    }
-    .patient-card .p-bed {
-      font-size: 0.75rem; color: var(--muted); margin-bottom: 12px;
-    }
-    .patient-vitals {
-      display: flex; gap: 14px;
-    }
-    .patient-vital {
-      flex: 1; text-align: center;
-      background: #0d0f14;
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      padding: 8px 0;
-    }
+    .patient-card:hover { border-color: var(--accent2); box-shadow: 0 0 20px rgba(10,191,255,0.1); }
+    .patient-card .p-id { font-family: var(--mono); font-size: 0.7rem; color: var(--accent2); letter-spacing: 2px; margin-bottom: 6px; }
+    .patient-card .p-name { font-family: var(--head); font-size: 1.15rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .patient-card .p-bed { font-size: 0.75rem; color: var(--muted); margin-bottom: 14px; }
+    .patient-vitals { display: flex; gap: 12px; }
+    .patient-vital { flex: 1; text-align: center; background: rgba(13,15,20,0.7); border: 1px solid var(--border); border-radius: 8px; padding: 8px 0; }
     .patient-vital .pv-label { font-size: 0.6rem; color: var(--muted); font-family: var(--mono); }
-    .patient-vital .pv-val   { font-size: 1.1rem; font-family: var(--head); font-weight: 700; }
+    .patient-vital .pv-val   { font-size: 1.15rem; font-family: var(--head); font-weight: 700; }
     .add-patient-btn {
       background: transparent;
       border: 2px dashed var(--border);
-      border-radius: 10px;
+      border-radius: 14px;
       color: var(--muted);
       font-family: var(--head);
       font-size: 0.9rem;
       letter-spacing: 1px;
       display: flex; align-items: center; justify-content: center; gap: 8px;
-      height: 100%;
       min-height: 130px;
       cursor: pointer;
       transition: border-color 0.2s, color 0.2s;
@@ -447,122 +528,78 @@
     .add-patient-btn:hover { border-color: var(--accent); color: var(--accent); }
 
     /* ── HELP TAB ── */
-    .help-section {
-      padding: 24px;
-      max-width: 900px;
-    }
-    .help-section h2 {
-      font-family: var(--head); font-size: 1.4rem; font-weight: 700;
-      color: var(--accent); letter-spacing: 2px; margin-bottom: 20px;
-    }
-    .help-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-    .help-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 18px 20px;
-    }
-    .help-card h3 {
-      font-family: var(--head); font-size: 1rem; font-weight: 700;
-      color: var(--accent2); letter-spacing: 1px; margin-bottom: 10px;
-    }
-    .help-card p, .help-card li {
-      font-size: 0.82rem; color: var(--muted); line-height: 1.7;
-    }
-    .help-card ul { padding-left: 16px; }
+    .help-section { padding: 26px 28px; max-width: 940px; }
+    .help-section h2 { font-family: var(--head); font-size: 1.4rem; font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 22px; }
+    .help-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .help-card { background: linear-gradient(145deg, var(--card), var(--card2)); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; }
+    .help-card h3 { font-family: var(--head); font-size: 1rem; font-weight: 700; color: var(--accent2); letter-spacing: 1px; margin-bottom: 10px; }
+    .help-card p, .help-card li { font-size: 0.83rem; color: var(--text2); line-height: 1.75; }
+    .help-card ul { padding-left: 18px; }
     .help-card li { margin-bottom: 4px; }
 
     /* ── SETTINGS TAB ── */
-    .settings-section {
-      padding: 24px;
-      max-width: 600px;
-    }
-    .settings-section h2 {
-      font-family: var(--head); font-size: 1.4rem; font-weight: 700;
-      color: var(--accent); letter-spacing: 2px; margin-bottom: 20px;
-    }
+    .settings-section { padding: 26px 28px; max-width: 620px; }
+    .settings-section h2 { font-family: var(--head); font-size: 1.4rem; font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 22px; }
     .setting-row {
-      background: var(--card);
+      background: linear-gradient(145deg, var(--card), var(--card2));
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      border-radius: 10px;
+      padding: 16px 20px;
+      display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 10px;
     }
-    .setting-row label {
-      font-family: var(--head); font-size: 0.9rem; font-weight: 600;
-    }
-    .setting-row .s-desc {
-      font-size: 0.72rem; color: var(--muted); margin-top: 2px;
-    }
+    .setting-row label { font-family: var(--head); font-size: 0.92rem; font-weight: 600; color: var(--text); }
+    .setting-row .s-desc { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
     .setting-row input[type=number], .setting-row select {
-      background: #0d0f14;
+      background: rgba(13,15,20,0.8);
       border: 1px solid var(--border);
-      border-radius: 5px;
+      border-radius: 6px;
       color: var(--text);
       font-family: var(--mono);
       font-size: 0.85rem;
-      padding: 5px 10px;
+      padding: 6px 12px;
       width: 100px;
       outline: none;
     }
-    .toggle {
-      position: relative; width: 40px; height: 22px;
-    }
+    .toggle { position: relative; width: 42px; height: 24px; }
     .toggle input { opacity: 0; width: 0; height: 0; }
-    .toggle-slider {
-      position: absolute; inset: 0;
-      background: #1e2336;
-      border-radius: 22px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .toggle-slider::before {
-      content: '';
-      position: absolute;
-      width: 16px; height: 16px;
-      left: 3px; top: 3px;
-      background: var(--muted);
-      border-radius: 50%;
-      transition: transform 0.3s, background 0.3s;
-    }
+    .toggle-slider { position: absolute; inset: 0; background: #1a1e30; border-radius: 24px; cursor: pointer; transition: background 0.3s; }
+    .toggle-slider::before { content: ''; position: absolute; width: 17px; height: 17px; left: 3.5px; top: 3.5px; background: var(--muted); border-radius: 50%; transition: transform 0.3s, background 0.3s; }
     .toggle input:checked + .toggle-slider { background: rgba(0,229,160,0.2); }
-    .toggle input:checked + .toggle-slider::before {
-      transform: translateX(18px);
-      background: var(--accent);
-    }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(18px); background: var(--accent); }
 
     /* ── SCROLLBAR ── */
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: #2a2e40; border-radius: 5px; }
-    ::-webkit-scrollbar-thumb:hover { background: #3a3e55; }
+    ::-webkit-scrollbar-thumb { background: #1e2438; border-radius: 5px; }
+    ::-webkit-scrollbar-thumb:hover { background: #2a3050; }
 
-    /* ── FADE IN ── */
+    /* ── ANIMATIONS ── */
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(12px); }
+      from { opacity: 0; transform: translateY(14px); }
       to   { opacity: 1; transform: translateY(0); }
     }
-    .card { animation: fadeUp 0.4s ease both; }
-    .card:nth-child(1) { animation-delay: 0.05s; }
-    .card:nth-child(2) { animation-delay: 0.10s; }
-    .card:nth-child(3) { animation-delay: 0.15s; }
-    .card:nth-child(4) { animation-delay: 0.20s; }
-    .card:nth-child(5) { animation-delay: 0.25s; }
-    .card:nth-child(6) { animation-delay: 0.30s; }
+    .card:nth-child(1) { animation-delay: 0.04s; }
+    .card:nth-child(2) { animation-delay: 0.09s; }
+    .card:nth-child(3) { animation-delay: 0.14s; }
+    .card:nth-child(4) { animation-delay: 0.19s; }
+    .card:nth-child(5) { animation-delay: 0.24s; }
+    .card:nth-child(6) { animation-delay: 0.29s; }
+
+    /* glow pulse on danger */
+    @keyframes glowDanger {
+      0%,100% { box-shadow: 0 0 0 rgba(255,64,96,0); }
+      50%      { box-shadow: 0 0 22px rgba(255,64,96,0.35); }
+    }
+    .card.danger-pulse { animation: glowDanger 1.2s infinite; }
   </style>
 </head>
 <body>
 
-<!-- ────── TOP BAR ────── -->
+<!-- ── TOP BAR ── -->
 <header class="topbar">
   <div class="brand">
+    <i class="fas fa-heartbeat brand-icon"></i>
     <span class="med">Med</span><span class="bot">Bot</span>
     <span class="label">Dashboard</span>
   </div>
@@ -576,7 +613,7 @@
   </div>
 </header>
 
-<!-- ────── NAV TABS ────── -->
+<!-- ── NAV TABS ── -->
 <nav class="nav-tabs">
   <button class="tab-btn active" onclick="switchTab('home',this)">🏠 Home</button>
   <button class="tab-btn" onclick="switchTab('patients',this)">👥 Patients List</button>
@@ -584,15 +621,15 @@
   <button class="tab-btn" onclick="switchTab('settings',this)">⚙ Settings</button>
 </nav>
 
-<!-- ══════════════════════════════ HOME TAB ══════════════════════════════ -->
+<!-- ══════════════ HOME TAB ══════════════ -->
 <div id="tab-home" class="tab-panel active">
   <div class="dashboard">
 
     <!-- HEART RATE -->
-    <div class="card">
-      <div class="card-label">Heart Rate</div>
-      <div class="card-value" id="hrVal">--</div>
-      <div class="card-unit">bpm</div>
+    <div class="card vital-card">
+      <div class="card-label"><i class="fas fa-heart lbl-hr"></i> Heart Rate</div>
+      <div class="card-value hr-val" id="hrVal">--</div>
+      <div class="card-unit">beats per minute</div>
       <div class="card-baseline" id="hrBase">Baseline: learning...</div>
       <div class="chart-wrap">
         <canvas id="hrChart"></canvas>
@@ -600,9 +637,9 @@
     </div>
 
     <!-- SPO2 -->
-    <div class="card">
-      <div class="card-label">SpO₂</div>
-      <div class="card-value" id="spo2Val">--</div>
+    <div class="card vital-card">
+      <div class="card-label"><i class="fas fa-lungs lbl-spo2"></i> SpO₂</div>
+      <div class="card-value spo2-val" id="spo2Val">--</div>
       <div class="card-unit">% oxygen saturation</div>
       <div class="card-baseline" id="spo2Base">Baseline: learning...</div>
       <div class="chart-wrap">
@@ -611,70 +648,73 @@
     </div>
 
     <!-- AI RISK ASSESSMENT -->
-    <div class="card" style="grid-row: span 2;">
-      <div class="card-label">AI Risk Assessment</div>
-      <div class="risk-badge normal" id="riskBadge">
-        <span class="dot"></span>
-        <span id="riskLabel">NORMAL</span>
+    <div class="card ai-card" id="aiCard">
+      <div class="card-label"><i class="fas fa-brain lbl-ai"></i> AI Risk Assessment</div>
+      <div class="ai-inner">
+        <!-- Semicircle gauge -->
+        <div class="gauge-container" id="gaugeContainer">
+          <svg class="gauge-svg" viewBox="0 0 220 120" id="gaugeSVG">
+            <!-- background track -->
+            <path d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="#1a1e30" stroke-width="18" stroke-linecap="round"/>
+            <!-- green zone -->
+            <path d="M 20 110 A 90 90 0 0 1 110 20" fill="none" stroke="rgba(0,229,160,0.25)" stroke-width="18" stroke-linecap="round"/>
+            <!-- yellow zone -->
+            <path d="M 110 20 A 90 90 0 0 1 170 38" fill="none" stroke="rgba(255,183,0,0.25)" stroke-width="18" stroke-linecap="round"/>
+            <!-- red zone -->
+            <path d="M 170 38 A 90 90 0 0 1 200 110" fill="none" stroke="rgba(255,64,96,0.25)" stroke-width="18" stroke-linecap="round"/>
+            <!-- active fill arc -->
+            <path id="gaugeArc" d="M 20 110 A 90 90 0 0 1 20 110" fill="none" stroke="var(--accent)" stroke-width="18" stroke-linecap="round"/>
+            <!-- needle -->
+            <line id="gaugeNeedle" x1="110" y1="110" x2="110" y2="26" stroke="var(--text)" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="110" cy="110" r="6" fill="#1e2438" stroke="var(--text)" stroke-width="2"/>
+            <!-- zone labels -->
+            <text x="14" y="125" font-family="'Share Tech Mono'" font-size="9" fill="rgba(0,229,160,0.7)">SAFE</text>
+            <text x="89" y="15" font-family="'Share Tech Mono'" font-size="9" fill="rgba(255,183,0,0.7)" text-anchor="middle">WARN</text>
+            <text x="194" y="125" font-family="'Share Tech Mono'" font-size="9" fill="rgba(255,64,96,0.7)" text-anchor="end">HIGH</text>
+          </svg>
+          <div class="gauge-label-val" id="gaugeLabelVal">
+            0<small id="gaugeSubLabel">RISK SCORE</small>
+          </div>
+        </div>
+
+        <!-- details -->
+        <div class="ai-details">
+          <div class="risk-badge normal" id="riskBadge">
+            <span class="dot"></span>
+            <span id="riskLabel">NORMAL</span>
+          </div>
+          <div class="confidence-label" id="confLabel">Confidence —</div>
+          <div class="stats-row">
+            <div class="stat-box">
+              <div class="s-label">HR Z-score</div>
+              <div class="s-val" id="hrZ">—</div>
+              <div class="s-label">deviation</div>
+            </div>
+            <div class="stat-box">
+              <div class="s-label">SpO₂ Z-score</div>
+              <div class="s-val" id="spo2Z">—</div>
+              <div class="s-label">deviation</div>
+            </div>
+            <div class="stat-box">
+              <div class="s-label">Anomaly</div>
+              <div class="s-val" id="anomaly" style="font-size:0.78rem;">No</div>
+              <div class="s-label">detected</div>
+            </div>
+          </div>
+          <button class="btn-buzzer" id="buzzerBtn" onclick="soundBuzzer()">
+            <i class="fas fa-bell"></i> &nbsp;Sound Alert Buzzer
+          </button>
+        </div>
       </div>
-      <div class="confidence-label">Confidence —</div>
-      <div class="stats-row">
-        <div class="stat-box">
-          <div class="s-label">HR Z-score</div>
-          <div class="s-val" id="hrZ">—</div>
-          <div class="s-label">deviation</div>
-        </div>
-        <div class="stat-box">
-          <div class="s-label">SpO2 Z-score</div>
-          <div class="s-val" id="spo2Z">—</div>
-          <div class="s-label">deviation</div>
-        </div>
-        <div class="stat-box">
-          <div class="s-label">Anomaly</div>
-          <div class="s-val" id="anomaly" style="font-size:0.75rem;">No</div>
-          <div class="s-label">detected</div>
-        </div>
-      </div>
-      <button class="btn-buzzer" id="buzzerBtn" onclick="soundBuzzer()">🔔 Sound Alert Buzzer</button>
     </div>
 
-    <!-- ROBOT CONTROL -->
-    <div class="card">
-      <div class="card-label">Robot Control</div>
-      <div class="patient-select">
-        <label>Patient</label>
-        <select id="patientSelect">
-          <option>P001 — Bed 1</option>
-          <option>P002 — Bed 2</option>
-          <option>P003 — Bed 3</option>
-          <option>P004 — Bed 4</option>
-        </select>
-      </div>
-      <div class="dpad">
-        <div class="dpad-btn empty"></div>
-        <div class="dpad-btn" onmousedown="move('F')" onmouseup="move('S')" ontouchstart="move('F')" ontouchend="move('S')">▲</div>
-        <div class="dpad-btn empty"></div>
-        <div class="dpad-btn" onmousedown="move('L')" onmouseup="move('S')" ontouchstart="move('L')" ontouchend="move('S')">◀</div>
-        <div class="dpad-btn stop" onmousedown="move('S')">STOP</div>
-        <div class="dpad-btn" onmousedown="move('R')" onmouseup="move('S')" ontouchstart="move('R')" ontouchend="move('S')">▶</div>
-        <div class="dpad-btn empty"></div>
-        <div class="dpad-btn" onmousedown="move('B')" onmouseup="move('S')" ontouchstart="move('B')" ontouchend="move('S')">▼</div>
-        <div class="dpad-btn empty"></div>
-      </div>
-      <div class="speed-row">
-        <label>Speed</label>
-        <input type="range" min="1" max="10" value="5" id="speedSlider" oninput="document.getElementById('speedVal').textContent=this.value"/>
-        <span class="speed-val" id="speedVal">5</span>
-      </div>
-      <div class="move-hint">Hold arrow to move. Release to stop.</div>
-    </div>
-
-    <!-- CAMERA FEED -->
-    <div class="card">
-      <div class="card-label">Camera Feed (ESP32-CAM)</div>
+    <!-- CAMERA FEED (col 1) -->
+    <div class="card cam-card">
+      <div class="card-label"><i class="fas fa-video lbl-cam"></i> Camera Feed (ESP32-CAM)</div>
       <div class="cam-wrap" id="camWrap">
         <img id="camStream" src="" alt="stream"/>
         <div class="cam-no-stream" id="camNoStream">
+          <i class="fas fa-camera" style="font-size:1.8rem;margin-bottom:8px;color:var(--border)"></i><br/>
           No stream connected<br/>Enter ESP32-CAM IP below
         </div>
       </div>
@@ -685,9 +725,43 @@
       </div>
     </div>
 
+    <!-- ROBOT CONTROL (col 2) -->
+    <div class="card robot-card">
+      <div class="card-label"><i class="fas fa-robot lbl-rob"></i> Robot Control</div>
+      <div class="patient-select">
+        <label>Patient</label>
+        <select id="patientSelect">
+          <option>P001 — Bed 1</option>
+          <option>P002 — Bed 2</option>
+          <option>P003 — Bed 3</option>
+          <option>P004 — Bed 4</option>
+        </select>
+      </div>
+
+      <div class="joystick-area">
+        <div class="joystick-outer" id="joystickOuter"
+             onmousedown="joystickStart(event)"
+             ontouchstart="joystickTouchStart(event)">
+          <span class="jzone top"    id="jTop"><i class="fas fa-chevron-up"></i></span>
+          <span class="jzone bottom" id="jBot"><i class="fas fa-chevron-down"></i></span>
+          <span class="jzone left"   id="jLft"><i class="fas fa-chevron-left"></i></span>
+          <span class="jzone right"  id="jRgt"><i class="fas fa-chevron-right"></i></span>
+          <div class="joystick-knob" id="joystickKnob"></div>
+        </div>
+        <button class="stop-btn" onclick="stopRobot()"><i class="fas fa-stop-circle"></i> &nbsp;STOP</button>
+        <div class="speed-row">
+          <label>Speed</label>
+          <input type="range" min="1" max="10" value="5" id="speedSlider"
+                 oninput="document.getElementById('speedVal').textContent=this.value"/>
+          <span class="speed-val" id="speedVal">5</span>
+        </div>
+        <div class="move-hint">Drag joystick or use arrow keys to move</div>
+      </div>
+    </div>
+
     <!-- LIVE ACTIVITY LOG -->
     <div class="card log-section">
-      <div class="log-header">Live Activity Log</div>
+      <div class="log-header"><i class="fas fa-list-ul"></i> &nbsp;Live Activity Log</div>
       <table class="log-table">
         <tbody id="logBody"></tbody>
       </table>
@@ -696,76 +770,44 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════ PATIENTS TAB ══════════════════════════════ -->
+<!-- ══════════════ PATIENTS TAB ══════════════ -->
 <div id="tab-patients" class="tab-panel">
   <div class="patients-grid" id="patientsGrid">
-
     <div class="patient-card">
       <div class="p-id">P001</div>
       <div class="p-name">Patient — Bed 1</div>
       <div class="p-bed">Ward A · Room 101</div>
       <div class="patient-vitals">
-        <div class="patient-vital">
-          <div class="pv-label">HR</div>
-          <div class="pv-val" style="color:var(--accent2)" id="p1hr">—</div>
-        </div>
-        <div class="patient-vital">
-          <div class="pv-label">SpO₂</div>
-          <div class="pv-val" style="color:var(--accent)" id="p1spo2">—</div>
-        </div>
-        <div class="patient-vital">
-          <div class="pv-label">Status</div>
-          <div class="pv-val" style="color:var(--accent);font-size:0.75rem" id="p1status">OK</div>
-        </div>
+        <div class="patient-vital"><div class="pv-label">HR</div><div class="pv-val" style="color:var(--accent2)" id="p1hr">—</div></div>
+        <div class="patient-vital"><div class="pv-label">SpO₂</div><div class="pv-val" style="color:var(--accent)" id="p1spo2">—</div></div>
+        <div class="patient-vital"><div class="pv-label">Status</div><div class="pv-val" style="color:var(--accent);font-size:0.75rem" id="p1status">OK</div></div>
       </div>
     </div>
-
     <div class="patient-card">
       <div class="p-id">P002</div>
       <div class="p-name">Patient — Bed 2</div>
       <div class="p-bed">Ward A · Room 102</div>
       <div class="patient-vitals">
-        <div class="patient-vital">
-          <div class="pv-label">HR</div>
-          <div class="pv-val" style="color:var(--accent2)">72</div>
-        </div>
-        <div class="patient-vital">
-          <div class="pv-label">SpO₂</div>
-          <div class="pv-val" style="color:var(--accent)">98.1</div>
-        </div>
-        <div class="patient-vital">
-          <div class="pv-label">Status</div>
-          <div class="pv-val" style="color:var(--accent);font-size:0.75rem">OK</div>
-        </div>
+        <div class="patient-vital"><div class="pv-label">HR</div><div class="pv-val" style="color:var(--accent2)">72</div></div>
+        <div class="patient-vital"><div class="pv-label">SpO₂</div><div class="pv-val" style="color:var(--accent)">98.1</div></div>
+        <div class="patient-vital"><div class="pv-label">Status</div><div class="pv-val" style="color:var(--accent);font-size:0.75rem">OK</div></div>
       </div>
     </div>
-
     <div class="patient-card">
       <div class="p-id">P003</div>
       <div class="p-name">Patient — Bed 3</div>
       <div class="p-bed">Ward B · Room 201</div>
       <div class="patient-vitals">
-        <div class="patient-vital">
-          <div class="pv-label">HR</div>
-          <div class="pv-val" style="color:var(--warn)">108</div>
-        </div>
-        <div class="patient-vital">
-          <div class="pv-label">SpO₂</div>
-          <div class="pv-val" style="color:var(--warn)">93.5</div>
-        </div>
-        <div class="patient-vital">
-          <div class="pv-label">Status</div>
-          <div class="pv-val" style="color:var(--warn);font-size:0.75rem">WARN</div>
-        </div>
+        <div class="patient-vital"><div class="pv-label">HR</div><div class="pv-val" style="color:var(--warn)">108</div></div>
+        <div class="patient-vital"><div class="pv-label">SpO₂</div><div class="pv-val" style="color:var(--warn)">93.5</div></div>
+        <div class="patient-vital"><div class="pv-label">Status</div><div class="pv-val" style="color:var(--warn);font-size:0.75rem">WARN</div></div>
       </div>
     </div>
-
     <button class="add-patient-btn">＋ Add Patient</button>
-
   </div>
 </div>
 
-<!-- ══════════════════════════════ HELP TAB ══════════════════════════════ -->
+<!-- ══════════════ HELP TAB ══════════════ -->
 <div id="tab-help" class="tab-panel">
   <div class="help-section">
     <h2>HELP &amp; DOCUMENTATION</h2>
@@ -800,9 +842,9 @@
       <div class="help-card">
         <h3>🤖 Robot Control</h3>
         <ul>
-          <li>Use arrow buttons or keyboard arrow keys to move.</li>
+          <li>Drag the joystick or use arrow keys to move.</li>
           <li>Adjust the speed slider before sending commands.</li>
-          <li>Always click <b>STOP</b> before releasing controls.</li>
+          <li>Always press <b>STOP</b> before releasing the joystick.</li>
           <li>Select a patient from the dropdown to navigate to their bed.</li>
         </ul>
       </div>
@@ -810,319 +852,448 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════ SETTINGS TAB ══════════════════════════════ -->
+<!-- ══════════════ SETTINGS TAB ══════════════ -->
 <div id="tab-settings" class="tab-panel">
   <div class="settings-section">
     <h2>SETTINGS</h2>
     <div class="setting-row">
-      <div>
-        <label>Data Refresh Rate</label>
-        <div class="s-desc">How often to fetch sensor data (seconds)</div>
-      </div>
+      <div><label>Data Refresh Rate</label><div class="s-desc">How often to fetch sensor data (seconds)</div></div>
       <input type="number" value="2" min="1" max="60" id="refreshRate"/>
     </div>
     <div class="setting-row">
-      <div>
-        <label>HR Warning Threshold</label>
-        <div class="s-desc">Alert if heart rate exceeds this BPM</div>
-      </div>
+      <div><label>HR Warning Threshold</label><div class="s-desc">Alert if heart rate exceeds this BPM</div></div>
       <input type="number" value="110" min="60" max="200" id="hrThresh"/>
     </div>
     <div class="setting-row">
-      <div>
-        <label>SpO₂ Alert Threshold</label>
-        <div class="s-desc">Alert if SpO₂ drops below this %</div>
-      </div>
+      <div><label>SpO₂ Alert Threshold</label><div class="s-desc">Alert if SpO₂ drops below this %</div></div>
       <input type="number" value="94" min="80" max="100" id="spo2Thresh"/>
     </div>
     <div class="setting-row">
-      <div>
-        <label>Auto Buzzer on Alert</label>
-        <div class="s-desc">Sound buzzer automatically on danger</div>
-      </div>
-      <label class="toggle">
-        <input type="checkbox" id="autoBuzzer"/>
-        <span class="toggle-slider"></span>
-      </label>
+      <div><label>Auto Buzzer on Alert</label><div class="s-desc">Sound buzzer automatically on danger</div></div>
+      <label class="toggle"><input type="checkbox" id="autoBuzzer"/><span class="toggle-slider"></span></label>
     </div>
     <div class="setting-row">
-      <div>
-        <label>Simulation Mode</label>
-        <div class="s-desc">Use fake data when no ESP32 is connected</div>
-      </div>
-      <label class="toggle">
-        <input type="checkbox" id="simMode" checked onchange="toggleSim(this)"/>
-        <span class="toggle-slider"></span>
-      </label>
+      <div><label>Simulation Mode</label><div class="s-desc">Use fake data when no ESP32 is connected</div></div>
+      <label class="toggle"><input type="checkbox" id="simMode" checked onchange="toggleSim(this)"/><span class="toggle-slider"></span></label>
     </div>
     <div class="setting-row">
-      <div>
-        <label>Data Backend</label>
-        <div class="s-desc">Where to send and fetch sensor data</div>
-      </div>
-      <select>
-        <option>Firebase</option>
-        <option>Flask/SQLite</option>
-        <option>Google Sheets</option>
-      </select>
+      <div><label>Data Backend</label><div class="s-desc">Where to send and fetch sensor data</div></div>
+      <select><option>Firebase</option><option>Flask/SQLite</option><option>Google Sheets</option></select>
     </div>
   </div>
 </div>
 
 <!-- ══════════════ SCRIPTS ══════════════ -->
 <script>
-  /* ── TAB SWITCH ── */
-  function switchTab(name, btn) {
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab-' + name).classList.add('active');
-    btn.classList.add('active');
-  }
+/* ── TAB SWITCH ── */
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
 
-  /* ── MINI CHART ── */
-  function MiniChart(canvasId, color) {
-    const canvas = document.getElementById(canvasId);
-    const ctx = canvas.getContext('2d');
-    const data = [];
-    const MAX = 30;
-
-    function resize() {
-      canvas.width  = canvas.offsetWidth  * devicePixelRatio;
-      canvas.height = canvas.offsetHeight * devicePixelRatio;
+/* ── CHART.JS LINE CHARTS ── */
+function makeLineChart(canvasId, color) {
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  const grad = ctx.createLinearGradient(0, 0, 0, 80);
+  grad.addColorStop(0, color + '55');
+  grad.addColorStop(1, color + '00');
+  return new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: Array(30).fill(''),
+      datasets: [{
+        data: Array(30).fill(null),
+        borderColor: color,
+        borderWidth: 2,
+        backgroundColor: grad,
+        fill: true,
+        tension: 0.4,
+        pointRadius: 0,
+        pointHoverRadius: 0
+      }]
+    },
+    options: {
+      animation: { duration: 300 },
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: {
+        x: { display: false },
+        y: { display: false, grace: '5%' }
+      }
     }
-
-    function draw() {
-      resize();
-      const W = canvas.width, H = canvas.height;
-      ctx.clearRect(0, 0, W, H);
-      if (data.length < 2) return;
-      const min = Math.min(...data) - 2;
-      const max = Math.max(...data) + 2;
-      const scaleX = W / (MAX - 1);
-      const scaleY = H / (max - min);
-
-      // gradient fill
-      const grad = ctx.createLinearGradient(0, 0, 0, H);
-      grad.addColorStop(0, color + '40');
-      grad.addColorStop(1, color + '00');
-
-      ctx.beginPath();
-      data.forEach((v, i) => {
-        const x = i * scaleX;
-        const y = H - (v - min) * scaleY;
-        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      });
-      ctx.lineTo((data.length - 1) * scaleX, H);
-      ctx.lineTo(0, H);
-      ctx.closePath();
-      ctx.fillStyle = grad;
-      ctx.fill();
-
-      // line
-      ctx.beginPath();
-      data.forEach((v, i) => {
-        const x = i * scaleX;
-        const y = H - (v - min) * scaleY;
-        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      });
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 1.5 * devicePixelRatio;
-      ctx.lineJoin = 'round';
-      ctx.stroke();
-    }
-
-    function push(val) {
-      data.push(val);
-      if (data.length > MAX) data.shift();
-      draw();
-    }
-
-    return { push };
-  }
-
-  const hrChart   = MiniChart('hrChart',   '#0abfff');
-  const spo2Chart = MiniChart('spo2Chart', '#00e5a0');
-
-  /* ── SIMULATION STATE ── */
-  let simRunning = true;
-  let simInterval = null;
-  let hrBaseline = null, spo2Baseline = null;
-  let hrHistory = [], spo2History = [];
-
-  function mean(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
-  function std(arr)  {
-    const m = mean(arr);
-    return Math.sqrt(arr.reduce((a, b) => a + (b - m) ** 2, 0) / arr.length);
-  }
-
-  function updateRisk(hr, spo2) {
-    const hrZ = hrHistory.length > 5
-      ? ((hr - mean(hrHistory)) / (std(hrHistory) || 1)).toFixed(2)
-      : '—';
-    const s2Z = spo2History.length > 5
-      ? ((spo2 - mean(spo2History)) / (std(spo2History) || 1)).toFixed(2)
-      : '—';
-
-    document.getElementById('hrZ').textContent   = hrZ;
-    document.getElementById('spo2Z').textContent = s2Z;
-
-    const hrZN = parseFloat(hrZ) || 0;
-    const s2ZN = parseFloat(s2Z) || 0;
-    const hrThresh  = parseInt(document.getElementById('hrThresh')?.value || 110);
-    const spo2Thr   = parseInt(document.getElementById('spo2Thresh')?.value || 94);
-    const badge     = document.getElementById('riskBadge');
-    const lbl       = document.getElementById('riskLabel');
-    const anomEl    = document.getElementById('anomaly');
-
-    if (hr > hrThresh || spo2 < spo2Thr || Math.abs(hrZN) > 3 || Math.abs(s2ZN) > 3) {
-      badge.className = 'risk-badge danger';
-      lbl.textContent = 'DANGER';
-      anomEl.textContent = 'Yes';
-      anomEl.style.color = 'var(--danger)';
-      if (document.getElementById('autoBuzzer')?.checked) soundBuzzer();
-    } else if (hr > hrThresh - 10 || spo2 < spo2Thr + 2 || Math.abs(hrZN) > 2 || Math.abs(s2ZN) > 2) {
-      badge.className = 'risk-badge warning';
-      lbl.textContent = 'WARNING';
-      anomEl.textContent = 'Maybe';
-      anomEl.style.color = 'var(--warn)';
-    } else {
-      badge.className = 'risk-badge normal';
-      lbl.textContent = 'NORMAL';
-      anomEl.textContent = 'No';
-      anomEl.style.color = 'var(--text)';
-    }
-  }
-
-  function pushReading(hr, spo2) {
-    document.getElementById('hrVal').textContent   = hr;
-    document.getElementById('spo2Val').textContent = spo2.toFixed(1);
-
-    // update patient 1 in patients tab
-    document.getElementById('p1hr').textContent   = hr;
-    document.getElementById('p1spo2').textContent = spo2.toFixed(1);
-
-    hrChart.push(hr);
-    spo2Chart.push(spo2);
-    hrHistory.push(hr);
-    spo2History.push(spo2);
-    if (hrHistory.length > 30)  hrHistory.shift();
-    if (spo2History.length > 30) spo2History.shift();
-
-    if (hrHistory.length >= 10 && !hrBaseline) {
-      hrBaseline   = mean(hrHistory).toFixed(0);
-      spo2Baseline = mean(spo2History).toFixed(1);
-      document.getElementById('hrBase').textContent   = `Baseline: ${hrBaseline} bpm`;
-      document.getElementById('spo2Base').textContent = `Baseline: ${spo2Baseline}%`;
-    }
-
-    updateRisk(hr, spo2);
-    addLog(hr, spo2);
-  }
-
-  /* ── LOGGER ── */
-  let logCount = 0;
-  function addLog(hr, spo2) {
-    const body = document.getElementById('logBody');
-    const now  = new Date();
-    const time = now.toTimeString().split(' ')[0];
-    const risk = document.getElementById('riskLabel').textContent;
-    const badgeClass = risk === 'NORMAL' ? 'ok' : risk === 'WARNING' ? 'warn' : 'err';
-
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${time}</td>
-      <td>Simulated reading — HR: ${hr} bpm | SpO₂: ${spo2.toFixed(1)}%</td>
-      <td><span class="log-badge ${badgeClass}">${risk}</span></td>
-    `;
-    body.insertBefore(tr, body.firstChild);
-    logCount++;
-    if (body.children.length > 20) body.removeChild(body.lastChild);
-  }
-
-  /* ── SIMULATION TICK ── */
-  function simTick() {
-    const hr   = Math.round(70 + Math.random() * 40);
-    const spo2 = 95 + Math.random() * 4;
-    pushReading(hr, spo2);
-  }
-
-  function startSim() {
-    simRunning = true;
-    simTick();
-    simInterval = setInterval(simTick, 2000);
-  }
-
-  function stopSim() {
-    simRunning = false;
-    clearInterval(simInterval);
-  }
-
-  function toggleSim(el) {
-    el.checked ? startSim() : stopSim();
-  }
-
-  /* ── CONNECT SERVER ── */
-  function connectServer() {
-    const ip = document.getElementById('serverIP').value.trim();
-    if (!ip) return;
-    document.getElementById('simLabel').textContent = 'Connected';
-    document.querySelector('.sim-dot').style.background = 'var(--accent)';
-    document.querySelector('.sim-dot').style.boxShadow  = '0 0 6px var(--accent)';
-    // In real use: start polling /data endpoint on ESP32/Flask
-    alert(`Attempting to connect to http://${ip} …\n(Wire up your fetch() call here)`);
-  }
-
-  /* ── ROBOT CONTROL ── */
-  function move(dir) {
-    const speed = document.getElementById('speedSlider').value;
-    const ip    = document.getElementById('serverIP').value.trim();
-    console.log(`Move: ${dir} Speed: ${speed}`);
-    if (ip) fetch(`http://${ip}/move?dir=${dir}&speed=${speed}`).catch(() => {});
-  }
-
-  // Keyboard support
-  document.addEventListener('keydown', e => {
-    const map = { ArrowUp:'F', ArrowDown:'B', ArrowLeft:'L', ArrowRight:'R' };
-    if (map[e.key]) { e.preventDefault(); move(map[e.key]); }
   });
-  document.addEventListener('keyup', e => {
-    if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) move('S');
-  });
+}
 
-  /* ── CAMERA ── */
-  function connectCam() {
-    const ip = document.getElementById('camIP').value.trim();
-    if (!ip) return;
-    const img = document.getElementById('camStream');
-    const noStream = document.getElementById('camNoStream');
-    img.src = `http://${ip}:81/stream`;
-    img.style.display = 'block';
-    noStream.style.display = 'none';
+const hrChartObj   = makeLineChart('hrChart',   '#ff4060');
+const spo2ChartObj = makeLineChart('spo2Chart', '#00e5a0');
+
+function pushChart(chartObj, val) {
+  const ds = chartObj.data.datasets[0];
+  ds.data.push(val);
+  if (ds.data.length > 30) ds.data.shift();
+  chartObj.update('none');
+}
+
+/* ── COUNT-UP ANIMATION ── */
+function countUp(el, target, decimals) {
+  const start = parseFloat(el.textContent) || 0;
+  const diff  = target - start;
+  const dur   = 500;
+  const step  = 16;
+  let elapsed = 0;
+  const timer = setInterval(() => {
+    elapsed += step;
+    const t = Math.min(elapsed / dur, 1);
+    const ease = 1 - Math.pow(1 - t, 3);
+    const val  = start + diff * ease;
+    el.textContent = decimals ? val.toFixed(decimals) : Math.round(val);
+    if (elapsed >= dur) clearInterval(timer);
+  }, step);
+}
+
+/* ── GAUGE (SEMICIRCLE) ── */
+const GAUGE_CX = 110, GAUGE_CY = 110, GAUGE_R = 90;
+const GAUGE_START_DEG = 180, GAUGE_RANGE_DEG = 180;
+
+function degToRad(d) { return d * Math.PI / 180; }
+function polarToXY(deg, r) {
+  const rad = degToRad(deg);
+  return {
+    x: GAUGE_CX + r * Math.cos(rad),
+    y: GAUGE_CY + r * Math.sin(rad)
+  };
+}
+
+function setGauge(score) {
+  // score 0-100
+  const pct = Math.min(Math.max(score, 0), 100) / 100;
+  const sweepDeg = pct * GAUGE_RANGE_DEG;
+
+  const start = polarToXY(degToRad(180) * (180 / Math.PI), GAUGE_R);
+  // SVG: 180° = left, going clockwise to 0° = right
+  const startX = GAUGE_CX - GAUGE_R; // 20,110
+  const startY = GAUGE_CY;
+
+  const endDeg = 180 - sweepDeg; // 180° is left edge, we sweep counter-clockwise in display
+  const endRad = degToRad(180 - sweepDeg);
+  const endX = GAUGE_CX + GAUGE_R * Math.cos(endRad);
+  const endY = GAUGE_CY - GAUGE_R * Math.sin(endRad < 0 ? -endRad : endRad) * (endRad >= 0 ? -1 : 1);
+
+  // Compute endpoint: starting at angle 180 (left), going to angle 180 - sweepDeg
+  const eDeg  = 180 - sweepDeg;
+  const eRad  = eDeg * Math.PI / 180;
+  const eX    = GAUGE_CX + GAUGE_R * Math.cos(eRad);
+  const eY    = GAUGE_CY - GAUGE_R * Math.sin(degToRad(sweepDeg));
+
+  // Use a simpler approach: recalculate endpoint properly
+  // Start: 180deg = left = (20, 110)
+  // End angle in standard math coords: 180-sweepDeg (sweeping towards right = 0)
+  const endAngle = (180 - sweepDeg) * Math.PI / 180;
+  const ex = GAUGE_CX + GAUGE_R * Math.cos(endAngle);
+  const ey = GAUGE_CY - GAUGE_R * Math.sin(endAngle);
+
+  const large = sweepDeg > 180 ? 1 : 0;
+
+  const color = score < 34 ? '#00e5a0' : score < 67 ? '#ffb700' : '#ff4060';
+  const arc = document.getElementById('gaugeArc');
+  arc.setAttribute('d', `M 20 110 A 90 90 0 ${large} 1 ${ex.toFixed(2)} ${ey.toFixed(2)}`);
+  arc.setAttribute('stroke', color);
+
+  // Needle: point from center to arc endpoint
+  const needle = document.getElementById('gaugeNeedle');
+  const nLen = 78;
+  const nX = GAUGE_CX + nLen * Math.cos(endAngle);
+  const nY = GAUGE_CY - nLen * Math.sin(endAngle);
+  needle.setAttribute('x2', nX.toFixed(2));
+  needle.setAttribute('y2', nY.toFixed(2));
+
+  document.getElementById('gaugeLabelVal').childNodes[0].textContent = Math.round(score);
+}
+
+/* ── SIMULATION STATE ── */
+let simRunning = true;
+let simInterval = null;
+let hrHistory = [], spo2History = [];
+let hrBaseline = null, spo2Baseline = null;
+
+function mean(arr) { return arr.reduce((a,b)=>a+b,0)/arr.length; }
+function std(arr)  {
+  const m = mean(arr);
+  return Math.sqrt(arr.reduce((a,b)=>a+(b-m)**2,0)/arr.length);
+}
+
+function updateRisk(hr, spo2) {
+  const hrZN = hrHistory.length > 5
+    ? (hr - mean(hrHistory)) / (std(hrHistory) || 1)
+    : 0;
+  const s2ZN = spo2History.length > 5
+    ? (spo2 - mean(spo2History)) / (std(spo2History) || 1)
+    : 0;
+
+  document.getElementById('hrZ').textContent   = hrHistory.length > 5 ? hrZN.toFixed(2) : '—';
+  document.getElementById('spo2Z').textContent = spo2History.length > 5 ? s2ZN.toFixed(2) : '—';
+
+  const hrThresh  = parseInt(document.getElementById('hrThresh')?.value || 110);
+  const spo2Thr   = parseInt(document.getElementById('spo2Thresh')?.value || 94);
+  const badge     = document.getElementById('riskBadge');
+  const lbl       = document.getElementById('riskLabel');
+  const anomEl    = document.getElementById('anomaly');
+  const aiCard    = document.getElementById('aiCard');
+  const confLabel = document.getElementById('confLabel');
+
+  let score = 0;
+  const hrDev  = Math.abs(hrZN);
+  const spo2Dev = Math.abs(s2ZN);
+
+  if (hr > hrThresh || spo2 < spo2Thr || hrDev > 3 || spo2Dev > 3) {
+    badge.className = 'risk-badge danger';
+    lbl.textContent = 'DANGER';
+    anomEl.textContent = 'Yes';
+    anomEl.style.color = 'var(--danger)';
+    aiCard.classList.add('danger-pulse');
+    confLabel.textContent = 'Confidence — HIGH';
+    score = 75 + Math.min(hrDev, 3) * 8 + Math.random() * 5;
+    if (document.getElementById('autoBuzzer')?.checked) soundBuzzer();
+  } else if (hr > hrThresh - 10 || spo2 < spo2Thr + 2 || hrDev > 2 || spo2Dev > 2) {
+    badge.className = 'risk-badge warning';
+    lbl.textContent = 'WARNING';
+    anomEl.textContent = 'Maybe';
+    anomEl.style.color = 'var(--warn)';
+    aiCard.classList.remove('danger-pulse');
+    confLabel.textContent = 'Confidence — MEDIUM';
+    score = 40 + Math.min(hrDev, 2) * 10 + Math.random() * 5;
+  } else {
+    badge.className = 'risk-badge normal';
+    lbl.textContent = 'NORMAL';
+    anomEl.textContent = 'No';
+    anomEl.style.color = 'var(--text2)';
+    aiCard.classList.remove('danger-pulse');
+    confLabel.textContent = 'Confidence — LOW RISK';
+    score = Math.max(5, hrDev * 8 + spo2Dev * 6 + Math.random() * 5);
   }
 
-  function disconnectCam() {
-    const img = document.getElementById('camStream');
-    img.src = '';
-    img.style.display = 'none';
-    document.getElementById('camNoStream').style.display = 'flex';
+  setGauge(Math.min(score, 100));
+
+  const status = lbl.textContent;
+  const p1status = document.getElementById('p1status');
+  p1status.textContent = status;
+  p1status.style.color = status === 'NORMAL' ? 'var(--accent)' : status === 'WARNING' ? 'var(--warn)' : 'var(--danger)';
+}
+
+function pushReading(hr, spo2) {
+  countUp(document.getElementById('hrVal'), hr, 0);
+  countUp(document.getElementById('spo2Val'), spo2, 1);
+
+  document.getElementById('p1hr').textContent   = hr;
+  document.getElementById('p1spo2').textContent = spo2.toFixed(1);
+
+  pushChart(hrChartObj, hr);
+  pushChart(spo2ChartObj, spo2);
+
+  hrHistory.push(hr);
+  spo2History.push(spo2);
+  if (hrHistory.length > 30)  hrHistory.shift();
+  if (spo2History.length > 30) spo2History.shift();
+
+  if (hrHistory.length >= 10 && !hrBaseline) {
+    hrBaseline   = mean(hrHistory).toFixed(0);
+    spo2Baseline = mean(spo2History).toFixed(1);
+    document.getElementById('hrBase').textContent   = `Baseline: ${hrBaseline} bpm`;
+    document.getElementById('spo2Base').textContent = `Baseline: ${spo2Baseline}%`;
   }
 
-  /* ── BUZZER ── */
-  function soundBuzzer() {
-    const ip = document.getElementById('serverIP').value.trim();
-    const btn = document.getElementById('buzzerBtn');
-    btn.style.background = 'rgba(255,183,0,0.3)';
-    btn.style.boxShadow  = '0 0 20px rgba(255,183,0,0.5)';
-    setTimeout(() => {
-      btn.style.background = '';
-      btn.style.boxShadow  = '';
-    }, 1000);
-    if (ip) fetch(`http://${ip}/buzzer`).catch(() => {});
-    console.log('BUZZER triggered');
+  updateRisk(hr, spo2);
+  addLog(hr, spo2);
+}
+
+/* ── LOGGER ── */
+function addLog(hr, spo2) {
+  const body = document.getElementById('logBody');
+  const time = new Date().toTimeString().split(' ')[0];
+  const risk = document.getElementById('riskLabel').textContent;
+  const badgeClass = risk === 'NORMAL' ? 'ok' : risk === 'WARNING' ? 'warn' : 'err';
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>${time}</td>
+    <td>Simulated reading — HR: ${hr} bpm | SpO₂: ${spo2.toFixed(1)}%</td>
+    <td><span class="log-badge ${badgeClass}">${risk}</span></td>
+  `;
+  body.insertBefore(tr, body.firstChild);
+  if (body.children.length > 20) body.removeChild(body.lastChild);
+}
+
+/* ── SIMULATION ── */
+function simTick() {
+  const hr   = Math.round(70 + Math.random() * 40);
+  const spo2 = 95 + Math.random() * 4;
+  pushReading(hr, spo2);
+}
+function startSim() {
+  simRunning = true;
+  simTick();
+  simInterval = setInterval(simTick, 2000);
+}
+function stopSim() {
+  simRunning = false;
+  clearInterval(simInterval);
+}
+function toggleSim(el) { el.checked ? startSim() : stopSim(); }
+
+/* ── CONNECT SERVER ── */
+function connectServer() {
+  const ip = document.getElementById('serverIP').value.trim();
+  if (!ip) return;
+  document.getElementById('simLabel').textContent = 'Connected';
+  document.querySelector('.sim-dot').style.background = 'var(--accent)';
+  document.querySelector('.sim-dot').style.boxShadow  = '0 0 8px var(--accent)';
+  alert(`Attempting to connect to http://${ip} …\n(Wire up your fetch() call here)`);
+}
+
+/* ── ROBOT / JOYSTICK ── */
+let joystickActive = false;
+let currentDir = 'S';
+
+function getJoystickDir(relX, relY, radius) {
+  const dist  = Math.sqrt(relX*relX + relY*relY);
+  if (dist < radius * 0.25) return 'S';
+  const angle = Math.atan2(-relY, relX) * 180 / Math.PI;
+  if (angle >= -45 && angle < 45)  return 'R';
+  if (angle >= 45  && angle < 135) return 'F';
+  if (angle >= 135 || angle < -135) return 'L';
+  return 'B';
+}
+
+function highlightJoystick(dir) {
+  ['jTop','jBot','jLft','jRgt'].forEach(id => document.getElementById(id).classList.remove('active'));
+  const map = { F:'jTop', B:'jBot', L:'jLft', R:'jRgt' };
+  if (map[dir]) document.getElementById(map[dir]).classList.add('active');
+  const knob = document.getElementById('joystickKnob');
+  knob.classList.toggle('active', dir !== 'S');
+}
+
+function updateKnobPos(relX, relY, radius) {
+  const dist  = Math.sqrt(relX*relX + relY*relY);
+  const capped = Math.min(dist, radius * 0.38);
+  const factor = capped / (dist || 1);
+  const kx = relX * factor;
+  const ky = relY * factor;
+  const knob = document.getElementById('joystickKnob');
+  knob.style.transform = `translate(calc(-50% + ${kx}px), calc(-50% + ${ky}px))`;
+}
+
+function resetKnob() {
+  document.getElementById('joystickKnob').style.transform = 'translate(-50%, -50%)';
+  highlightJoystick('S');
+}
+
+function joystickStart(e) {
+  joystickActive = true;
+  const outer = document.getElementById('joystickOuter');
+  const rect  = outer.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top  + rect.height / 2;
+
+  function onMove(me) {
+    if (!joystickActive) return;
+    const px = me.clientX !== undefined ? me.clientX : me.touches[0].clientX;
+    const py = me.clientY !== undefined ? me.clientY : me.touches[0].clientY;
+    const rx = px - cx, ry = py - cy;
+    updateKnobPos(rx, ry, rect.width / 2);
+    const dir = getJoystickDir(rx, ry, rect.width / 2);
+    if (dir !== currentDir) { currentDir = dir; move(dir); highlightJoystick(dir); }
+  }
+  function onEnd() {
+    joystickActive = false;
+    currentDir = 'S';
+    move('S');
+    resetKnob();
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onEnd);
+    document.removeEventListener('touchmove', onMove);
+    document.removeEventListener('touchend', onEnd);
   }
 
-  /* ── INIT ── */
-  startSim();
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('mouseup', onEnd);
+  onMove(e);
+}
+
+function joystickTouchStart(e) {
+  e.preventDefault();
+  joystickStart(e.touches[0]);
+  const outer = document.getElementById('joystickOuter');
+  const rect  = outer.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top  + rect.height / 2;
+  function onMove(me) {
+    if (!joystickActive) return;
+    const px = me.touches[0].clientX, py = me.touches[0].clientY;
+    const rx = px - cx, ry = py - cy;
+    updateKnobPos(rx, ry, rect.width / 2);
+    const dir = getJoystickDir(rx, ry, rect.width / 2);
+    if (dir !== currentDir) { currentDir = dir; move(dir); highlightJoystick(dir); }
+  }
+  function onEnd() {
+    joystickActive = false; currentDir = 'S'; move('S'); resetKnob();
+    document.removeEventListener('touchmove', onMove);
+    document.removeEventListener('touchend', onEnd);
+  }
+  document.addEventListener('touchmove', onMove, { passive: false });
+  document.addEventListener('touchend', onEnd);
+}
+
+function stopRobot() { move('S'); resetKnob(); joystickActive = false; currentDir = 'S'; }
+
+function move(dir) {
+  const speed = document.getElementById('speedSlider').value;
+  const ip    = document.getElementById('serverIP').value.trim();
+  console.log(`Move: ${dir} Speed: ${speed}`);
+  if (ip) fetch(`http://${ip}/move?dir=${dir}&speed=${speed}`).catch(() => {});
+}
+
+// Keyboard support
+document.addEventListener('keydown', e => {
+  const map = { ArrowUp:'F', ArrowDown:'B', ArrowLeft:'L', ArrowRight:'R' };
+  if (map[e.key]) { e.preventDefault(); move(map[e.key]); highlightJoystick(map[e.key]); }
+});
+document.addEventListener('keyup', e => {
+  if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
+    move('S'); highlightJoystick('S');
+  }
+});
+
+/* ── CAMERA ── */
+function connectCam() {
+  const ip = document.getElementById('camIP').value.trim();
+  if (!ip) return;
+  const img = document.getElementById('camStream');
+  img.src = `http://${ip}:81/stream`;
+  img.style.display = 'block';
+  document.getElementById('camNoStream').style.display = 'none';
+}
+function disconnectCam() {
+  document.getElementById('camStream').src = '';
+  document.getElementById('camStream').style.display = 'none';
+  document.getElementById('camNoStream').style.display = 'flex';
+}
+
+/* ── BUZZER ── */
+function soundBuzzer() {
+  const ip  = document.getElementById('serverIP').value.trim();
+  const btn = document.getElementById('buzzerBtn');
+  btn.style.background = 'rgba(255,183,0,0.3)';
+  btn.style.boxShadow  = '0 0 24px rgba(255,183,0,0.5)';
+  setTimeout(() => { btn.style.background = ''; btn.style.boxShadow = ''; }, 1000);
+  if (ip) fetch(`http://${ip}/buzzer`).catch(() => {});
+  console.log('BUZZER triggered');
+}
+
+/* ── INIT ── */
+setGauge(0);
+startSim();
 </script>
 </body>
 </html>
