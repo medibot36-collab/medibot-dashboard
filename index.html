@@ -5,59 +5,109 @@
 
   <style>
     body {
-      font-family: Arial;
-      background-color: #f4f6f8;
       margin: 0;
-      padding: 0;
-    }
-
-    header {
-      background-color: #2c3e50;
+      font-family: Arial;
+      background: #1e1e1e;
       color: white;
-      padding: 15px;
-      text-align: center;
-      font-size: 24px;
     }
 
-    .container {
+    /* 🔝 NAVBAR */
+    .navbar {
       display: flex;
+      justify-content: space-between;
+      background: #2c3e50;
+      padding: 10px 20px;
+    }
+
+    .nav-links span {
+      margin: 0 10px;
+      cursor: pointer;
+    }
+
+    .nav-links span:hover {
+      color: #00ffcc;
+    }
+
+    /* 📦 SECTIONS */
+    .section {
+      display: none;
       padding: 20px;
+    }
+
+    .active {
+      display: block;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
     }
 
     .card {
-      background: white;
-      padding: 20px;
-      margin-right: 20px;
+      background: #2b2b2b;
+      padding: 15px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      width: 300px;
-    }
-
-    h2 {
-      margin-top: 0;
     }
 
     .value {
-      font-size: 20px;
-      color: #27ae60;
+      font-size: 28px;
+      color: #00ffcc;
     }
   </style>
 </head>
 
 <body>
 
-<header>MEDIBOT Dashboard</header>
-
-<div class="container">
-
-  <!-- Current Patient Card -->
-  <div class="card">
-    <h2>Current Patient</h2>
-    <p>Name: <span id="name" class="value">--</span></p>
-    <p>Heart Rate: <span id="hr" class="value">--</span></p>
-    <p>SpO2: <span id="spo2" class="value">--</span></p>
+<!-- 🔝 NAVBAR -->
+<div class="navbar">
+  <div><b>MEDIBOT</b></div>
+  <div class="nav-links">
+    <span onclick="showSection('home')">Home</span>
+    <span onclick="showSection('patients')">Patients</span>
+    <span onclick="showSection('logs')">Logs</span>
+    <span onclick="showSection('help')">Help</span>
   </div>
+</div>
 
+<!-- 🏠 HOME SECTION -->
+<div id="home" class="section active">
+  <div class="grid">
+
+    <div class="card">
+      <h3>Heart Rate</h3>
+      <div id="hr" class="value">--</div>
+    </div>
+
+    <div class="card">
+      <h3>SpO2</h3>
+      <div id="spo2" class="value">--</div>
+    </div>
+
+    <div class="card">
+      <h3>Status</h3>
+      <div id="status" class="value">--</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 📋 PATIENTS SECTION -->
+<div id="patients" class="section">
+  <h2>Patients List</h2>
+  <div id="patientList"></div>
+</div>
+
+<!-- 📜 LOGS SECTION -->
+<div id="logs" class="section">
+  <h2>Activity Logs</h2>
+  <div id="log"></div>
+</div>
+
+<!-- ❓ HELP SECTION -->
+<div id="help" class="section">
+  <h2>Help</h2>
+  <p>Use this dashboard to monitor patient vitals and control the robot.</p>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase.js"></script>
@@ -65,21 +115,48 @@
 <script>
   // 🔴 CHANGE THIS
   var firebaseConfig = {
-    apiKey: "AIzaSyAA5gXTs0swsOoN2lulPHAIFg-GnD1kze8",              // 🔴 paste your API key
-    databaseURL: "https://medbot-59790-default-rtdb.asia-southeast1.firebasedatabase.app/"     // 🔴 paste your DB URL
+    apiKey: "YOUR_API_KEY",              // 🔴 paste your API key
+    databaseURL: "YOUR_DATABASE_URL"     // 🔴 paste your DB URL
   };
 
   firebase.initializeApp(firebaseConfig);
-
   var db = firebase.database();
 
-  db.ref("current_patient").on("value", function(snapshot) {
-    var data = snapshot.val();
+  // 🔥 NAVIGATION FUNCTION
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(sec => {
+      sec.classList.remove('active');
+    });
+    document.getElementById(id).classList.add('active');
+  }
 
-    document.getElementById("name").innerText = data.name;
-    document.getElementById("hr").innerText = data.heartRate;
-    document.getElementById("spo2").innerText = data.spo2;
+  // 📊 LIVE DATA
+  db.ref("current_patient").on("value", (snap) => {
+    let d = snap.val();
+    document.getElementById("hr").innerText = d.heartRate;
+    document.getElementById("spo2").innerText = d.spo2;
+    document.getElementById("status").innerText = d.status;
   });
+
+  // 📋 PATIENT LIST
+  db.ref("patients").on("value", (snap) => {
+    let data = snap.val();
+    let html = "";
+
+    for (let id in data) {
+      html += `<p>${id} - ${data[id].name}</p>`;
+    }
+
+    document.getElementById("patientList").innerHTML = html;
+  });
+
+  // 📜 LOGS
+  db.ref("logs").on("child_added", (snap) => {
+    let log = document.createElement("p");
+    log.innerText = snap.val();
+    document.getElementById("log").prepend(log);
+  });
+
 </script>
 
 </body>
