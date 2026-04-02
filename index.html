@@ -9,25 +9,23 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <style>
     :root {
-      --bg:        #080a10;
-      --surface:   #0e1119;
-      --card:      #111520;
-      --card2:     #131826;
-      --border:    #1e2438;
-      --accent:    #00e5a0;
-      --accent2:   #0abfff;
-      --warn:      #ffb700;
-      --danger:    #ff4060;
-      --text:      #f0f4ff;
-      --text2:     #c8d0e8;
-      --muted:     #6070a0;
-      --mono:      'Share Tech Mono', monospace;
-      --head:      'Rajdhani', sans-serif;
-      --body:      'Exo 2', sans-serif;
+      --bg:      #080a10;
+      --surface: #0e1119;
+      --card:    #111520;
+      --card2:   #131826;
+      --border:  #1e2438;
+      --accent:  #00e5a0;
+      --accent2: #0abfff;
+      --warn:    #ffb700;
+      --danger:  #ff4060;
+      --text:    #f0f4ff;
+      --text2:   #c8d0e8;
+      --muted:   #6070a0;
+      --mono:    'Share Tech Mono', monospace;
+      --head:    'Rajdhani', sans-serif;
+      --body:    'Exo 2', sans-serif;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       background: var(--bg);
       color: var(--text);
@@ -41,150 +39,84 @@
 
     /* ── TOP BAR ── */
     .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 28px;
-      height: 58px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px; height: 58px;
       background: rgba(14,17,25,0.95);
       border-bottom: 1px solid var(--border);
       position: sticky; top: 0; z-index: 100;
       backdrop-filter: blur(12px);
     }
-    .brand {
-      font-family: var(--head);
-      font-size: 1.4rem;
-      font-weight: 700;
-      letter-spacing: 3px;
-      display: flex; align-items: center; gap: 6px;
-    }
+    .brand { font-family: var(--head); font-size: 1.4rem; font-weight: 700; letter-spacing: 3px; display: flex; align-items: center; gap: 6px; }
     .brand-icon { color: var(--accent2); margin-right: 4px; font-size: 1.1rem; }
     .brand span.med { color: var(--text); }
     .brand span.bot { color: var(--accent); }
-    .brand span.label {
-      font-size: 0.6rem; letter-spacing: 5px;
-      color: var(--muted); font-weight: 400;
-      padding-left: 12px; text-transform: uppercase;
-    }
-    .topbar-right {
-      display: flex; align-items: center; gap: 10px;
-    }
+    .brand span.label { font-size: 0.6rem; letter-spacing: 5px; color: var(--muted); font-weight: 400; padding-left: 12px; text-transform: uppercase; }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
     .server-input {
-      background: rgba(13,15,20,0.8);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      padding: 6px 12px;
-      width: 230px;
-      outline: none;
+      background: rgba(13,15,20,0.8); border: 1px solid var(--border); border-radius: 6px;
+      color: var(--muted); font-family: var(--mono); font-size: 0.75rem;
+      padding: 6px 12px; width: 230px; outline: none;
       transition: border-color 0.2s, color 0.2s;
     }
     .server-input:focus { border-color: var(--accent2); color: var(--text); }
     .btn-connect {
-      background: linear-gradient(135deg, var(--accent2), #007acc);
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      font-family: var(--head);
-      font-weight: 700;
-      font-size: 0.82rem;
-      letter-spacing: 1.5px;
-      padding: 7px 18px;
-      cursor: pointer;
+      background: linear-gradient(135deg, var(--accent2), #007acc); color: #fff;
+      border: none; border-radius: 6px; font-family: var(--head); font-weight: 700;
+      font-size: 0.82rem; letter-spacing: 1.5px; padding: 7px 18px; cursor: pointer;
       transition: opacity 0.2s, box-shadow 0.2s;
       box-shadow: 0 0 12px rgba(10,191,255,0.3);
     }
     .btn-connect:hover { opacity: 0.9; box-shadow: 0 0 20px rgba(10,191,255,0.5); }
-    .sim-badge {
-      display: flex; align-items: center; gap: 7px;
-      font-size: 0.72rem; color: var(--muted);
-      font-family: var(--mono);
-    }
-    .sim-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--warn);
-      box-shadow: 0 0 8px var(--warn);
-      animation: pulse-dot 1.5s infinite;
-    }
-    @keyframes pulse-dot { 0%,100% { opacity:1; } 50% { opacity: 0.25; } }
+    .sim-badge { display: flex; align-items: center; gap: 7px; font-size: 0.72rem; color: var(--muted); font-family: var(--mono); }
+    .sim-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 8px var(--warn); animation: pulse-dot 1.5s infinite; }
+    @keyframes pulse-dot { 0%,100%{opacity:1;}50%{opacity:0.25;} }
 
     /* ── NAV TABS ── */
     .nav-tabs {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      padding: 0 28px;
-      background: rgba(14,17,25,0.9);
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center; gap: 4px;
+      padding: 0 28px; background: rgba(14,17,25,0.9);
+      border-bottom: 1px solid var(--border); backdrop-filter: blur(8px);
     }
     .tab-btn {
-      background: none;
-      border: none;
-      border-bottom: 2px solid transparent;
-      color: var(--muted);
-      font-family: var(--head);
-      font-size: 0.88rem;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      padding: 14px 22px;
-      cursor: pointer;
-      transition: color 0.2s, border-color 0.2s;
+      background: none; border: none; border-bottom: 2px solid transparent;
+      color: var(--muted); font-family: var(--head); font-size: 0.88rem; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase; padding: 14px 22px;
+      cursor: pointer; transition: color 0.2s, border-color 0.2s;
     }
     .tab-btn:hover { color: var(--text2); }
     .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
-
-    /* ── TAB CONTENT ── */
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
-    /* ── MAIN GRID ── */
+    /* ── DASHBOARD GRID ── */
+    /* 3 columns: patient-info | HR | SpO2 */
     .dashboard {
       padding: 22px 28px;
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: auto auto auto auto;
+      grid-template-columns: 280px 1fr 1fr;
       gap: 18px;
     }
 
-    /* ── CARD ── */
+    /* ── CARD BASE ── */
     .card {
       background: linear-gradient(145deg, var(--card) 0%, var(--card2) 100%);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 22px 24px;
-      position: relative;
-      overflow: hidden;
+      border: 1px solid var(--border); border-radius: 14px; padding: 22px 24px;
+      position: relative; overflow: hidden;
       animation: fadeUp 0.45s ease both;
     }
     .card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent2), transparent);
-      opacity: 0.5;
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent2), transparent); opacity: 0.5;
     }
     .card::after {
-      content: '';
-      position: absolute;
-      top: -60px; right: -60px;
-      width: 160px; height: 160px;
-      border-radius: 50%;
+      content: ''; position: absolute; top: -60px; right: -60px;
+      width: 160px; height: 160px; border-radius: 50%;
       background: radial-gradient(circle, rgba(10,191,255,0.04), transparent 70%);
       pointer-events: none;
     }
-
     .card-label {
-      font-family: var(--head);
-      font-size: 0.78rem;
-      letter-spacing: 3px;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-bottom: 12px;
+      font-family: var(--head); font-size: 0.78rem; letter-spacing: 3px;
+      color: var(--muted); text-transform: uppercase; margin-bottom: 12px;
       display: flex; align-items: center; gap: 8px;
     }
     .card-label i { font-size: 0.9rem; }
@@ -193,118 +125,99 @@
     .card-label .lbl-ai   { color: #b080ff; }
     .card-label .lbl-rob  { color: var(--accent2); }
     .card-label .lbl-cam  { color: var(--warn); }
-    .card-label .lbl-log  { color: var(--muted); }
+    .card-label .lbl-pat  { color: var(--accent2); }
 
-    .card-value {
-      font-family: var(--head);
-      font-size: 5rem;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1;
-      text-shadow: 0 0 30px rgba(10,191,255,0.3);
-    }
-    .card-value.hr-val { text-shadow: 0 0 30px rgba(255,64,96,0.35); color: #fff; }
-    .card-value.spo2-val { text-shadow: 0 0 30px rgba(0,229,160,0.35); color: #fff; }
-    .card-unit {
-      font-size: 0.78rem;
-      color: var(--muted);
-      font-family: var(--mono);
-      margin-top: 4px;
-      letter-spacing: 1px;
-    }
-    .card-baseline {
-      font-size: 0.72rem;
-      color: var(--text2);
-      font-family: var(--mono);
-      margin-top: 6px;
-    }
-
-    /* ── VITAL CARDS TOP ROW ── */
-    .vital-card {
+    /* ── PATIENT INFO CARD ── */
+    .patient-info-card {
+      grid-column: 1;
+      grid-row: 1;
       min-height: 260px;
+      display: flex; flex-direction: column;
     }
-    .chart-wrap {
-      margin-top: 16px;
-      height: 80px;
-      position: relative;
+    .patient-info-card::before {
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
     }
+    .patient-avatar {
+      width: 62px; height: 62px; border-radius: 50%;
+      background: linear-gradient(135deg, #1a2040, #0e1530);
+      border: 2px solid var(--accent2);
+      box-shadow: 0 0 16px rgba(10,191,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; color: var(--accent2);
+      margin-bottom: 14px; flex-shrink: 0;
+    }
+    .patient-name-row {
+      font-family: var(--head); font-size: 1.25rem; font-weight: 700;
+      color: var(--text); margin-bottom: 2px; line-height: 1.2;
+    }
+    .patient-sub {
+      font-family: var(--mono); font-size: 0.68rem; color: var(--accent2);
+      letter-spacing: 2px; margin-bottom: 16px;
+    }
+    .patient-fields { display: flex; flex-direction: column; gap: 9px; flex: 1; }
+    .pf-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 10px;
+      background: rgba(10,12,20,0.55);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+    }
+    .pf-row i { font-size: 0.75rem; width: 14px; text-align: center; color: var(--accent2); flex-shrink: 0; }
+    .pf-label { font-family: var(--mono); font-size: 0.6rem; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; min-width: 38px; flex-shrink: 0; }
+    .pf-val { font-family: var(--head); font-size: 0.88rem; font-weight: 600; color: var(--text2); }
+    .patient-status-row {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: 14px; padding: 8px 10px;
+      background: rgba(0,229,160,0.06);
+      border: 1px solid rgba(0,229,160,0.2);
+      border-radius: 8px;
+    }
+    .patient-status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 6px var(--accent); animation: pulse-dot 1.8s infinite; }
+    .patient-status-txt { font-family: var(--head); font-size: 0.8rem; font-weight: 600; letter-spacing: 1.5px; color: var(--accent); }
 
-    /* ── AI RISK GAUGE ── */
-    .ai-card {
-      grid-column: 1 / -1;
-    }
-    .ai-inner {
-      display: flex;
-      align-items: center;
-      gap: 32px;
-    }
-    .gauge-container {
-      flex-shrink: 0;
-      position: relative;
-      width: 220px;
-      height: 120px;
-    }
+    /* ── VITAL CARDS ── */
+    .vital-card { min-height: 260px; }
+    .hr-card   { grid-column: 2; grid-row: 1; }
+    .spo2-card { grid-column: 3; grid-row: 1; }
+    .card-value { font-family: var(--head); font-size: 5rem; font-weight: 700; color: #fff; line-height: 1; }
+    .card-value.hr-val   { text-shadow: 0 0 30px rgba(255,64,96,0.4); }
+    .card-value.spo2-val { text-shadow: 0 0 30px rgba(0,229,160,0.4); }
+    .card-unit     { font-size: 0.78rem; color: var(--muted); font-family: var(--mono); margin-top: 4px; letter-spacing: 1px; }
+    .card-baseline { font-size: 0.72rem; color: var(--text2); font-family: var(--mono); margin-top: 6px; }
+    .chart-wrap { margin-top: 16px; height: 80px; position: relative; }
+
+    /* ── AI RISK CARD ── */
+    .ai-card { grid-column: 1 / -1; }
+    .ai-inner { display: flex; align-items: center; gap: 32px; }
+    .gauge-container { flex-shrink: 0; position: relative; width: 220px; height: 120px; }
     .gauge-svg { width: 220px; height: 120px; overflow: visible; }
     .gauge-label-val {
-      position: absolute;
-      bottom: 6px; left: 50%;
-      transform: translateX(-50%);
-      font-family: var(--head);
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--text);
-      text-align: center;
-      line-height: 1;
-      white-space: nowrap;
-      pointer-events: none;
+      position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%);
+      font-family: var(--head); font-size: 1.6rem; font-weight: 700; color: var(--text);
+      text-align: center; line-height: 1; white-space: nowrap; pointer-events: none;
     }
-    .gauge-label-val small {
-      display: block;
-      font-size: 0.6rem;
-      letter-spacing: 3px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
+    .gauge-label-val small { display: block; font-size: 0.6rem; letter-spacing: 3px; color: var(--muted); margin-top: 2px; }
     .ai-details { flex: 1; }
     .risk-badge {
-      display: inline-flex; align-items: center;
-      gap: 8px;
-      padding: 6px 18px;
-      border-radius: 24px;
-      font-family: var(--head);
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: 3px;
-      margin-bottom: 14px;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 18px; border-radius: 24px;
+      font-family: var(--head); font-size: 1rem; font-weight: 700; letter-spacing: 3px; margin-bottom: 14px;
     }
-    .risk-badge.normal  { background: rgba(0,229,160,0.12); color: var(--accent); border: 1px solid rgba(0,229,160,0.35);}
-    .risk-badge.warning { background: rgba(255,183,0,0.12); color: var(--warn); border: 1px solid rgba(255,183,0,0.35);}
-    .risk-badge.danger  { background: rgba(255,64,96,0.12);  color: var(--danger); border: 1px solid rgba(255,64,96,0.35);}
+    .risk-badge.normal  { background: rgba(0,229,160,0.12); color: var(--accent); border: 1px solid rgba(0,229,160,0.35); }
+    .risk-badge.warning { background: rgba(255,183,0,0.12);  color: var(--warn);   border: 1px solid rgba(255,183,0,0.35); }
+    .risk-badge.danger  { background: rgba(255,64,96,0.12);  color: var(--danger); border: 1px solid rgba(255,64,96,0.35); }
     .risk-badge .dot { width: 9px; height: 9px; border-radius: 50%; background: currentColor; box-shadow: 0 0 6px currentColor; }
     .confidence-label { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); margin-bottom: 12px; }
     .stats-row { display: flex; gap: 12px; margin-bottom: 14px; }
-    .stat-box {
-      flex: 1;
-      background: rgba(13,15,20,0.6);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 12px;
-      text-align: center;
-    }
+    .stat-box { flex: 1; background: rgba(13,15,20,0.6); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; text-align: center; }
     .stat-box .s-label { font-size: 0.62rem; color: var(--muted); font-family: var(--mono); letter-spacing: 1px; }
     .stat-box .s-val   { font-size: 1rem; font-family: var(--head); font-weight: 700; color: var(--text); margin: 2px 0; }
     .btn-buzzer {
       width: 100%;
       background: linear-gradient(135deg, rgba(255,183,0,0.08), rgba(255,100,0,0.08));
-      border: 1px solid rgba(255,183,0,0.5);
-      color: var(--warn);
-      border-radius: 8px;
-      font-family: var(--head);
-      font-weight: 700;
-      letter-spacing: 2px;
-      font-size: 0.85rem;
-      padding: 10px;
-      cursor: pointer;
+      border: 1px solid rgba(255,183,0,0.5); color: var(--warn);
+      border-radius: 8px; font-family: var(--head); font-weight: 700;
+      letter-spacing: 2px; font-size: 0.85rem; padding: 10px; cursor: pointer;
       transition: background 0.2s, box-shadow 0.2s;
     }
     .btn-buzzer:hover { background: rgba(255,183,0,0.18); box-shadow: 0 0 18px rgba(255,183,0,0.3); }
@@ -313,217 +226,169 @@
     /* ── CAMERA CARD ── */
     .cam-card { grid-column: 1 / 2; }
     .cam-wrap {
-      background: #080a10;
-      border: 1px dashed var(--border);
-      border-radius: 10px;
-      height: 180px;
-      display: flex; flex-direction: column;
+      background: #080a10; border: 1px dashed var(--border); border-radius: 10px;
+      height: 170px; display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 0.72rem;
-      margin-bottom: 14px;
-      position: relative;
-      overflow: hidden;
+      color: var(--muted); font-family: var(--mono); font-size: 0.72rem;
+      margin-bottom: 12px; position: relative; overflow: hidden;
     }
     .cam-wrap img { width: 100%; height: 100%; object-fit: cover; display: none; border-radius: 10px; }
     .cam-no-stream { text-align: center; line-height: 2; color: var(--muted); }
-    .cam-controls { display: flex; align-items: center; gap: 8px; }
+    .cam-controls { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
     .cam-ip {
-      flex: 1;
-      background: rgba(13,15,20,0.8);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      padding: 7px 12px;
-      border-radius: 6px;
-      outline: none;
+      flex: 1; background: rgba(13,15,20,0.8); border: 1px solid var(--border);
+      color: var(--text); font-family: var(--mono); font-size: 0.75rem;
+      padding: 7px 12px; border-radius: 6px; outline: none;
     }
     .cam-ip::placeholder { color: var(--muted); }
     .btn-cam {
-      border: none;
-      border-radius: 6px;
-      font-family: var(--head);
-      font-weight: 700;
-      font-size: 0.75rem;
-      letter-spacing: 1px;
-      padding: 7px 14px;
-      cursor: pointer;
-      transition: opacity 0.2s, box-shadow 0.2s;
+      border: none; border-radius: 6px; font-family: var(--head); font-weight: 700;
+      font-size: 0.75rem; letter-spacing: 1px; padding: 7px 14px; cursor: pointer;
+      transition: box-shadow 0.2s;
     }
     .btn-cam.connect    { background: var(--accent); color: #000; box-shadow: 0 0 10px rgba(0,229,160,0.3); }
     .btn-cam.connect:hover { box-shadow: 0 0 18px rgba(0,229,160,0.5); }
     .btn-cam.disconnect { background: transparent; border: 1px solid var(--danger); color: var(--danger); }
 
+    /* ── AUDIO CONTROLS ── */
+    .audio-controls {
+      display: flex; align-items: center; gap: 0;
+      background: rgba(10,12,20,0.65);
+      border: 1px solid var(--border); border-radius: 10px;
+      overflow: hidden;
+    }
+    .audio-item {
+      flex: 1; display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px;
+    }
+    .audio-item + .audio-item { border-left: 1px solid var(--border); }
+    .audio-icon-wrap {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 0.95rem;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    .audio-icon-wrap.spk-wrap { background: rgba(10,191,255,0.08); color: var(--accent2); }
+    .audio-icon-wrap.spk-wrap.on { background: rgba(10,191,255,0.18); box-shadow: 0 0 10px rgba(10,191,255,0.3); }
+    .audio-icon-wrap.mic-wrap { background: rgba(176,128,255,0.08); color: #b080ff; }
+    .audio-icon-wrap.mic-wrap.on { background: rgba(176,128,255,0.2); box-shadow: 0 0 10px rgba(176,128,255,0.35); }
+    .audio-text { flex: 1; }
+    .audio-text .a-name { font-family: var(--head); font-size: 0.8rem; font-weight: 600; letter-spacing: 1px; color: var(--text2); }
+    .audio-text .a-status { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 1.5px; margin-top: 1px; transition: color 0.3s; }
+    .audio-text .a-status.off     { color: var(--muted); }
+    .audio-text .a-status.on-spk  { color: var(--accent2); }
+    .audio-text .a-status.on-mic  { color: #b080ff; }
+    /* pill toggle */
+    .audio-pill {
+      width: 46px; height: 24px; border-radius: 12px;
+      border: none; cursor: pointer; position: relative; flex-shrink: 0;
+      background: #1a1e30; transition: background 0.3s, box-shadow 0.3s; outline: none;
+    }
+    .audio-pill::before {
+      content: ''; position: absolute; top: 3px; left: 3px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--muted); transition: transform 0.3s, background 0.3s;
+    }
+    .audio-pill.on-spk { background: rgba(10,191,255,0.2); box-shadow: 0 0 10px rgba(10,191,255,0.25); }
+    .audio-pill.on-spk::before { transform: translateX(22px); background: var(--accent2); }
+    .audio-pill.on-mic { background: rgba(176,128,255,0.2); box-shadow: 0 0 10px rgba(176,128,255,0.25); }
+    .audio-pill.on-mic::before { transform: translateX(22px); background: #b080ff; }
+    /* live dot */
+    .live-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      margin-left: 4px; display: inline-block; vertical-align: middle;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .live-dot.vis-spk { opacity: 1; background: var(--accent2); box-shadow: 0 0 5px var(--accent2); animation: pulse-dot 1s infinite; }
+    .live-dot.vis-mic { opacity: 1; background: #b080ff; box-shadow: 0 0 5px #b080ff; animation: pulse-dot 1s infinite; }
+
     /* ── ROBOT / JOYSTICK CARD ── */
     .robot-card { grid-column: 2 / 3; }
-    .patient-select {
-      display: flex; align-items: center; gap: 10px;
-      margin-bottom: 16px;
-    }
+    .patient-select { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
     .patient-select label { font-size: 0.72rem; font-family: var(--mono); color: var(--muted); }
     .patient-select select {
-      flex: 1;
-      background: rgba(13,15,20,0.8);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-family: var(--body);
-      font-size: 0.85rem;
-      padding: 7px 12px;
-      border-radius: 6px;
-      outline: none;
+      flex: 1; background: rgba(13,15,20,0.8); border: 1px solid var(--border);
+      color: var(--text); font-family: var(--body); font-size: 0.85rem;
+      padding: 7px 12px; border-radius: 6px; outline: none;
     }
-
-    /* Joystick */
-    .joystick-area {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-    }
+    .joystick-area { display: flex; flex-direction: column; align-items: center; gap: 12px; }
     .joystick-outer {
-      width: 160px; height: 160px;
-      border-radius: 50%;
+      width: 160px; height: 160px; border-radius: 50%;
       background: radial-gradient(circle at 35% 35%, #1e2540, #0c0f18);
       border: 2px solid var(--border);
       box-shadow: 0 0 20px rgba(10,191,255,0.08), inset 0 2px 8px rgba(0,0,0,0.5);
-      position: relative;
-      cursor: pointer;
-      user-select: none;
-      transition: box-shadow 0.2s;
+      position: relative; cursor: pointer; user-select: none; transition: box-shadow 0.2s;
     }
-    .joystick-outer:hover {
-      box-shadow: 0 0 28px rgba(10,191,255,0.18), inset 0 2px 8px rgba(0,0,0,0.5);
-    }
-    /* direction zones */
-    .jzone {
-      position: absolute;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--muted);
-      font-size: 0.9rem;
-      transition: color 0.15s;
-      pointer-events: none;
-    }
+    .joystick-outer:hover { box-shadow: 0 0 28px rgba(10,191,255,0.18), inset 0 2px 8px rgba(0,0,0,0.5); }
+    .jzone { position: absolute; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 0.9rem; transition: color 0.15s; pointer-events: none; }
     .jzone.top    { top: 10px; left: 50%; transform: translateX(-50%); }
     .jzone.bottom { bottom: 10px; left: 50%; transform: translateX(-50%); }
     .jzone.left   { left: 10px; top: 50%; transform: translateY(-50%); }
     .jzone.right  { right: 10px; top: 50%; transform: translateY(-50%); }
     .jzone.active { color: var(--accent2); text-shadow: 0 0 8px var(--accent2); }
-
     .joystick-knob {
-      width: 58px; height: 58px;
-      border-radius: 50%;
+      width: 58px; height: 58px; border-radius: 50%;
       background: radial-gradient(circle at 35% 35%, #2a3060, #131830);
       border: 2px solid rgba(10,191,255,0.4);
       box-shadow: 0 0 16px rgba(10,191,255,0.25), inset 0 1px 4px rgba(255,255,255,0.08);
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      transition: box-shadow 0.15s, border-color 0.15s;
-      pointer-events: none;
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      transition: box-shadow 0.15s, border-color 0.15s; pointer-events: none;
     }
-    .joystick-knob.active {
-      box-shadow: 0 0 24px rgba(10,191,255,0.5), inset 0 1px 4px rgba(255,255,255,0.1);
-      border-color: var(--accent2);
-    }
+    .joystick-knob.active { box-shadow: 0 0 24px rgba(10,191,255,0.5); border-color: var(--accent2); }
     .joystick-knob::after {
-      content: '';
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 14px; height: 14px;
-      border-radius: 50%;
+      content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 14px; height: 14px; border-radius: 50%;
       background: radial-gradient(circle, var(--accent2), rgba(10,191,255,0.3));
       box-shadow: 0 0 10px var(--accent2);
     }
-
     .stop-btn {
       background: linear-gradient(135deg, rgba(255,64,96,0.1), rgba(180,0,30,0.15));
-      border: 1px solid rgba(255,64,96,0.5);
-      color: var(--danger);
-      border-radius: 8px;
-      font-family: var(--head);
-      font-weight: 700;
-      letter-spacing: 2px;
-      font-size: 0.82rem;
-      padding: 8px 28px;
-      cursor: pointer;
-      transition: background 0.2s, box-shadow 0.2s;
+      border: 1px solid rgba(255,64,96,0.5); color: var(--danger); border-radius: 8px;
+      font-family: var(--head); font-weight: 700; letter-spacing: 2px; font-size: 0.82rem;
+      padding: 8px 28px; cursor: pointer; transition: background 0.2s, box-shadow 0.2s;
     }
     .stop-btn:hover { background: rgba(255,64,96,0.2); box-shadow: 0 0 14px rgba(255,64,96,0.3); }
     .stop-btn:active { transform: scale(0.96); }
-
-    .speed-row {
-      display: flex; align-items: center; gap: 12px;
-      width: 100%;
-    }
+    .speed-row { display: flex; align-items: center; gap: 12px; width: 100%; }
     .speed-row label { font-size: 0.68rem; font-family: var(--mono); color: var(--muted); white-space: nowrap; }
     .speed-row input[type=range] { flex: 1; accent-color: var(--accent2); height: 4px; }
     .speed-val { font-family: var(--mono); font-size: 0.9rem; color: var(--accent2); min-width: 20px; }
     .move-hint { font-size: 0.62rem; color: var(--muted); font-family: var(--mono); }
 
-    /* ── ACTIVITY LOG ── */
+    /* ── LOG ── */
     .log-section { grid-column: 1 / -1; }
-    .log-header {
-      font-family: var(--head);
-      font-size: 0.75rem;
-      letter-spacing: 3px;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-bottom: 12px;
-      display: flex; align-items: center; gap: 8px;
-    }
+    .log-header { font-family: var(--head); font-size: 0.75rem; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
     .log-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 0.77rem; }
     .log-table tbody tr { border-bottom: 1px solid #141825; transition: background 0.15s; }
     .log-table tbody tr:hover { background: #131623; }
     .log-table td { padding: 9px 12px; color: var(--text2); }
     .log-table td:first-child { color: var(--muted); width: 75px; }
     .log-table td:last-child { width: 70px; text-align: right; }
-    .log-badge {
-      display: inline-block; padding: 3px 10px;
-      border-radius: 12px; font-size: 0.65rem;
-      font-weight: 700; letter-spacing: 1.5px;
-    }
+    .log-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.65rem; font-weight: 700; letter-spacing: 1.5px; }
     .log-badge.ok   { background: rgba(0,229,160,0.12); color: var(--accent); }
     .log-badge.warn { background: rgba(255,183,0,0.12);  color: var(--warn); }
     .log-badge.err  { background: rgba(255,64,96,0.12);  color: var(--danger); }
 
     /* ── PATIENTS TAB ── */
-    .patients-grid {
-      padding: 22px 28px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-      gap: 18px;
-    }
-    .patient-card {
+    .patients-grid { padding: 22px 28px; display: grid; grid-template-columns: repeat(auto-fill, minmax(270px,1fr)); gap: 18px; }
+    .patient-card-list {
       background: linear-gradient(145deg, var(--card), var(--card2));
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 20px 22px;
-      cursor: pointer;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px;
+      cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .patient-card:hover { border-color: var(--accent2); box-shadow: 0 0 20px rgba(10,191,255,0.1); }
-    .patient-card .p-id { font-family: var(--mono); font-size: 0.7rem; color: var(--accent2); letter-spacing: 2px; margin-bottom: 6px; }
-    .patient-card .p-name { font-family: var(--head); font-size: 1.15rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-    .patient-card .p-bed { font-size: 0.75rem; color: var(--muted); margin-bottom: 14px; }
+    .patient-card-list:hover { border-color: var(--accent2); box-shadow: 0 0 20px rgba(10,191,255,0.1); }
+    .patient-card-list .p-id   { font-family: var(--mono); font-size: 0.7rem; color: var(--accent2); letter-spacing: 2px; margin-bottom: 6px; }
+    .patient-card-list .p-name { font-family: var(--head); font-size: 1.15rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .patient-card-list .p-bed  { font-size: 0.75rem; color: var(--muted); margin-bottom: 14px; }
     .patient-vitals { display: flex; gap: 12px; }
     .patient-vital { flex: 1; text-align: center; background: rgba(13,15,20,0.7); border: 1px solid var(--border); border-radius: 8px; padding: 8px 0; }
     .patient-vital .pv-label { font-size: 0.6rem; color: var(--muted); font-family: var(--mono); }
     .patient-vital .pv-val   { font-size: 1.15rem; font-family: var(--head); font-weight: 700; }
     .add-patient-btn {
-      background: transparent;
-      border: 2px dashed var(--border);
-      border-radius: 14px;
-      color: var(--muted);
-      font-family: var(--head);
-      font-size: 0.9rem;
-      letter-spacing: 1px;
+      background: transparent; border: 2px dashed var(--border); border-radius: 14px;
+      color: var(--muted); font-family: var(--head); font-size: 0.9rem; letter-spacing: 1px;
       display: flex; align-items: center; justify-content: center; gap: 8px;
-      min-height: 130px;
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
+      min-height: 130px; cursor: pointer; transition: border-color 0.2s, color 0.2s;
     }
     .add-patient-btn:hover { border-color: var(--accent); color: var(--accent); }
 
@@ -540,27 +405,10 @@
     /* ── SETTINGS TAB ── */
     .settings-section { padding: 26px 28px; max-width: 620px; }
     .settings-section h2 { font-family: var(--head); font-size: 1.4rem; font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 22px; }
-    .setting-row {
-      background: linear-gradient(145deg, var(--card), var(--card2));
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px 20px;
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 10px;
-    }
+    .setting-row { background: linear-gradient(145deg, var(--card), var(--card2)); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
     .setting-row label { font-family: var(--head); font-size: 0.92rem; font-weight: 600; color: var(--text); }
     .setting-row .s-desc { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
-    .setting-row input[type=number], .setting-row select {
-      background: rgba(13,15,20,0.8);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      padding: 6px 12px;
-      width: 100px;
-      outline: none;
-    }
+    .setting-row input[type=number], .setting-row select { background: rgba(13,15,20,0.8); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: var(--mono); font-size: 0.85rem; padding: 6px 12px; width: 100px; outline: none; }
     .toggle { position: relative; width: 42px; height: 24px; }
     .toggle input { opacity: 0; width: 0; height: 0; }
     .toggle-slider { position: absolute; inset: 0; background: #1a1e30; border-radius: 24px; cursor: pointer; transition: background 0.3s; }
@@ -568,29 +416,18 @@
     .toggle input:checked + .toggle-slider { background: rgba(0,229,160,0.2); }
     .toggle input:checked + .toggle-slider::before { transform: translateX(18px); background: var(--accent); }
 
-    /* ── SCROLLBAR ── */
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: #1e2438; border-radius: 5px; }
     ::-webkit-scrollbar-thumb:hover { background: #2a3050; }
 
-    /* ── ANIMATIONS ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(14px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .card:nth-child(1) { animation-delay: 0.04s; }
-    .card:nth-child(2) { animation-delay: 0.09s; }
-    .card:nth-child(3) { animation-delay: 0.14s; }
-    .card:nth-child(4) { animation-delay: 0.19s; }
-    .card:nth-child(5) { animation-delay: 0.24s; }
-    .card:nth-child(6) { animation-delay: 0.29s; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);} }
+    .card:nth-child(1){animation-delay:0.04s;} .card:nth-child(2){animation-delay:0.08s;}
+    .card:nth-child(3){animation-delay:0.12s;} .card:nth-child(4){animation-delay:0.16s;}
+    .card:nth-child(5){animation-delay:0.20s;} .card:nth-child(6){animation-delay:0.24s;}
+    .card:nth-child(7){animation-delay:0.28s;}
 
-    /* glow pulse on danger */
-    @keyframes glowDanger {
-      0%,100% { box-shadow: 0 0 0 rgba(255,64,96,0); }
-      50%      { box-shadow: 0 0 22px rgba(255,64,96,0.35); }
-    }
+    @keyframes glowDanger { 0%,100%{box-shadow:0 0 0 rgba(255,64,96,0);}50%{box-shadow:0 0 22px rgba(255,64,96,0.35);} }
     .card.danger-pulse { animation: glowDanger 1.2s infinite; }
   </style>
 </head>
@@ -625,64 +462,84 @@
 <div id="tab-home" class="tab-panel active">
   <div class="dashboard">
 
-    <!-- HEART RATE -->
-    <div class="card vital-card">
+    <!-- PATIENT INFO CARD (col 1, row 1) -->
+    <div class="card patient-info-card">
+      <div class="card-label"><i class="fas fa-id-card lbl-pat"></i> Current Patient</div>
+      <div class="patient-avatar"><i class="fas fa-user"></i></div>
+      <div class="patient-name-row" id="piName">Ravi Kumar</div>
+      <div class="patient-sub" id="piID">PID · P001-2024</div>
+      <div class="patient-fields">
+        <div class="pf-row">
+          <i class="fas fa-hashtag"></i>
+          <span class="pf-label">Age</span>
+          <span class="pf-val" id="piAge">34 yrs</span>
+        </div>
+        <div class="pf-row">
+          <i class="fas fa-venus-mars"></i>
+          <span class="pf-label">Gender</span>
+          <span class="pf-val" id="piGender">Male</span>
+        </div>
+        <div class="pf-row">
+          <i class="fas fa-envelope"></i>
+          <span class="pf-label">Email</span>
+          <span class="pf-val" id="piEmail" style="font-size:0.78rem;">ravi.kumar@gmail.com</span>
+        </div>
+        <div class="pf-row">
+          <i class="fas fa-calendar-alt"></i>
+          <span class="pf-label">Date</span>
+          <span class="pf-val" id="piDate">03 Apr 2026</span>
+        </div>
+        <div class="pf-row">
+          <i class="fas fa-bed"></i>
+          <span class="pf-label">Bed</span>
+          <span class="pf-val" id="piBed">Ward A · Bed 1</span>
+        </div>
+      </div>
+      <div class="patient-status-row">
+        <div class="patient-status-dot"></div>
+        <span class="patient-status-txt">MONITORING ACTIVE</span>
+      </div>
+    </div>
+
+    <!-- HEART RATE (col 2, row 1) -->
+    <div class="card vital-card hr-card">
       <div class="card-label"><i class="fas fa-heart lbl-hr"></i> Heart Rate</div>
       <div class="card-value hr-val" id="hrVal">--</div>
       <div class="card-unit">beats per minute</div>
       <div class="card-baseline" id="hrBase">Baseline: learning...</div>
-      <div class="chart-wrap">
-        <canvas id="hrChart"></canvas>
-      </div>
+      <div class="chart-wrap"><canvas id="hrChart"></canvas></div>
     </div>
 
-    <!-- SPO2 -->
-    <div class="card vital-card">
+    <!-- SPO2 (col 3, row 1) -->
+    <div class="card vital-card spo2-card">
       <div class="card-label"><i class="fas fa-lungs lbl-spo2"></i> SpO₂</div>
       <div class="card-value spo2-val" id="spo2Val">--</div>
       <div class="card-unit">% oxygen saturation</div>
       <div class="card-baseline" id="spo2Base">Baseline: learning...</div>
-      <div class="chart-wrap">
-        <canvas id="spo2Chart"></canvas>
-      </div>
+      <div class="chart-wrap"><canvas id="spo2Chart"></canvas></div>
     </div>
 
-    <!-- AI RISK ASSESSMENT -->
+    <!-- AI RISK (full width) -->
     <div class="card ai-card" id="aiCard">
       <div class="card-label"><i class="fas fa-brain lbl-ai"></i> AI Risk Assessment</div>
       <div class="ai-inner">
-        <!-- Semicircle gauge -->
-        <div class="gauge-container" id="gaugeContainer">
+        <div class="gauge-container">
           <svg class="gauge-svg" viewBox="0 0 220 120" id="gaugeSVG">
-            <!-- background track -->
             <path d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="#1a1e30" stroke-width="18" stroke-linecap="round"/>
-            <!-- green zone -->
-            <path d="M 20 110 A 90 90 0 0 1 110 20" fill="none" stroke="rgba(0,229,160,0.25)" stroke-width="18" stroke-linecap="round"/>
-            <!-- yellow zone -->
-            <path d="M 110 20 A 90 90 0 0 1 170 38" fill="none" stroke="rgba(255,183,0,0.25)" stroke-width="18" stroke-linecap="round"/>
-            <!-- red zone -->
-            <path d="M 170 38 A 90 90 0 0 1 200 110" fill="none" stroke="rgba(255,64,96,0.25)" stroke-width="18" stroke-linecap="round"/>
-            <!-- active fill arc -->
+            <path d="M 20 110 A 90 90 0 0 1 110 20"  fill="none" stroke="rgba(0,229,160,0.22)"  stroke-width="18" stroke-linecap="round"/>
+            <path d="M 110 20 A 90 90 0 0 1 170 38"  fill="none" stroke="rgba(255,183,0,0.22)"  stroke-width="18" stroke-linecap="round"/>
+            <path d="M 170 38 A 90 90 0 0 1 200 110" fill="none" stroke="rgba(255,64,96,0.22)"  stroke-width="18" stroke-linecap="round"/>
             <path id="gaugeArc" d="M 20 110 A 90 90 0 0 1 20 110" fill="none" stroke="var(--accent)" stroke-width="18" stroke-linecap="round"/>
-            <!-- needle -->
             <line id="gaugeNeedle" x1="110" y1="110" x2="110" y2="26" stroke="var(--text)" stroke-width="2.5" stroke-linecap="round"/>
             <circle cx="110" cy="110" r="6" fill="#1e2438" stroke="var(--text)" stroke-width="2"/>
-            <!-- zone labels -->
-            <text x="14" y="125" font-family="'Share Tech Mono'" font-size="9" fill="rgba(0,229,160,0.7)">SAFE</text>
-            <text x="89" y="15" font-family="'Share Tech Mono'" font-size="9" fill="rgba(255,183,0,0.7)" text-anchor="middle">WARN</text>
+            <text x="14"  y="125" font-family="'Share Tech Mono'" font-size="9" fill="rgba(0,229,160,0.7)">SAFE</text>
+            <text x="89"  y="15"  font-family="'Share Tech Mono'" font-size="9" fill="rgba(255,183,0,0.7)" text-anchor="middle">WARN</text>
             <text x="194" y="125" font-family="'Share Tech Mono'" font-size="9" fill="rgba(255,64,96,0.7)" text-anchor="end">HIGH</text>
           </svg>
-          <div class="gauge-label-val" id="gaugeLabelVal">
-            0<small id="gaugeSubLabel">RISK SCORE</small>
-          </div>
+          <div class="gauge-label-val" id="gaugeLabelVal">0<small>RISK SCORE</small></div>
         </div>
-
-        <!-- details -->
         <div class="ai-details">
-          <div class="risk-badge normal" id="riskBadge">
-            <span class="dot"></span>
-            <span id="riskLabel">NORMAL</span>
-          </div>
+          <div class="risk-badge normal" id="riskBadge"><span class="dot"></span><span id="riskLabel">NORMAL</span></div>
           <div class="confidence-label" id="confLabel">Confidence —</div>
           <div class="stats-row">
             <div class="stat-box">
@@ -723,6 +580,32 @@
         <button class="btn-cam connect" onclick="connectCam()">Connect</button>
         <button class="btn-cam disconnect" onclick="disconnectCam()">Disconnect</button>
       </div>
+
+      <!-- AUDIO CONTROLS -->
+      <div class="audio-controls">
+        <!-- Speaker -->
+        <div class="audio-item">
+          <div class="audio-icon-wrap spk-wrap" id="spkIconWrap">
+            <i class="fas fa-volume-up" id="spkIcon"></i>
+          </div>
+          <div class="audio-text">
+            <div class="a-name">Speaker <span class="live-dot" id="spkDot"></span></div>
+            <div class="a-status off" id="spkStatus">OFF</div>
+          </div>
+          <button class="audio-pill" id="spkPill" onclick="toggleAudio('spk')" title="Toggle Speaker"></button>
+        </div>
+        <!-- Mic -->
+        <div class="audio-item">
+          <div class="audio-icon-wrap mic-wrap" id="micIconWrap">
+            <i class="fas fa-microphone-slash" id="micIcon"></i>
+          </div>
+          <div class="audio-text">
+            <div class="a-name">Microphone <span class="live-dot" id="micDot"></span></div>
+            <div class="a-status off" id="micStatus">OFF</div>
+          </div>
+          <button class="audio-pill" id="micPill" onclick="toggleAudio('mic')" title="Toggle Microphone"></button>
+        </div>
+      </div>
     </div>
 
     <!-- ROBOT CONTROL (col 2) -->
@@ -737,7 +620,6 @@
           <option>P004 — Bed 4</option>
         </select>
       </div>
-
       <div class="joystick-area">
         <div class="joystick-outer" id="joystickOuter"
              onmousedown="joystickStart(event)"
@@ -762,9 +644,7 @@
     <!-- LIVE ACTIVITY LOG -->
     <div class="card log-section">
       <div class="log-header"><i class="fas fa-list-ul"></i> &nbsp;Live Activity Log</div>
-      <table class="log-table">
-        <tbody id="logBody"></tbody>
-      </table>
+      <table class="log-table"><tbody id="logBody"></tbody></table>
     </div>
 
   </div>
@@ -773,9 +653,9 @@
 <!-- ══════════════ PATIENTS TAB ══════════════ -->
 <div id="tab-patients" class="tab-panel">
   <div class="patients-grid" id="patientsGrid">
-    <div class="patient-card">
+    <div class="patient-card-list">
       <div class="p-id">P001</div>
-      <div class="p-name">Patient — Bed 1</div>
+      <div class="p-name">Ravi Kumar</div>
       <div class="p-bed">Ward A · Room 101</div>
       <div class="patient-vitals">
         <div class="patient-vital"><div class="pv-label">HR</div><div class="pv-val" style="color:var(--accent2)" id="p1hr">—</div></div>
@@ -783,9 +663,9 @@
         <div class="patient-vital"><div class="pv-label">Status</div><div class="pv-val" style="color:var(--accent);font-size:0.75rem" id="p1status">OK</div></div>
       </div>
     </div>
-    <div class="patient-card">
+    <div class="patient-card-list">
       <div class="p-id">P002</div>
-      <div class="p-name">Patient — Bed 2</div>
+      <div class="p-name">Anita Sharma</div>
       <div class="p-bed">Ward A · Room 102</div>
       <div class="patient-vitals">
         <div class="patient-vital"><div class="pv-label">HR</div><div class="pv-val" style="color:var(--accent2)">72</div></div>
@@ -793,9 +673,9 @@
         <div class="patient-vital"><div class="pv-label">Status</div><div class="pv-val" style="color:var(--accent);font-size:0.75rem">OK</div></div>
       </div>
     </div>
-    <div class="patient-card">
+    <div class="patient-card-list">
       <div class="p-id">P003</div>
-      <div class="p-name">Patient — Bed 3</div>
+      <div class="p-name">Mohan Das</div>
       <div class="p-bed">Ward B · Room 201</div>
       <div class="patient-vitals">
         <div class="patient-vital"><div class="pv-label">HR</div><div class="pv-val" style="color:var(--warn)">108</div></div>
@@ -815,7 +695,7 @@
       <div class="help-card">
         <h3>🔌 Connecting to ESP32</h3>
         <ul>
-          <li>Upload the firmware to your ESP32 via Arduino IDE.</li>
+          <li>Upload firmware to your ESP32 via Arduino IDE.</li>
           <li>Connect ESP32 to your local Wi-Fi network.</li>
           <li>Find the IP address from the Serial Monitor.</li>
           <li>Enter the IP in the top bar and click <b>Connect</b>.</li>
@@ -827,16 +707,16 @@
           <li>Use an ESP32-CAM module with the CameraWebServer sketch.</li>
           <li>Ensure it's on the same Wi-Fi as your computer.</li>
           <li>Enter its IP in the Camera Feed section and click <b>Connect</b>.</li>
-          <li>The stream will appear live in the dashboard.</li>
+          <li>Toggle Speaker/Mic to enable two-way audio.</li>
         </ul>
       </div>
       <div class="help-card">
         <h3>❤️ Sensor Readings</h3>
         <ul>
           <li>MAX30102 sensor provides Heart Rate and SpO₂.</li>
-          <li>Baseline is calculated over the first 30 readings.</li>
-          <li>Z-score &gt; 2 triggers a <b>Warning</b>, &gt; 3 triggers <b>Danger</b>.</li>
-          <li>Click <b>Sound Alert Buzzer</b> to activate the buzzer on the robot.</li>
+          <li>Baseline is calculated over the first 10 readings.</li>
+          <li>Z-score &gt; 2 triggers <b>Warning</b>, &gt; 3 triggers <b>Danger</b>.</li>
+          <li>Click <b>Sound Alert Buzzer</b> to activate robot buzzer.</li>
         </ul>
       </div>
       <div class="help-card">
@@ -893,6 +773,13 @@ function switchTab(name, btn) {
   btn.classList.add('active');
 }
 
+/* ── SET TODAY'S DATE ── */
+(function() {
+  const d = new Date();
+  const opts = { day:'2-digit', month:'short', year:'numeric' };
+  document.getElementById('piDate').textContent = d.toLocaleDateString('en-GB', opts);
+})();
+
 /* ── CHART.JS LINE CHARTS ── */
 function makeLineChart(canvasId, color) {
   const ctx = document.getElementById(canvasId).getContext('2d');
@@ -903,30 +790,16 @@ function makeLineChart(canvasId, color) {
     type: 'line',
     data: {
       labels: Array(30).fill(''),
-      datasets: [{
-        data: Array(30).fill(null),
-        borderColor: color,
-        borderWidth: 2,
-        backgroundColor: grad,
-        fill: true,
-        tension: 0.4,
-        pointRadius: 0,
-        pointHoverRadius: 0
-      }]
+      datasets: [{ data: Array(30).fill(null), borderColor: color, borderWidth: 2, backgroundColor: grad, fill: true, tension: 0.4, pointRadius: 0, pointHoverRadius: 0 }]
     },
     options: {
       animation: { duration: 300 },
-      responsive: true,
-      maintainAspectRatio: false,
+      responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false }, tooltip: { enabled: false } },
-      scales: {
-        x: { display: false },
-        y: { display: false, grace: '5%' }
-      }
+      scales: { x: { display: false }, y: { display: false, grace: '5%' } }
     }
   });
 }
-
 const hrChartObj   = makeLineChart('hrChart',   '#ff4060');
 const spo2ChartObj = makeLineChart('spo2Chart', '#00e5a0');
 
@@ -937,209 +810,119 @@ function pushChart(chartObj, val) {
   chartObj.update('none');
 }
 
-/* ── COUNT-UP ANIMATION ── */
+/* ── COUNT-UP ── */
 function countUp(el, target, decimals) {
   const start = parseFloat(el.textContent) || 0;
-  const diff  = target - start;
-  const dur   = 500;
-  const step  = 16;
+  const diff = target - start, dur = 500, step = 16;
   let elapsed = 0;
   const timer = setInterval(() => {
     elapsed += step;
     const t = Math.min(elapsed / dur, 1);
     const ease = 1 - Math.pow(1 - t, 3);
-    const val  = start + diff * ease;
-    el.textContent = decimals ? val.toFixed(decimals) : Math.round(val);
+    el.textContent = decimals ? (start + diff * ease).toFixed(decimals) : Math.round(start + diff * ease);
     if (elapsed >= dur) clearInterval(timer);
   }, step);
 }
 
-/* ── GAUGE (SEMICIRCLE) ── */
-const GAUGE_CX = 110, GAUGE_CY = 110, GAUGE_R = 90;
-const GAUGE_START_DEG = 180, GAUGE_RANGE_DEG = 180;
-
-function degToRad(d) { return d * Math.PI / 180; }
-function polarToXY(deg, r) {
-  const rad = degToRad(deg);
-  return {
-    x: GAUGE_CX + r * Math.cos(rad),
-    y: GAUGE_CY + r * Math.sin(rad)
-  };
-}
-
+/* ── GAUGE ── */
 function setGauge(score) {
-  // score 0-100
   const pct = Math.min(Math.max(score, 0), 100) / 100;
-  const sweepDeg = pct * GAUGE_RANGE_DEG;
-
-  const start = polarToXY(degToRad(180) * (180 / Math.PI), GAUGE_R);
-  // SVG: 180° = left, going clockwise to 0° = right
-  const startX = GAUGE_CX - GAUGE_R; // 20,110
-  const startY = GAUGE_CY;
-
-  const endDeg = 180 - sweepDeg; // 180° is left edge, we sweep counter-clockwise in display
-  const endRad = degToRad(180 - sweepDeg);
-  const endX = GAUGE_CX + GAUGE_R * Math.cos(endRad);
-  const endY = GAUGE_CY - GAUGE_R * Math.sin(endRad < 0 ? -endRad : endRad) * (endRad >= 0 ? -1 : 1);
-
-  // Compute endpoint: starting at angle 180 (left), going to angle 180 - sweepDeg
-  const eDeg  = 180 - sweepDeg;
-  const eRad  = eDeg * Math.PI / 180;
-  const eX    = GAUGE_CX + GAUGE_R * Math.cos(eRad);
-  const eY    = GAUGE_CY - GAUGE_R * Math.sin(degToRad(sweepDeg));
-
-  // Use a simpler approach: recalculate endpoint properly
-  // Start: 180deg = left = (20, 110)
-  // End angle in standard math coords: 180-sweepDeg (sweeping towards right = 0)
+  const sweepDeg = pct * 180;
   const endAngle = (180 - sweepDeg) * Math.PI / 180;
-  const ex = GAUGE_CX + GAUGE_R * Math.cos(endAngle);
-  const ey = GAUGE_CY - GAUGE_R * Math.sin(endAngle);
-
+  const ex = 110 + 90 * Math.cos(endAngle);
+  const ey = 110 - 90 * Math.sin(endAngle);
   const large = sweepDeg > 180 ? 1 : 0;
-
   const color = score < 34 ? '#00e5a0' : score < 67 ? '#ffb700' : '#ff4060';
   const arc = document.getElementById('gaugeArc');
   arc.setAttribute('d', `M 20 110 A 90 90 0 ${large} 1 ${ex.toFixed(2)} ${ey.toFixed(2)}`);
   arc.setAttribute('stroke', color);
-
-  // Needle: point from center to arc endpoint
-  const needle = document.getElementById('gaugeNeedle');
   const nLen = 78;
-  const nX = GAUGE_CX + nLen * Math.cos(endAngle);
-  const nY = GAUGE_CY - nLen * Math.sin(endAngle);
+  const nX = 110 + nLen * Math.cos(endAngle);
+  const nY = 110 - nLen * Math.sin(endAngle);
+  const needle = document.getElementById('gaugeNeedle');
   needle.setAttribute('x2', nX.toFixed(2));
   needle.setAttribute('y2', nY.toFixed(2));
-
   document.getElementById('gaugeLabelVal').childNodes[0].textContent = Math.round(score);
 }
 
-/* ── SIMULATION STATE ── */
-let simRunning = true;
-let simInterval = null;
+/* ── SIMULATION ── */
+let simRunning = true, simInterval = null;
 let hrHistory = [], spo2History = [];
 let hrBaseline = null, spo2Baseline = null;
 
 function mean(arr) { return arr.reduce((a,b)=>a+b,0)/arr.length; }
-function std(arr)  {
-  const m = mean(arr);
-  return Math.sqrt(arr.reduce((a,b)=>a+(b-m)**2,0)/arr.length);
-}
+function std(arr)  { const m=mean(arr); return Math.sqrt(arr.reduce((a,b)=>a+(b-m)**2,0)/arr.length); }
 
 function updateRisk(hr, spo2) {
-  const hrZN = hrHistory.length > 5
-    ? (hr - mean(hrHistory)) / (std(hrHistory) || 1)
-    : 0;
-  const s2ZN = spo2History.length > 5
-    ? (spo2 - mean(spo2History)) / (std(spo2History) || 1)
-    : 0;
-
+  const hrZN  = hrHistory.length > 5   ? (hr - mean(hrHistory)) / (std(hrHistory) || 1) : 0;
+  const s2ZN  = spo2History.length > 5 ? (spo2 - mean(spo2History)) / (std(spo2History) || 1) : 0;
   document.getElementById('hrZ').textContent   = hrHistory.length > 5 ? hrZN.toFixed(2) : '—';
   document.getElementById('spo2Z').textContent = spo2History.length > 5 ? s2ZN.toFixed(2) : '—';
-
   const hrThresh  = parseInt(document.getElementById('hrThresh')?.value || 110);
   const spo2Thr   = parseInt(document.getElementById('spo2Thresh')?.value || 94);
-  const badge     = document.getElementById('riskBadge');
-  const lbl       = document.getElementById('riskLabel');
-  const anomEl    = document.getElementById('anomaly');
-  const aiCard    = document.getElementById('aiCard');
+  const badge = document.getElementById('riskBadge'), lbl = document.getElementById('riskLabel');
+  const anomEl = document.getElementById('anomaly'), aiCard = document.getElementById('aiCard');
   const confLabel = document.getElementById('confLabel');
-
+  const hrDev = Math.abs(hrZN), spo2Dev = Math.abs(s2ZN);
   let score = 0;
-  const hrDev  = Math.abs(hrZN);
-  const spo2Dev = Math.abs(s2ZN);
-
   if (hr > hrThresh || spo2 < spo2Thr || hrDev > 3 || spo2Dev > 3) {
-    badge.className = 'risk-badge danger';
-    lbl.textContent = 'DANGER';
-    anomEl.textContent = 'Yes';
-    anomEl.style.color = 'var(--danger)';
-    aiCard.classList.add('danger-pulse');
-    confLabel.textContent = 'Confidence — HIGH';
+    badge.className = 'risk-badge danger'; lbl.textContent = 'DANGER';
+    anomEl.textContent = 'Yes'; anomEl.style.color = 'var(--danger)';
+    aiCard.classList.add('danger-pulse'); confLabel.textContent = 'Confidence — HIGH';
     score = 75 + Math.min(hrDev, 3) * 8 + Math.random() * 5;
     if (document.getElementById('autoBuzzer')?.checked) soundBuzzer();
   } else if (hr > hrThresh - 10 || spo2 < spo2Thr + 2 || hrDev > 2 || spo2Dev > 2) {
-    badge.className = 'risk-badge warning';
-    lbl.textContent = 'WARNING';
-    anomEl.textContent = 'Maybe';
-    anomEl.style.color = 'var(--warn)';
-    aiCard.classList.remove('danger-pulse');
-    confLabel.textContent = 'Confidence — MEDIUM';
+    badge.className = 'risk-badge warning'; lbl.textContent = 'WARNING';
+    anomEl.textContent = 'Maybe'; anomEl.style.color = 'var(--warn)';
+    aiCard.classList.remove('danger-pulse'); confLabel.textContent = 'Confidence — MEDIUM';
     score = 40 + Math.min(hrDev, 2) * 10 + Math.random() * 5;
   } else {
-    badge.className = 'risk-badge normal';
-    lbl.textContent = 'NORMAL';
-    anomEl.textContent = 'No';
-    anomEl.style.color = 'var(--text2)';
-    aiCard.classList.remove('danger-pulse');
-    confLabel.textContent = 'Confidence — LOW RISK';
+    badge.className = 'risk-badge normal'; lbl.textContent = 'NORMAL';
+    anomEl.textContent = 'No'; anomEl.style.color = 'var(--text2)';
+    aiCard.classList.remove('danger-pulse'); confLabel.textContent = 'Confidence — LOW RISK';
     score = Math.max(5, hrDev * 8 + spo2Dev * 6 + Math.random() * 5);
   }
-
   setGauge(Math.min(score, 100));
-
   const status = lbl.textContent;
-  const p1status = document.getElementById('p1status');
-  p1status.textContent = status;
-  p1status.style.color = status === 'NORMAL' ? 'var(--accent)' : status === 'WARNING' ? 'var(--warn)' : 'var(--danger)';
+  const p1s = document.getElementById('p1status');
+  p1s.textContent = status;
+  p1s.style.color = status==='NORMAL'?'var(--accent)':status==='WARNING'?'var(--warn)':'var(--danger)';
 }
 
 function pushReading(hr, spo2) {
   countUp(document.getElementById('hrVal'), hr, 0);
   countUp(document.getElementById('spo2Val'), spo2, 1);
-
   document.getElementById('p1hr').textContent   = hr;
   document.getElementById('p1spo2').textContent = spo2.toFixed(1);
-
   pushChart(hrChartObj, hr);
   pushChart(spo2ChartObj, spo2);
-
-  hrHistory.push(hr);
-  spo2History.push(spo2);
-  if (hrHistory.length > 30)  hrHistory.shift();
+  hrHistory.push(hr); spo2History.push(spo2);
+  if (hrHistory.length > 30) hrHistory.shift();
   if (spo2History.length > 30) spo2History.shift();
-
   if (hrHistory.length >= 10 && !hrBaseline) {
     hrBaseline   = mean(hrHistory).toFixed(0);
     spo2Baseline = mean(spo2History).toFixed(1);
     document.getElementById('hrBase').textContent   = `Baseline: ${hrBaseline} bpm`;
     document.getElementById('spo2Base').textContent = `Baseline: ${spo2Baseline}%`;
   }
-
   updateRisk(hr, spo2);
   addLog(hr, spo2);
 }
 
-/* ── LOGGER ── */
 function addLog(hr, spo2) {
   const body = document.getElementById('logBody');
   const time = new Date().toTimeString().split(' ')[0];
   const risk = document.getElementById('riskLabel').textContent;
-  const badgeClass = risk === 'NORMAL' ? 'ok' : risk === 'WARNING' ? 'warn' : 'err';
-  const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td>${time}</td>
-    <td>Simulated reading — HR: ${hr} bpm | SpO₂: ${spo2.toFixed(1)}%</td>
-    <td><span class="log-badge ${badgeClass}">${risk}</span></td>
-  `;
+  const bc   = risk==='NORMAL'?'ok':risk==='WARNING'?'warn':'err';
+  const tr   = document.createElement('tr');
+  tr.innerHTML = `<td>${time}</td><td>Simulated reading — HR: ${hr} bpm | SpO₂: ${spo2.toFixed(1)}%</td><td><span class="log-badge ${bc}">${risk}</span></td>`;
   body.insertBefore(tr, body.firstChild);
   if (body.children.length > 20) body.removeChild(body.lastChild);
 }
 
-/* ── SIMULATION ── */
-function simTick() {
-  const hr   = Math.round(70 + Math.random() * 40);
-  const spo2 = 95 + Math.random() * 4;
-  pushReading(hr, spo2);
-}
-function startSim() {
-  simRunning = true;
-  simTick();
-  simInterval = setInterval(simTick, 2000);
-}
-function stopSim() {
-  simRunning = false;
-  clearInterval(simInterval);
-}
+function simTick() { pushReading(Math.round(70 + Math.random()*40), 95 + Math.random()*4); }
+function startSim() { simRunning = true; simTick(); simInterval = setInterval(simTick, 2000); }
+function stopSim()  { simRunning = false; clearInterval(simInterval); }
 function toggleSim(el) { el.checked ? startSim() : stopSim(); }
 
 /* ── CONNECT SERVER ── */
@@ -1152,143 +935,146 @@ function connectServer() {
   alert(`Attempting to connect to http://${ip} …\n(Wire up your fetch() call here)`);
 }
 
-/* ── ROBOT / JOYSTICK ── */
-let joystickActive = false;
-let currentDir = 'S';
+/* ── AUDIO CONTROLS ── */
+let spkOn = false, micOn = false;
+let spkStream = null, micStream = null;
 
-function getJoystickDir(relX, relY, radius) {
-  const dist  = Math.sqrt(relX*relX + relY*relY);
-  if (dist < radius * 0.25) return 'S';
-  const angle = Math.atan2(-relY, relX) * 180 / Math.PI;
-  if (angle >= -45 && angle < 45)  return 'R';
-  if (angle >= 45  && angle < 135) return 'F';
-  if (angle >= 135 || angle < -135) return 'L';
+function toggleAudio(type) {
+  if (type === 'spk') {
+    spkOn = !spkOn;
+    document.getElementById('spkPill').className       = 'audio-pill' + (spkOn ? ' on-spk' : '');
+    document.getElementById('spkIconWrap').className   = 'audio-icon-wrap spk-wrap' + (spkOn ? ' on' : '');
+    document.getElementById('spkIcon').className       = spkOn ? 'fas fa-volume-up' : 'fas fa-volume-mute';
+    document.getElementById('spkStatus').textContent   = spkOn ? 'ON' : 'OFF';
+    document.getElementById('spkStatus').className     = 'a-status' + (spkOn ? ' on-spk' : ' off');
+    document.getElementById('spkDot').className        = 'live-dot' + (spkOn ? ' vis-spk' : '');
+    const ip = document.getElementById('serverIP').value.trim();
+    if (ip) fetch(`http://${ip}/speaker?state=${spkOn?1:0}`).catch(()=>{});
+    addAudioLog('Speaker', spkOn);
+  } else {
+    micOn = !micOn;
+    document.getElementById('micPill').className       = 'audio-pill' + (micOn ? ' on-mic' : '');
+    document.getElementById('micIconWrap').className   = 'audio-icon-wrap mic-wrap' + (micOn ? ' on' : '');
+    document.getElementById('micIcon').className       = micOn ? 'fas fa-microphone' : 'fas fa-microphone-slash';
+    document.getElementById('micStatus').textContent   = micOn ? 'ON' : 'OFF';
+    document.getElementById('micStatus').className     = 'a-status' + (micOn ? ' on-mic' : ' off');
+    document.getElementById('micDot').className        = 'live-dot' + (micOn ? ' vis-mic' : '');
+    if (micOn) {
+      navigator.mediaDevices?.getUserMedia({ audio: true })
+        .then(s => { micStream = s; })
+        .catch(() => {});
+    } else {
+      if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+    }
+    const ip = document.getElementById('serverIP').value.trim();
+    if (ip) fetch(`http://${ip}/mic?state=${micOn?1:0}`).catch(()=>{});
+    addAudioLog('Microphone', micOn);
+  }
+}
+
+function addAudioLog(device, state) {
+  const body = document.getElementById('logBody');
+  const time = new Date().toTimeString().split(' ')[0];
+  const tr   = document.createElement('tr');
+  const bc   = state ? 'ok' : 'warn';
+  tr.innerHTML = `<td>${time}</td><td>${device} turned ${state?'ON':'OFF'}</td><td><span class="log-badge ${bc}">${state?'ON':'OFF'}</span></td>`;
+  body.insertBefore(tr, body.firstChild);
+  if (body.children.length > 20) body.removeChild(body.lastChild);
+}
+
+/* ── JOYSTICK ── */
+let joystickActive = false, currentDir = 'S';
+
+function getJoystickDir(rx, ry, radius) {
+  if (Math.sqrt(rx*rx+ry*ry) < radius*0.25) return 'S';
+  const a = Math.atan2(-ry, rx)*180/Math.PI;
+  if (a>=-45&&a<45)  return 'R';
+  if (a>=45&&a<135)  return 'F';
+  if (a>=135||a<-135) return 'L';
   return 'B';
 }
-
 function highlightJoystick(dir) {
-  ['jTop','jBot','jLft','jRgt'].forEach(id => document.getElementById(id).classList.remove('active'));
-  const map = { F:'jTop', B:'jBot', L:'jLft', R:'jRgt' };
-  if (map[dir]) document.getElementById(map[dir]).classList.add('active');
-  const knob = document.getElementById('joystickKnob');
-  knob.classList.toggle('active', dir !== 'S');
+  ['jTop','jBot','jLft','jRgt'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  const map={F:'jTop',B:'jBot',L:'jLft',R:'jRgt'};
+  if(map[dir]) document.getElementById(map[dir]).classList.add('active');
+  document.getElementById('joystickKnob').classList.toggle('active', dir!=='S');
 }
-
-function updateKnobPos(relX, relY, radius) {
-  const dist  = Math.sqrt(relX*relX + relY*relY);
-  const capped = Math.min(dist, radius * 0.38);
-  const factor = capped / (dist || 1);
-  const kx = relX * factor;
-  const ky = relY * factor;
-  const knob = document.getElementById('joystickKnob');
-  knob.style.transform = `translate(calc(-50% + ${kx}px), calc(-50% + ${ky}px))`;
+function updateKnobPos(rx, ry, radius) {
+  const dist = Math.sqrt(rx*rx+ry*ry);
+  const cap  = Math.min(dist, radius*0.38)/(dist||1);
+  document.getElementById('joystickKnob').style.transform = `translate(calc(-50% + ${rx*cap}px), calc(-50% + ${ry*cap}px))`;
 }
-
-function resetKnob() {
-  document.getElementById('joystickKnob').style.transform = 'translate(-50%, -50%)';
-  highlightJoystick('S');
-}
+function resetKnob() { document.getElementById('joystickKnob').style.transform='translate(-50%,-50%)'; highlightJoystick('S'); }
 
 function joystickStart(e) {
   joystickActive = true;
   const outer = document.getElementById('joystickOuter');
   const rect  = outer.getBoundingClientRect();
-  const cx = rect.left + rect.width / 2;
-  const cy = rect.top  + rect.height / 2;
-
+  const cx = rect.left+rect.width/2, cy = rect.top+rect.height/2;
   function onMove(me) {
     if (!joystickActive) return;
-    const px = me.clientX !== undefined ? me.clientX : me.touches[0].clientX;
-    const py = me.clientY !== undefined ? me.clientY : me.touches[0].clientY;
-    const rx = px - cx, ry = py - cy;
-    updateKnobPos(rx, ry, rect.width / 2);
-    const dir = getJoystickDir(rx, ry, rect.width / 2);
-    if (dir !== currentDir) { currentDir = dir; move(dir); highlightJoystick(dir); }
+    const px=me.clientX!==undefined?me.clientX:me.touches[0].clientX;
+    const py=me.clientY!==undefined?me.clientY:me.touches[0].clientY;
+    const rx=px-cx, ry=py-cy;
+    updateKnobPos(rx,ry,rect.width/2);
+    const dir=getJoystickDir(rx,ry,rect.width/2);
+    if(dir!==currentDir){currentDir=dir;move(dir);highlightJoystick(dir);}
   }
   function onEnd() {
-    joystickActive = false;
-    currentDir = 'S';
-    move('S');
-    resetKnob();
-    document.removeEventListener('mousemove', onMove);
-    document.removeEventListener('mouseup', onEnd);
-    document.removeEventListener('touchmove', onMove);
-    document.removeEventListener('touchend', onEnd);
+    joystickActive=false; currentDir='S'; move('S'); resetKnob();
+    document.removeEventListener('mousemove',onMove); document.removeEventListener('mouseup',onEnd);
   }
-
-  document.addEventListener('mousemove', onMove);
-  document.addEventListener('mouseup', onEnd);
-  onMove(e);
+  document.addEventListener('mousemove',onMove); document.addEventListener('mouseup',onEnd); onMove(e);
 }
-
 function joystickTouchStart(e) {
-  e.preventDefault();
-  joystickStart(e.touches[0]);
-  const outer = document.getElementById('joystickOuter');
-  const rect  = outer.getBoundingClientRect();
-  const cx = rect.left + rect.width / 2;
-  const cy = rect.top  + rect.height / 2;
+  e.preventDefault(); joystickStart(e.touches[0]);
+  const outer=document.getElementById('joystickOuter');
+  const rect=outer.getBoundingClientRect();
+  const cx=rect.left+rect.width/2, cy=rect.top+rect.height/2;
   function onMove(me) {
-    if (!joystickActive) return;
-    const px = me.touches[0].clientX, py = me.touches[0].clientY;
-    const rx = px - cx, ry = py - cy;
-    updateKnobPos(rx, ry, rect.width / 2);
-    const dir = getJoystickDir(rx, ry, rect.width / 2);
-    if (dir !== currentDir) { currentDir = dir; move(dir); highlightJoystick(dir); }
+    if(!joystickActive)return;
+    const rx=me.touches[0].clientX-cx, ry=me.touches[0].clientY-cy;
+    updateKnobPos(rx,ry,rect.width/2);
+    const dir=getJoystickDir(rx,ry,rect.width/2);
+    if(dir!==currentDir){currentDir=dir;move(dir);highlightJoystick(dir);}
   }
-  function onEnd() {
-    joystickActive = false; currentDir = 'S'; move('S'); resetKnob();
-    document.removeEventListener('touchmove', onMove);
-    document.removeEventListener('touchend', onEnd);
-  }
-  document.addEventListener('touchmove', onMove, { passive: false });
-  document.addEventListener('touchend', onEnd);
+  function onEnd(){joystickActive=false;currentDir='S';move('S');resetKnob();document.removeEventListener('touchmove',onMove);document.removeEventListener('touchend',onEnd);}
+  document.addEventListener('touchmove',onMove,{passive:false}); document.addEventListener('touchend',onEnd);
 }
-
-function stopRobot() { move('S'); resetKnob(); joystickActive = false; currentDir = 'S'; }
-
-function move(dir) {
-  const speed = document.getElementById('speedSlider').value;
-  const ip    = document.getElementById('serverIP').value.trim();
-  console.log(`Move: ${dir} Speed: ${speed}`);
-  if (ip) fetch(`http://${ip}/move?dir=${dir}&speed=${speed}`).catch(() => {});
+function stopRobot(){move('S');resetKnob();joystickActive=false;currentDir='S';}
+function move(dir){
+  const speed=document.getElementById('speedSlider').value;
+  const ip=document.getElementById('serverIP').value.trim();
+  console.log(`Move:${dir} Speed:${speed}`);
+  if(ip) fetch(`http://${ip}/move?dir=${dir}&speed=${speed}`).catch(()=>{});
 }
-
-// Keyboard support
-document.addEventListener('keydown', e => {
-  const map = { ArrowUp:'F', ArrowDown:'B', ArrowLeft:'L', ArrowRight:'R' };
-  if (map[e.key]) { e.preventDefault(); move(map[e.key]); highlightJoystick(map[e.key]); }
+document.addEventListener('keydown',e=>{
+  const map={ArrowUp:'F',ArrowDown:'B',ArrowLeft:'L',ArrowRight:'R'};
+  if(map[e.key]){e.preventDefault();move(map[e.key]);highlightJoystick(map[e.key]);}
 });
-document.addEventListener('keyup', e => {
-  if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
-    move('S'); highlightJoystick('S');
-  }
+document.addEventListener('keyup',e=>{
+  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){move('S');highlightJoystick('S');}
 });
 
 /* ── CAMERA ── */
 function connectCam() {
-  const ip = document.getElementById('camIP').value.trim();
-  if (!ip) return;
-  const img = document.getElementById('camStream');
-  img.src = `http://${ip}:81/stream`;
-  img.style.display = 'block';
-  document.getElementById('camNoStream').style.display = 'none';
+  const ip=document.getElementById('camIP').value.trim(); if(!ip)return;
+  const img=document.getElementById('camStream');
+  img.src=`http://${ip}:81/stream`; img.style.display='block';
+  document.getElementById('camNoStream').style.display='none';
 }
 function disconnectCam() {
-  document.getElementById('camStream').src = '';
-  document.getElementById('camStream').style.display = 'none';
-  document.getElementById('camNoStream').style.display = 'flex';
+  document.getElementById('camStream').src=''; document.getElementById('camStream').style.display='none';
+  document.getElementById('camNoStream').style.display='flex';
 }
 
 /* ── BUZZER ── */
 function soundBuzzer() {
-  const ip  = document.getElementById('serverIP').value.trim();
-  const btn = document.getElementById('buzzerBtn');
-  btn.style.background = 'rgba(255,183,0,0.3)';
-  btn.style.boxShadow  = '0 0 24px rgba(255,183,0,0.5)';
-  setTimeout(() => { btn.style.background = ''; btn.style.boxShadow = ''; }, 1000);
-  if (ip) fetch(`http://${ip}/buzzer`).catch(() => {});
-  console.log('BUZZER triggered');
+  const ip=document.getElementById('serverIP').value.trim();
+  const btn=document.getElementById('buzzerBtn');
+  btn.style.background='rgba(255,183,0,0.3)'; btn.style.boxShadow='0 0 24px rgba(255,183,0,0.5)';
+  setTimeout(()=>{btn.style.background='';btn.style.boxShadow='';},1000);
+  if(ip) fetch(`http://${ip}/buzzer`).catch(()=>{});
 }
 
 /* ── INIT ── */
