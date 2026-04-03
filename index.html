@@ -38,9 +38,7 @@
         radial-gradient(ellipse 60% 40% at 90% 100%, rgba(0,229,160,0.04) 0%, transparent 60%);
     }
 
-    /* ════════════════════════════════
-       LOGIN OVERLAY
-    ════════════════════════════════ */
+    /* LOGIN OVERLAY */
     .login-overlay {
       position: fixed; inset: 0; z-index: 9999;
       background: rgba(8,10,16,0.98);
@@ -65,25 +63,13 @@
       background: radial-gradient(circle, rgba(10,191,255,0.05), transparent 70%);
       pointer-events:none;
     }
-    .login-logo {
-      font-family: var(--head); font-size: 2.4rem; font-weight: 900;
-      letter-spacing: 5px; margin-bottom: 4px;
-    }
+    .login-logo { font-family: var(--head); font-size: 2.4rem; font-weight: 900; letter-spacing: 5px; margin-bottom: 4px; }
     .login-logo .med { color: #ffffff; }
     .login-logo .bot { color: var(--accent); }
-    .login-sub {
-      font-family: var(--mono); font-size: 0.68rem; color: var(--muted);
-      letter-spacing: 5px; margin-bottom: 34px; text-transform: uppercase;
-    }
-    .login-divider {
-      height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent);
-      margin-bottom: 28px;
-    }
+    .login-sub { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); letter-spacing: 5px; margin-bottom: 34px; text-transform: uppercase; }
+    .login-divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin-bottom: 28px; }
     .login-field { margin-bottom: 18px; text-align: left; }
-    .login-field label {
-      display: block; font-family: var(--mono); font-size: 0.72rem;
-      color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px;
-    }
+    .login-field label { display: block; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
     .login-field input {
       width: 100%; background: rgba(13,15,22,0.85);
       border: 1px solid var(--border); border-radius: 9px;
@@ -91,10 +77,7 @@
       padding: 13px 16px; outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .login-field input:focus {
-      border-color: var(--accent2);
-      box-shadow: 0 0 0 3px rgba(10,191,255,0.1);
-    }
+    .login-field input:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px rgba(10,191,255,0.1); }
     .login-field input::placeholder { color: #2a3450; }
     .btn-login {
       width: 100%; margin-top: 10px;
@@ -107,18 +90,10 @@
       transition: opacity 0.2s, box-shadow 0.2s;
     }
     .btn-login:hover { opacity: 0.9; box-shadow: 0 0 38px rgba(10,191,255,0.55); }
-    .login-error {
-      margin-top: 14px; color: var(--danger);
-      font-family: var(--mono); font-size: 0.8rem; min-height: 20px;
-    }
-    .login-hint {
-      margin-top: 16px; font-family: var(--mono);
-      font-size: 0.65rem; color: #3a4468; line-height: 1.6;
-    }
+    .login-error { margin-top: 14px; color: var(--danger); font-family: var(--mono); font-size: 0.8rem; min-height: 20px; }
+    .login-hint { margin-top: 16px; font-family: var(--mono); font-size: 0.65rem; color: #3a4468; line-height: 1.6; }
 
-    /* ════════════════════════════════
-       TOP BAR
-    ════════════════════════════════ */
+    /* TOP BAR */
     .topbar {
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 28px; height: 66px;
@@ -127,18 +102,14 @@
       position: sticky; top: 0; z-index: 100;
       backdrop-filter: blur(12px);
     }
-    /* — Unique Brand Title — */
     .brand { display: flex; align-items: center; gap: 14px; }
     .brand-pill {
       display: flex; align-items: center; gap: 9px;
       background: linear-gradient(135deg, rgba(0,229,160,0.07), rgba(10,191,255,0.07));
       border: 1.5px solid rgba(10,191,255,0.45);
       border-radius: 13px; padding: 7px 20px;
-      box-shadow: 0 0 26px rgba(10,191,255,0.12),
-                  inset 0 1px 0 rgba(255,255,255,0.04),
-                  inset 0 -1px 0 rgba(0,0,0,0.3);
-      font-family: var(--head); font-size: 1.95rem;
-      font-weight: 900; letter-spacing: 4px;
+      box-shadow: 0 0 26px rgba(10,191,255,0.12), inset 0 1px 0 rgba(255,255,255,0.04), inset 0 -1px 0 rgba(0,0,0,0.3);
+      font-family: var(--head); font-size: 1.95rem; font-weight: 900; letter-spacing: 4px;
       position: relative; overflow: hidden;
     }
     .brand-pill::before {
@@ -149,14 +120,8 @@
     .brand-pill .med { color: #ffffff; text-shadow: 0 0 30px rgba(255,255,255,0.15); }
     .brand-pill .bot { color: var(--accent); text-shadow: 0 0 20px rgba(0,229,160,0.4); }
     .brand-meta { line-height: 1.35; }
-    .brand-meta .b-title {
-      font-family: var(--head); font-size: 0.82rem; font-weight: 700;
-      color: var(--text2); letter-spacing: 4px; text-transform: uppercase;
-    }
-    .brand-meta .b-sub {
-      font-family: var(--mono); font-size: 0.58rem;
-      color: rgba(10,191,255,0.5); letter-spacing: 3px; text-transform: uppercase;
-    }
+    .brand-meta .b-title { font-family: var(--head); font-size: 0.82rem; font-weight: 700; color: var(--text2); letter-spacing: 4px; text-transform: uppercase; }
+    .brand-meta .b-sub { font-family: var(--mono); font-size: 0.58rem; color: rgba(10,191,255,0.5); letter-spacing: 3px; text-transform: uppercase; }
     .topbar-right { display: flex; align-items: center; gap: 10px; }
     .server-input {
       background: rgba(13,15,20,0.8); border: 1px solid var(--border); border-radius: 7px;
@@ -169,8 +134,7 @@
       background: linear-gradient(135deg, var(--accent2), #007acc); color: #fff;
       border: none; border-radius: 7px; font-family: var(--head); font-weight: 700;
       font-size: 0.9rem; letter-spacing: 1.5px; padding: 9px 20px; cursor: pointer;
-      box-shadow: 0 0 12px rgba(10,191,255,0.3);
-      transition: opacity 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 12px rgba(10,191,255,0.3); transition: opacity 0.2s, box-shadow 0.2s;
     }
     .btn-connect:hover { opacity: 0.9; box-shadow: 0 0 22px rgba(10,191,255,0.5); }
     .sim-badge { display: flex; align-items: center; gap: 7px; font-size: 0.78rem; color: var(--muted); font-family: var(--mono); }
@@ -186,9 +150,7 @@
     .btn-logout:hover { background: rgba(255,64,96,0.1); box-shadow: 0 0 12px rgba(255,64,96,0.2); }
     @keyframes pulse-dot { 0%,100%{opacity:1;}50%{opacity:0.2;} }
 
-    /* ════════════════════════════════
-       NAV TABS
-    ════════════════════════════════ */
+    /* NAV TABS */
     .nav-tabs {
       display: flex; align-items: center; justify-content: center; gap: 4px;
       padding: 0 28px; background: rgba(14,17,25,0.9);
@@ -205,9 +167,7 @@
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
-    /* ════════════════════════════════
-       DASHBOARD GRID
-    ════════════════════════════════ */
+    /* DASHBOARD GRID */
     .dashboard {
       padding: 22px 28px;
       display: grid;
@@ -215,7 +175,7 @@
       gap: 18px;
     }
 
-    /* ── CARD BASE ── */
+    /* CARD BASE */
     .card {
       background: linear-gradient(145deg, var(--card) 0%, var(--card2) 100%);
       border: 1px solid var(--border); border-radius: 14px; padding: 22px 24px;
@@ -245,9 +205,63 @@
     .card-label .lbl-cam  { color: var(--warn); }
     .card-label .lbl-pat  { color: var(--accent2); }
 
-    /* ── PATIENT INFO ── */
+    /* PATIENT INFO CARD */
     .patient-info-card { grid-column: 1; grid-row: 1; min-height: 280px; display: flex; flex-direction: column; }
     .patient-info-card::before { background: linear-gradient(90deg, transparent, var(--accent), transparent); }
+
+    /* Patient awaiting state */
+    .patient-awaiting {
+      flex: 1;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 14px; padding: 10px 0;
+    }
+    .patient-await-icon {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: linear-gradient(135deg, #1a2040, #0e1530);
+      border: 2px dashed rgba(10,191,255,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; color: rgba(10,191,255,0.25);
+    }
+    .patient-await-text {
+      font-family: var(--mono); font-size: 0.76rem;
+      color: var(--accent2); letter-spacing: 2px;
+      text-transform: uppercase;
+      animation: pulse-dot 2s infinite;
+      text-align: center;
+    }
+    .patient-await-subtext {
+      font-family: var(--mono); font-size: 0.64rem;
+      color: var(--muted); letter-spacing: 1px;
+      text-align: center; line-height: 1.8;
+    }
+    .patient-fields-await { display: flex; flex-direction: column; gap: 9px; width: 100%; margin-top: 4px; }
+    .pf-row-await {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 12px;
+      background: rgba(10,12,20,0.4);
+      border: 1px dashed rgba(30,36,56,0.7); border-radius: 8px;
+      opacity: 0.55;
+    }
+    .pf-row-await i { font-size: 0.8rem; width: 14px; text-align: center; color: rgba(10,191,255,0.3); flex-shrink: 0; }
+    .pf-row-await .pf-label { font-family: var(--mono); font-size: 0.64rem; color: rgba(128,144,184,0.6); letter-spacing: 1.5px; text-transform: uppercase; min-width: 38px; flex-shrink: 0; }
+    .pf-row-await .pf-skeleton {
+      height: 10px; border-radius: 4px;
+      background: linear-gradient(90deg, rgba(30,36,56,0.8) 25%, rgba(40,50,72,0.5) 50%, rgba(30,36,56,0.8) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 2s infinite;
+      flex: 1;
+    }
+    @keyframes shimmer { 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
+
+    .patient-status-row {
+      display: flex; align-items: center; gap: 8px; margin-top: 14px; padding: 9px 12px;
+      border: 1px solid rgba(30,36,56,0.7); border-radius: 8px;
+      background: rgba(10,12,20,0.4);
+    }
+    .patient-status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+    .patient-status-txt { font-family: var(--head); font-size: 0.88rem; font-weight: 600; letter-spacing: 1.5px; color: var(--muted); }
+
+    /* Active patient info (shown after data loads) */
     .patient-avatar {
       width: 64px; height: 64px; border-radius: 50%;
       background: linear-gradient(135deg, #1a2040, #0e1530);
@@ -265,16 +279,16 @@
       border: 1px solid var(--border); border-radius: 8px;
     }
     .pf-row i { font-size: 0.8rem; width: 14px; text-align: center; color: var(--accent2); flex-shrink: 0; }
-    .pf-label { font-family: var(--mono); font-size: 0.64rem; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; min-width: 38px; flex-shrink: 0; }
-    .pf-val { font-family: var(--head); font-size: 0.98rem; font-weight: 600; color: var(--text); }
-    .patient-status-row {
+    .pf-row .pf-label { font-family: var(--mono); font-size: 0.64rem; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; min-width: 38px; flex-shrink: 0; }
+    .pf-row .pf-val { font-family: var(--head); font-size: 0.98rem; font-weight: 600; color: var(--text); }
+    .patient-status-row-active {
       display: flex; align-items: center; gap: 8px; margin-top: 14px; padding: 9px 12px;
       background: rgba(0,229,160,0.06); border: 1px solid rgba(0,229,160,0.2); border-radius: 8px;
     }
-    .patient-status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 6px var(--accent); animation: pulse-dot 1.8s infinite; }
-    .patient-status-txt { font-family: var(--head); font-size: 0.88rem; font-weight: 600; letter-spacing: 1.5px; color: var(--accent); }
+    .patient-status-dot-active { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 6px var(--accent); animation: pulse-dot 1.8s infinite; }
+    .patient-status-txt-active { font-family: var(--head); font-size: 0.88rem; font-weight: 600; letter-spacing: 1.5px; color: var(--accent); }
 
-    /* ── VITALS ── */
+    /* VITALS */
     .vital-card { min-height: 280px; }
     .hr-card   { grid-column: 2; grid-row: 1; }
     .spo2-card { grid-column: 3; grid-row: 1; }
@@ -290,7 +304,7 @@
     }
     .chart-wrap { margin-top: 16px; height: 80px; position: relative; }
 
-    /* ── AI RISK ── */
+    /* AI RISK */
     .ai-card { grid-column: 1 / -1; }
     .ai-inner { display: flex; align-items: center; gap: 32px; }
     .gauge-container { flex-shrink: 0; position: relative; width: 220px; height: 120px; }
@@ -327,9 +341,7 @@
     .btn-buzzer:hover { background: rgba(255,183,0,0.18); box-shadow: 0 0 18px rgba(255,183,0,0.3); }
     .btn-buzzer:active { transform: scale(0.97); }
 
-    /* ════════════════════════════════
-       BOTTOM ROW — centered 2-col
-    ════════════════════════════════ */
+    /* BOTTOM ROW */
     .bottom-row {
       grid-column: 1 / -1;
       display: grid;
@@ -340,7 +352,7 @@
       width: 100%;
     }
 
-    /* ── ROBOT CONTROL (left) ── */
+    /* ROBOT CONTROL */
     .robot-card { }
     .patient-select { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
     .patient-select label { font-size: 0.8rem; font-family: var(--mono); color: var(--muted); }
@@ -393,7 +405,7 @@
     .speed-val { font-family: var(--mono); font-size: 1rem; color: var(--accent2); min-width: 20px; }
     .move-hint { font-size: 0.7rem; color: var(--muted); font-family: var(--mono); }
 
-    /* ── CAMERA CARD (right) ── */
+    /* CAMERA CARD */
     .cam-card { }
     .cam-wrap {
       background: #080a10; border: 1px dashed var(--border); border-radius: 10px;
@@ -419,7 +431,7 @@
     .btn-cam.connect:hover { box-shadow: 0 0 20px rgba(0,229,160,0.5); }
     .btn-cam.disconnect { background: transparent; border: 1px solid var(--danger); color: var(--danger); }
 
-    /* ── AUDIO — SEPARATE STACKED ON/OFF ── */
+    /* AUDIO */
     .audio-section { display: flex; flex-direction: column; gap: 10px; }
     .audio-device-row {
       display: flex; align-items: center; justify-content: space-between;
@@ -428,10 +440,7 @@
       border: 1px solid var(--border); border-radius: 10px;
     }
     .audio-device-info { display: flex; align-items: center; gap: 12px; }
-    .audio-device-icon {
-      width: 38px; height: 38px; border-radius: 9px;
-      display: flex; align-items: center; justify-content: center; font-size: 1rem;
-    }
+    .audio-device-icon { width: 38px; height: 38px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
     .audio-device-icon.spk { background: rgba(10,191,255,0.1); color: var(--accent2); }
     .audio-device-icon.mic { background: rgba(176,128,255,0.1); color: #b080ff; }
     .audio-device-name { font-family: var(--head); font-size: 1rem; font-weight: 600; color: var(--text); letter-spacing: 1px; }
@@ -457,9 +466,7 @@
     .btn-audio-off { background: rgba(255,64,96,0.07); color: var(--danger); border-color: rgba(255,64,96,0.22); }
     .btn-audio-off:hover { background: rgba(255,64,96,0.16); }
 
-    /* ════════════════════════════════
-       PATIENTS TAB
-    ════════════════════════════════ */
+    /* PATIENTS TAB */
     .patients-grid { padding: 22px 28px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 18px; }
     .patient-card-list {
       background: linear-gradient(145deg, var(--card), var(--card2));
@@ -482,9 +489,7 @@
     }
     .add-patient-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-    /* ════════════════════════════════
-       HELP TAB
-    ════════════════════════════════ */
+    /* HELP TAB */
     .help-section { padding: 26px 28px; max-width: 940px; }
     .help-section h2 { font-family: var(--head); font-size: 1.55rem; font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 22px; }
     .help-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -494,9 +499,7 @@
     .help-card ul { padding-left: 18px; }
     .help-card li { margin-bottom: 4px; }
 
-    /* ════════════════════════════════
-       SETTINGS TAB
-    ════════════════════════════════ */
+    /* SETTINGS TAB */
     .settings-section { padding: 26px 28px; max-width: 620px; }
     .settings-section h2 { font-family: var(--head); font-size: 1.55rem; font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 22px; }
     .setting-row { background: linear-gradient(145deg, var(--card), var(--card2)); border: 1px solid var(--border); border-radius: 11px; padding: 17px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
@@ -510,9 +513,7 @@
     .toggle input:checked + .toggle-slider { background: rgba(0,229,160,0.2); }
     .toggle input:checked + .toggle-slider::before { transform: translateX(20px); background: var(--accent); }
 
-    /* ════════════════════════════════
-       UTILITIES / KEYFRAMES
-    ════════════════════════════════ */
+    /* UTILITIES */
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: #1e2438; border-radius: 5px; }
@@ -529,7 +530,7 @@
 </head>
 <body>
 
-<!-- ══════════════ LOGIN OVERLAY ══════════════ -->
+<!-- LOGIN OVERLAY -->
 <div id="loginOverlay" class="login-overlay">
   <div class="login-box">
     <div class="login-logo"><span class="med">MED</span><span class="bot">BOT</span></div>
@@ -553,7 +554,7 @@
   </div>
 </div>
 
-<!-- ══════════════ TOP BAR ══════════════ -->
+<!-- TOP BAR -->
 <header class="topbar">
   <div class="brand">
     <div class="brand-pill">
@@ -576,7 +577,7 @@
   </div>
 </header>
 
-<!-- ══════════════ NAV TABS ══════════════ -->
+<!-- NAV TABS -->
 <nav class="nav-tabs">
   <button class="tab-btn active" onclick="switchTab('home',this)">🏠 Home</button>
   <button class="tab-btn" onclick="switchTab('patients',this)">👥 Patients List</button>
@@ -584,30 +585,54 @@
   <button class="tab-btn" onclick="switchTab('settings',this)">⚙ Settings</button>
 </nav>
 
-<!-- ══════════════ HOME TAB ══════════════ -->
+<!-- HOME TAB -->
 <div id="tab-home" class="tab-panel active">
   <div class="dashboard">
 
-    <!-- PATIENT INFO (col 1, row 1) -->
+    <!-- PATIENT INFO (col 1, row 1) — awaiting state by default -->
     <div class="card patient-info-card">
       <div class="card-label"><i class="fas fa-id-card lbl-pat"></i> Current Patient</div>
-      <div class="patient-avatar"><i class="fas fa-user"></i></div>
-      <div class="patient-name-row" id="piName">Ravi Kumar</div>
-      <div class="patient-sub" id="piID">PID · P001-2024</div>
-      <div class="patient-fields">
-        <div class="pf-row"><i class="fas fa-hashtag"></i><span class="pf-label">Age</span><span class="pf-val" id="piAge">34 yrs</span></div>
-        <div class="pf-row"><i class="fas fa-venus-mars"></i><span class="pf-label">Gender</span><span class="pf-val" id="piGender">Male</span></div>
-        <div class="pf-row"><i class="fas fa-envelope"></i><span class="pf-label">Email</span><span class="pf-val" id="piEmail" style="font-size:0.84rem;">ravi.kumar@gmail.com</span></div>
-        <div class="pf-row"><i class="fas fa-calendar-alt"></i><span class="pf-label">Date</span><span class="pf-val" id="piDate">—</span></div>
-        <div class="pf-row"><i class="fas fa-bed"></i><span class="pf-label">Bed</span><span class="pf-val" id="piBed">Ward A · Bed 1</span></div>
+
+      <!-- AWAITING STATE (shown when no data) -->
+      <div id="patientAwaiting" class="patient-awaiting">
+        <div class="patient-await-icon"><i class="fas fa-user"></i></div>
+        <div class="patient-await-text">⬤ Awaiting patient data...</div>
+        <div class="patient-fields-await">
+          <div class="pf-row-await"><i class="fas fa-hashtag"></i><span class="pf-label">Age</span><div class="pf-skeleton"></div></div>
+          <div class="pf-row-await"><i class="fas fa-venus-mars"></i><span class="pf-label">Sex</span><div class="pf-skeleton"></div></div>
+          <div class="pf-row-await"><i class="fas fa-envelope"></i><span class="pf-label">Email</span><div class="pf-skeleton"></div></div>
+          <div class="pf-row-await"><i class="fas fa-calendar-alt"></i><span class="pf-label">Date</span><div class="pf-skeleton"></div></div>
+          <div class="pf-row-await"><i class="fas fa-bed"></i><span class="pf-label">Bed</span><div class="pf-skeleton"></div></div>
+        </div>
+        <div class="patient-await-subtext">Connect to server to<br/>load patient profile</div>
       </div>
-      <div class="patient-status-row">
+
+      <!-- ACTIVE STATE (hidden until data arrives) -->
+      <div id="patientActive" style="display:none; flex:1; flex-direction:column;">
+        <div class="patient-avatar"><i class="fas fa-user"></i></div>
+        <div class="patient-name-row" id="piName">—</div>
+        <div class="patient-sub" id="piID">—</div>
+        <div class="patient-fields">
+          <div class="pf-row"><i class="fas fa-hashtag"></i><span class="pf-label">Age</span><span class="pf-val" id="piAge">—</span></div>
+          <div class="pf-row"><i class="fas fa-venus-mars"></i><span class="pf-label">Gender</span><span class="pf-val" id="piGender">—</span></div>
+          <div class="pf-row"><i class="fas fa-envelope"></i><span class="pf-label">Email</span><span class="pf-val" id="piEmail" style="font-size:0.84rem;">—</span></div>
+          <div class="pf-row"><i class="fas fa-calendar-alt"></i><span class="pf-label">Date</span><span class="pf-val" id="piDate">—</span></div>
+          <div class="pf-row"><i class="fas fa-bed"></i><span class="pf-label">Bed</span><span class="pf-val" id="piBed">—</span></div>
+        </div>
+        <div class="patient-status-row-active" style="margin-top:14px;">
+          <div class="patient-status-dot-active"></div>
+          <span class="patient-status-txt-active">MONITORING ACTIVE</span>
+        </div>
+      </div>
+
+      <!-- Offline status footer (awaiting state) -->
+      <div id="patientOfflineStatus" class="patient-status-row" style="margin-top:14px;">
         <div class="patient-status-dot"></div>
-        <span class="patient-status-txt">MONITORING ACTIVE</span>
+        <span class="patient-status-txt">NOT CONNECTED</span>
       </div>
     </div>
 
-    <!-- HEART RATE (col 2, row 1) -->
+    <!-- HEART RATE -->
     <div class="card vital-card hr-card">
       <div class="card-label"><i class="fas fa-heart lbl-hr"></i> Heart Rate</div>
       <div class="card-value hr-val" id="hrVal">—</div>
@@ -617,7 +642,7 @@
       <div class="chart-wrap"><canvas id="hrChart"></canvas></div>
     </div>
 
-    <!-- SPO2 (col 3, row 1) -->
+    <!-- SPO2 -->
     <div class="card vital-card spo2-card">
       <div class="card-label"><i class="fas fa-lungs lbl-spo2"></i> SpO₂</div>
       <div class="card-value spo2-val" id="spo2Val">—</div>
@@ -627,7 +652,7 @@
       <div class="chart-wrap"><canvas id="spo2Chart"></canvas></div>
     </div>
 
-    <!-- AI RISK (full width) -->
+    <!-- AI RISK -->
     <div class="card ai-card" id="aiCard">
       <div class="card-label"><i class="fas fa-brain lbl-ai"></i> AI Risk Assessment</div>
       <div class="ai-inner">
@@ -650,21 +675,9 @@
           <div class="risk-badge normal" id="riskBadge"><span class="dot"></span><span id="riskLabel">AWAITING DATA</span></div>
           <div class="confidence-label" id="confLabel">Connect ESP32 to begin assessment</div>
           <div class="stats-row">
-            <div class="stat-box">
-              <div class="s-label">HR Z-score</div>
-              <div class="s-val" id="hrZ">—</div>
-              <div class="s-label">deviation</div>
-            </div>
-            <div class="stat-box">
-              <div class="s-label">SpO₂ Z-score</div>
-              <div class="s-val" id="spo2Z">—</div>
-              <div class="s-label">deviation</div>
-            </div>
-            <div class="stat-box">
-              <div class="s-label">Anomaly</div>
-              <div class="s-val" id="anomaly" style="font-size:0.85rem;">—</div>
-              <div class="s-label">detected</div>
-            </div>
+            <div class="stat-box"><div class="s-label">HR Z-score</div><div class="s-val" id="hrZ">—</div><div class="s-label">deviation</div></div>
+            <div class="stat-box"><div class="s-label">SpO₂ Z-score</div><div class="s-val" id="spo2Z">—</div><div class="s-label">deviation</div></div>
+            <div class="stat-box"><div class="s-label">Anomaly</div><div class="s-val" id="anomaly" style="font-size:0.85rem;">—</div><div class="s-label">detected</div></div>
           </div>
           <button class="btn-buzzer" id="buzzerBtn" onclick="soundBuzzer()">
             <i class="fas fa-bell"></i> &nbsp;Sound Alert Buzzer
@@ -673,10 +686,55 @@
       </div>
     </div>
 
-    <!-- BOTTOM ROW: Robot (left) | Camera (right) — CENTERED & SWAPPED -->
+    <!-- BOTTOM ROW: Camera (left) | Robot Control (right) — SWAPPED -->
     <div class="bottom-row">
 
-      <!-- ROBOT CONTROL (left — was right) -->
+      <!-- CAMERA FEED (LEFT) -->
+      <div class="card cam-card">
+        <div class="card-label"><i class="fas fa-video lbl-cam"></i> Camera Feed (ESP32-CAM)</div>
+        <div class="cam-wrap" id="camWrap">
+          <img id="camStream" src="" alt="stream"/>
+          <div class="cam-no-stream" id="camNoStream">
+            <i class="fas fa-camera" style="font-size:1.8rem;margin-bottom:8px;color:var(--border)"></i><br/>
+            No stream connected<br/>Enter ESP32-CAM IP below
+          </div>
+        </div>
+        <div class="cam-controls">
+          <input class="cam-ip" id="camIP" placeholder="ESP32-CAM IP (e.g. 192.168.1.20)"/>
+          <button class="btn-cam connect" onclick="connectCam()">Connect</button>
+          <button class="btn-cam disconnect" onclick="disconnectCam()">Disconnect</button>
+        </div>
+        <div class="audio-section">
+          <div class="audio-device-row">
+            <div class="audio-device-info">
+              <div class="audio-device-icon spk"><i class="fas fa-volume-mute" id="spkIcon"></i></div>
+              <div>
+                <div class="audio-device-name">Speaker</div>
+                <span class="audio-state-badge" id="spkState">OFF</span>
+              </div>
+            </div>
+            <div class="audio-btn-group">
+              <button class="btn-audio-on" id="spkOnBtn" onclick="setAudio('spk', true)">ON</button>
+              <button class="btn-audio-off" onclick="setAudio('spk', false)">OFF</button>
+            </div>
+          </div>
+          <div class="audio-device-row">
+            <div class="audio-device-info">
+              <div class="audio-device-icon mic"><i class="fas fa-microphone-slash" id="micIcon"></i></div>
+              <div>
+                <div class="audio-device-name">Microphone</div>
+                <span class="audio-state-badge" id="micState">OFF</span>
+              </div>
+            </div>
+            <div class="audio-btn-group">
+              <button class="btn-audio-on" id="micOnBtn" onclick="setAudio('mic', true)">ON</button>
+              <button class="btn-audio-off" onclick="setAudio('mic', false)">OFF</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROBOT CONTROL (RIGHT) -->
       <div class="card robot-card">
         <div class="card-label"><i class="fas fa-robot lbl-rob"></i> Robot Control</div>
         <div class="patient-select">
@@ -709,68 +767,12 @@
         </div>
       </div>
 
-      <!-- CAMERA FEED (right — was left) -->
-      <div class="card cam-card">
-        <div class="card-label"><i class="fas fa-video lbl-cam"></i> Camera Feed (ESP32-CAM)</div>
-        <div class="cam-wrap" id="camWrap">
-          <img id="camStream" src="" alt="stream"/>
-          <div class="cam-no-stream" id="camNoStream">
-            <i class="fas fa-camera" style="font-size:1.8rem;margin-bottom:8px;color:var(--border)"></i><br/>
-            No stream connected<br/>Enter ESP32-CAM IP below
-          </div>
-        </div>
-        <div class="cam-controls">
-          <input class="cam-ip" id="camIP" placeholder="ESP32-CAM IP (e.g. 192.168.1.20)"/>
-          <button class="btn-cam connect" onclick="connectCam()">Connect</button>
-          <button class="btn-cam disconnect" onclick="disconnectCam()">Disconnect</button>
-        </div>
-
-        <!-- AUDIO — separate stacked ON/OFF buttons per device -->
-        <div class="audio-section">
-
-          <!-- Speaker -->
-          <div class="audio-device-row">
-            <div class="audio-device-info">
-              <div class="audio-device-icon spk">
-                <i class="fas fa-volume-mute" id="spkIcon"></i>
-              </div>
-              <div>
-                <div class="audio-device-name">Speaker</div>
-                <span class="audio-state-badge" id="spkState">OFF</span>
-              </div>
-            </div>
-            <div class="audio-btn-group">
-              <button class="btn-audio-on" id="spkOnBtn" onclick="setAudio('spk', true)">ON</button>
-              <button class="btn-audio-off" onclick="setAudio('spk', false)">OFF</button>
-            </div>
-          </div>
-
-          <!-- Microphone -->
-          <div class="audio-device-row">
-            <div class="audio-device-info">
-              <div class="audio-device-icon mic">
-                <i class="fas fa-microphone-slash" id="micIcon"></i>
-              </div>
-              <div>
-                <div class="audio-device-name">Microphone</div>
-                <span class="audio-state-badge" id="micState">OFF</span>
-              </div>
-            </div>
-            <div class="audio-btn-group">
-              <button class="btn-audio-on" id="micOnBtn" onclick="setAudio('mic', true)">ON</button>
-              <button class="btn-audio-off" onclick="setAudio('mic', false)">OFF</button>
-            </div>
-          </div>
-
-        </div><!-- end .audio-section -->
-      </div><!-- end .cam-card -->
-
     </div><!-- end .bottom-row -->
 
   </div><!-- end .dashboard -->
 </div>
 
-<!-- ══════════════ PATIENTS TAB ══════════════ -->
+<!-- PATIENTS TAB -->
 <div id="tab-patients" class="tab-panel">
   <div class="patients-grid" id="patientsGrid">
     <div class="patient-card-list">
@@ -807,7 +809,7 @@
   </div>
 </div>
 
-<!-- ══════════════ HELP TAB ══════════════ -->
+<!-- HELP TAB -->
 <div id="tab-help" class="tab-panel">
   <div class="help-section">
     <h2>HELP &amp; DOCUMENTATION</h2>
@@ -852,7 +854,7 @@
   </div>
 </div>
 
-<!-- ══════════════ SETTINGS TAB ══════════════ -->
+<!-- SETTINGS TAB -->
 <div id="tab-settings" class="tab-panel">
   <div class="settings-section">
     <h2>SETTINGS</h2>
@@ -879,17 +881,13 @@
   </div>
 </div>
 
-<!-- ══════════════ SCRIPTS ══════════════ -->
 <script>
-/* ════════════════════════════════
-   LOGIN
-════════════════════════════════ */
+/* LOGIN */
 function doLogin() {
   const id  = document.getElementById('doctorID').value.trim();
   const pw  = document.getElementById('doctorPass').value;
   const err = document.getElementById('loginError');
   if (!id || !pw) { err.textContent = 'Please enter both Doctor ID and password.'; return; }
-  // Replace with real authentication in production
   if (id === 'DOC001' && pw === 'medbot2024') {
     document.getElementById('loginOverlay').style.display = 'none';
     initDashboard();
@@ -906,9 +904,7 @@ function doLogout() {
   document.getElementById('loginOverlay').style.display = 'flex';
 }
 
-/* ════════════════════════════════
-   TABS
-════════════════════════════════ */
+/* TABS */
 function switchTab(name, btn) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -916,11 +912,8 @@ function switchTab(name, btn) {
   btn.classList.add('active');
 }
 
-/* ════════════════════════════════
-   CHARTS
-════════════════════════════════ */
+/* CHARTS */
 let hrChartObj, spo2ChartObj;
-
 function makeLineChart(canvasId, color) {
   const ctx  = document.getElementById(canvasId).getContext('2d');
   const grad = ctx.createLinearGradient(0, 0, 0, 80);
@@ -947,9 +940,7 @@ function pushChart(chartObj, val) {
   chartObj.update('none');
 }
 
-/* ════════════════════════════════
-   GAUGE
-════════════════════════════════ */
+/* GAUGE */
 function setGauge(score) {
   const pct      = Math.min(Math.max(score, 0), 100) / 100;
   const sweepDeg = pct * 180;
@@ -968,11 +959,10 @@ function setGauge(score) {
   document.getElementById('gaugeLabelVal').childNodes[0].textContent = score === 0 ? '—' : Math.round(score);
 }
 
-/* ════════════════════════════════
-   VITALS & RISK
-════════════════════════════════ */
+/* VITALS & RISK */
 let hrHistory = [], spo2History = [];
 let hrBaseline = null, spo2Baseline = null;
+let patientDataReceived = false;
 
 function mean(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
 function std(arr)  { const m = mean(arr); return Math.sqrt(arr.reduce((a, b) => a + (b - m) ** 2, 0) / arr.length); }
@@ -1020,8 +1010,31 @@ function updateRisk(hr, spo2) {
   }
 }
 
-/* Push one stable reading from ESP32 (no random noise) */
-function pushReading(hr, spo2) {
+/* Show active patient card when first data arrives */
+function showPatientActive(data) {
+  if (!patientDataReceived) {
+    patientDataReceived = true;
+    document.getElementById('patientAwaiting').style.display = 'none';
+    document.getElementById('patientOfflineStatus').style.display = 'none';
+    const activeEl = document.getElementById('patientActive');
+    activeEl.style.display = 'flex';
+
+    // Populate fields if server sends patient info, else use defaults
+    document.getElementById('piName').textContent  = data.name    || 'Unknown Patient';
+    document.getElementById('piID').textContent    = data.pid     || 'PID · —';
+    document.getElementById('piAge').textContent   = data.age     || '—';
+    document.getElementById('piGender').textContent= data.gender  || '—';
+    document.getElementById('piEmail').textContent = data.email   || '—';
+    document.getElementById('piBed').textContent   = data.bed     || '—';
+    const d = new Date();
+    document.getElementById('piDate').textContent  =
+      d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+  }
+}
+
+function pushReading(hr, spo2, patientData) {
+  showPatientActive(patientData || {});
+
   document.getElementById('hrVal').textContent   = hr;
   document.getElementById('spo2Val').textContent = spo2.toFixed(1);
   document.getElementById('hrConnect').style.display   = 'none';
@@ -1047,9 +1060,7 @@ function pushReading(hr, spo2) {
   updateRisk(hr, spo2);
 }
 
-/* ════════════════════════════════
-   SERVER CONNECTION
-════════════════════════════════ */
+/* SERVER CONNECTION */
 let fetchInterval = null;
 
 function startFetching(ip) {
@@ -1058,7 +1069,11 @@ function startFetching(ip) {
   function doFetch() {
     fetch(`http://${ip}/vitals`)
       .then(r => r.json())
-      .then(d => { if (d.hr !== undefined && d.spo2 !== undefined) pushReading(d.hr, d.spo2); })
+      .then(d => {
+        if (d.hr !== undefined && d.spo2 !== undefined) {
+          pushReading(d.hr, d.spo2, d.patient || {});
+        }
+      })
       .catch(() => {});
   }
   doFetch();
@@ -1087,9 +1102,7 @@ function connectServer() {
     });
 }
 
-/* ════════════════════════════════
-   AUDIO — separate ON / OFF
-════════════════════════════════ */
+/* AUDIO */
 let spkOn = false, micOn = false, micStream = null;
 
 function setAudio(type, state) {
@@ -1116,9 +1129,7 @@ function setAudio(type, state) {
   if (ip) fetch(`http://${ip}/${type === 'spk' ? 'speaker' : 'mic'}?state=${state ? 1 : 0}`).catch(() => {});
 }
 
-/* ════════════════════════════════
-   JOYSTICK
-════════════════════════════════ */
+/* JOYSTICK */
 let joystickActive = false, currentDir = 'S';
 
 function getJoystickDir(rx, ry, radius) {
@@ -1202,9 +1213,7 @@ document.addEventListener('keyup', e => {
   if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) { move('S'); highlightJoystick('S'); }
 });
 
-/* ════════════════════════════════
-   CAMERA
-════════════════════════════════ */
+/* CAMERA */
 function connectCam() {
   const ip = document.getElementById('camIP').value.trim(); if (!ip) return;
   const img = document.getElementById('camStream');
@@ -1217,9 +1226,7 @@ function disconnectCam() {
   document.getElementById('camNoStream').style.display = 'flex';
 }
 
-/* ════════════════════════════════
-   BUZZER
-════════════════════════════════ */
+/* BUZZER */
 function soundBuzzer() {
   const ip  = document.getElementById('serverIP').value.trim();
   const btn = document.getElementById('buzzerBtn');
@@ -1229,15 +1236,8 @@ function soundBuzzer() {
   if (ip) fetch(`http://${ip}/buzzer`).catch(() => {});
 }
 
-/* ════════════════════════════════
-   INIT (called after successful login)
-════════════════════════════════ */
+/* INIT */
 function initDashboard() {
-  // Set today's date dynamically
-  const d = new Date();
-  document.getElementById('piDate').textContent =
-    d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
-  // Init charts & gauge at zero
   hrChartObj   = makeLineChart('hrChart',   '#ff4060');
   spo2ChartObj = makeLineChart('spo2Chart', '#00e5a0');
   setGauge(0);
