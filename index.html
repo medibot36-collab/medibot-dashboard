@@ -7,6 +7,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700;900&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+  <!-- ✅ FIREBASE SDK — Added for Firebase Realtime Database -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
   <style>
     :root {
       --bg:      #080a10;
@@ -209,7 +214,6 @@
     .patient-info-card { grid-column: 1; grid-row: 1; min-height: 280px; display: flex; flex-direction: column; }
     .patient-info-card::before { background: linear-gradient(90deg, transparent, var(--accent), transparent); }
 
-    /* Patient awaiting state */
     .patient-awaiting {
       flex: 1;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -261,7 +265,6 @@
     .patient-status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
     .patient-status-txt { font-family: var(--head); font-size: 0.88rem; font-weight: 600; letter-spacing: 1.5px; color: var(--muted); }
 
-    /* Active patient info (shown after data loads) */
     .patient-avatar {
       width: 64px; height: 64px; border-radius: 50%;
       background: linear-gradient(135deg, #1a2040, #0e1530);
@@ -589,11 +592,10 @@
 <div id="tab-home" class="tab-panel active">
   <div class="dashboard">
 
-    <!-- PATIENT INFO (col 1, row 1) — awaiting state by default -->
+    <!-- PATIENT INFO -->
     <div class="card patient-info-card">
       <div class="card-label"><i class="fas fa-id-card lbl-pat"></i> Current Patient</div>
 
-      <!-- AWAITING STATE (shown when no data) -->
       <div id="patientAwaiting" class="patient-awaiting">
         <div class="patient-await-icon"><i class="fas fa-user"></i></div>
         <div class="patient-await-text">⬤ Awaiting patient data...</div>
@@ -604,10 +606,9 @@
           <div class="pf-row-await"><i class="fas fa-calendar-alt"></i><span class="pf-label">Date</span><div class="pf-skeleton"></div></div>
           <div class="pf-row-await"><i class="fas fa-bed"></i><span class="pf-label">Bed</span><div class="pf-skeleton"></div></div>
         </div>
-        <div class="patient-await-subtext">Connect to server to<br/>load patient profile</div>
+        <div class="patient-await-subtext">Connect to Firebase to<br/>load patient profile</div>
       </div>
 
-      <!-- ACTIVE STATE (hidden until data arrives) -->
       <div id="patientActive" style="display:none; flex:1; flex-direction:column;">
         <div class="patient-avatar"><i class="fas fa-user"></i></div>
         <div class="patient-name-row" id="piName">—</div>
@@ -625,7 +626,6 @@
         </div>
       </div>
 
-      <!-- Offline status footer (awaiting state) -->
       <div id="patientOfflineStatus" class="patient-status-row" style="margin-top:14px;">
         <div class="patient-status-dot"></div>
         <span class="patient-status-txt">NOT CONNECTED</span>
@@ -686,7 +686,7 @@
       </div>
     </div>
 
-    <!-- BOTTOM ROW: Camera (left) | Robot Control (right) — SWAPPED -->
+    <!-- BOTTOM ROW -->
     <div class="bottom-row">
 
       <!-- CAMERA FEED (LEFT) -->
@@ -768,7 +768,6 @@
       </div>
 
     </div><!-- end .bottom-row -->
-
   </div><!-- end .dashboard -->
 </div>
 
@@ -815,12 +814,12 @@
     <h2>HELP &amp; DOCUMENTATION</h2>
     <div class="help-grid">
       <div class="help-card">
-        <h3>🔌 Connecting to ESP32</h3>
+        <h3>🔌 Connecting to Firebase</h3>
         <ul>
-          <li>Upload firmware to your ESP32 via Arduino IDE.</li>
-          <li>Connect ESP32 to your local Wi-Fi network.</li>
-          <li>Find the IP address from the Serial Monitor.</li>
-          <li>Enter the IP in the top bar and click <b>Connect</b>.</li>
+          <li>Open <b>medbot_firebase.js</b> and fill in your Firebase config values.</li>
+          <li>Go to Firebase Console → Project Settings → Your Apps.</li>
+          <li>Copy all 7 values into the <b>firebaseConfig</b> object.</li>
+          <li>The dashboard auto-connects on login — no IP needed.</li>
         </ul>
       </div>
       <div class="help-card">
@@ -836,7 +835,7 @@
         <h3>❤️ Sensor Readings</h3>
         <ul>
           <li>MAX30102 sensor provides Heart Rate and SpO₂.</li>
-          <li>Baseline is calculated over the first 10 readings.</li>
+          <li>ESP32 writes data to <b>medbot/vitals/P001/</b> in Firebase.</li>
           <li>Z-score &gt; 2 triggers <b>Warning</b>, &gt; 3 triggers <b>Danger</b>.</li>
           <li>Click <b>Sound Alert Buzzer</b> to activate robot buzzer.</li>
         </ul>
@@ -845,7 +844,7 @@
         <h3>🤖 Robot Control</h3>
         <ul>
           <li>Drag the joystick or use arrow keys to move.</li>
-          <li>Adjust the speed slider before sending commands.</li>
+          <li>Commands are written to Firebase in real-time.</li>
           <li>Always press <b>STOP</b> before releasing the joystick.</li>
           <li>Select a patient from the dropdown to navigate to their bed.</li>
         </ul>
@@ -881,367 +880,8 @@
   </div>
 </div>
 
-<script>
-/* LOGIN */
-function doLogin() {
-  const id  = document.getElementById('doctorID').value.trim();
-  const pw  = document.getElementById('doctorPass').value;
-  const err = document.getElementById('loginError');
-  if (!id || !pw) { err.textContent = 'Please enter both Doctor ID and password.'; return; }
-  if (id === 'DOC001' && pw === 'medbot2024') {
-    document.getElementById('loginOverlay').style.display = 'none';
-    initDashboard();
-  } else {
-    err.textContent = '⚠ Invalid Doctor ID or password.';
-    document.getElementById('doctorPass').value = '';
-  }
-}
-function doLogout() {
-  if (!confirm('Log out of MedBot Dashboard?')) return;
-  document.getElementById('doctorID').value   = '';
-  document.getElementById('doctorPass').value = '';
-  document.getElementById('loginError').textContent = '';
-  document.getElementById('loginOverlay').style.display = 'flex';
-}
+<!-- ✅ EXTERNAL FIREBASE SCRIPT — Replaces the old inline script block -->
+<script src="medbot_firebase.js"></script>
 
-/* TABS */
-function switchTab(name, btn) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  btn.classList.add('active');
-}
-
-/* CHARTS */
-let hrChartObj, spo2ChartObj;
-function makeLineChart(canvasId, color) {
-  const ctx  = document.getElementById(canvasId).getContext('2d');
-  const grad = ctx.createLinearGradient(0, 0, 0, 80);
-  grad.addColorStop(0, color + '55');
-  grad.addColorStop(1, color + '00');
-  return new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: Array(30).fill(''),
-      datasets: [{ data: Array(30).fill(null), borderColor: color, borderWidth: 2, backgroundColor: grad, fill: true, tension: 0.4, pointRadius: 0, pointHoverRadius: 0 }]
-    },
-    options: {
-      animation: { duration: 200 },
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { enabled: false } },
-      scales: { x: { display: false }, y: { display: false, grace: '5%' } }
-    }
-  });
-}
-function pushChart(chartObj, val) {
-  const ds = chartObj.data.datasets[0];
-  ds.data.push(val);
-  if (ds.data.length > 30) ds.data.shift();
-  chartObj.update('none');
-}
-
-/* GAUGE */
-function setGauge(score) {
-  const pct      = Math.min(Math.max(score, 0), 100) / 100;
-  const sweepDeg = pct * 180;
-  const endAngle = (180 - sweepDeg) * Math.PI / 180;
-  const ex = 110 + 90 * Math.cos(endAngle);
-  const ey = 110 - 90 * Math.sin(endAngle);
-  const large = sweepDeg > 180 ? 1 : 0;
-  const color = score < 34 ? '#00e5a0' : score < 67 ? '#ffb700' : '#ff4060';
-  const arc = document.getElementById('gaugeArc');
-  arc.setAttribute('d', `M 20 110 A 90 90 0 ${large} 1 ${ex.toFixed(2)} ${ey.toFixed(2)}`);
-  arc.setAttribute('stroke', color);
-  const nX = 110 + 78 * Math.cos(endAngle);
-  const nY = 110 - 78 * Math.sin(endAngle);
-  document.getElementById('gaugeNeedle').setAttribute('x2', nX.toFixed(2));
-  document.getElementById('gaugeNeedle').setAttribute('y2', nY.toFixed(2));
-  document.getElementById('gaugeLabelVal').childNodes[0].textContent = score === 0 ? '—' : Math.round(score);
-}
-
-/* VITALS & RISK */
-let hrHistory = [], spo2History = [];
-let hrBaseline = null, spo2Baseline = null;
-let patientDataReceived = false;
-
-function mean(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
-function std(arr)  { const m = mean(arr); return Math.sqrt(arr.reduce((a, b) => a + (b - m) ** 2, 0) / arr.length); }
-
-function updateRisk(hr, spo2) {
-  const hrZN  = hrHistory.length   > 5 ? (hr   - mean(hrHistory))   / (std(hrHistory)   || 1) : 0;
-  const s2ZN  = spo2History.length > 5 ? (spo2 - mean(spo2History)) / (std(spo2History) || 1) : 0;
-  document.getElementById('hrZ').textContent   = hrHistory.length   > 5 ? hrZN.toFixed(2) : '—';
-  document.getElementById('spo2Z').textContent = spo2History.length > 5 ? s2ZN.toFixed(2) : '—';
-
-  const hrThr   = parseInt(document.getElementById('hrThresh')?.value   || 110);
-  const spo2Thr = parseInt(document.getElementById('spo2Thresh')?.value || 94);
-  const badge   = document.getElementById('riskBadge');
-  const lbl     = document.getElementById('riskLabel');
-  const anomEl  = document.getElementById('anomaly');
-  const aiCard  = document.getElementById('aiCard');
-  const confLbl = document.getElementById('confLabel');
-  const hrDev   = Math.abs(hrZN), spo2Dev = Math.abs(s2ZN);
-  let score = 0;
-
-  if (hr > hrThr || spo2 < spo2Thr || hrDev > 3 || spo2Dev > 3) {
-    badge.className = 'risk-badge danger'; lbl.textContent = 'DANGER';
-    anomEl.textContent = 'Yes'; anomEl.style.color = 'var(--danger)';
-    aiCard.classList.add('danger-pulse'); confLbl.textContent = 'Confidence — HIGH';
-    score = 75 + Math.min(hrDev, 3) * 8;
-    if (document.getElementById('autoBuzzer')?.checked) soundBuzzer();
-  } else if (hr > hrThr - 10 || spo2 < spo2Thr + 2 || hrDev > 2 || spo2Dev > 2) {
-    badge.className = 'risk-badge warning'; lbl.textContent = 'WARNING';
-    anomEl.textContent = 'Maybe'; anomEl.style.color = 'var(--warn)';
-    aiCard.classList.remove('danger-pulse'); confLbl.textContent = 'Confidence — MEDIUM';
-    score = 40 + Math.min(hrDev, 2) * 10;
-  } else {
-    badge.className = 'risk-badge normal'; lbl.textContent = 'NORMAL';
-    anomEl.textContent = 'No'; anomEl.style.color = 'var(--text2)';
-    aiCard.classList.remove('danger-pulse'); confLbl.textContent = 'Confidence — LOW RISK';
-    score = Math.max(5, hrDev * 8 + spo2Dev * 6);
-  }
-  setGauge(Math.min(score, 100));
-
-  const status = lbl.textContent;
-  const p1s = document.getElementById('p1status');
-  if (p1s) {
-    p1s.textContent = status;
-    p1s.style.color = status === 'NORMAL' ? 'var(--accent)' : status === 'WARNING' ? 'var(--warn)' : 'var(--danger)';
-  }
-}
-
-/* Show active patient card when first data arrives */
-function showPatientActive(data) {
-  if (!patientDataReceived) {
-    patientDataReceived = true;
-    document.getElementById('patientAwaiting').style.display = 'none';
-    document.getElementById('patientOfflineStatus').style.display = 'none';
-    const activeEl = document.getElementById('patientActive');
-    activeEl.style.display = 'flex';
-
-    // Populate fields if server sends patient info, else use defaults
-    document.getElementById('piName').textContent  = data.name    || 'Unknown Patient';
-    document.getElementById('piID').textContent    = data.pid     || 'PID · —';
-    document.getElementById('piAge').textContent   = data.age     || '—';
-    document.getElementById('piGender').textContent= data.gender  || '—';
-    document.getElementById('piEmail').textContent = data.email   || '—';
-    document.getElementById('piBed').textContent   = data.bed     || '—';
-    const d = new Date();
-    document.getElementById('piDate').textContent  =
-      d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
-  }
-}
-
-function pushReading(hr, spo2, patientData) {
-  showPatientActive(patientData || {});
-
-  document.getElementById('hrVal').textContent   = hr;
-  document.getElementById('spo2Val').textContent = spo2.toFixed(1);
-  document.getElementById('hrConnect').style.display   = 'none';
-  document.getElementById('spo2Connect').style.display = 'none';
-
-  const p1hr   = document.getElementById('p1hr');
-  const p1spo2 = document.getElementById('p1spo2');
-  if (p1hr)   p1hr.textContent   = hr;
-  if (p1spo2) p1spo2.textContent = spo2.toFixed(1);
-
-  pushChart(hrChartObj,   hr);
-  pushChart(spo2ChartObj, spo2);
-  hrHistory.push(hr);   spo2History.push(spo2);
-  if (hrHistory.length   > 30) hrHistory.shift();
-  if (spo2History.length > 30) spo2History.shift();
-
-  if (hrHistory.length >= 10 && !hrBaseline) {
-    hrBaseline   = mean(hrHistory).toFixed(0);
-    spo2Baseline = mean(spo2History).toFixed(1);
-    document.getElementById('hrBase').textContent   = `Baseline: ${hrBaseline} bpm`;
-    document.getElementById('spo2Base').textContent = `Baseline: ${spo2Baseline}%`;
-  }
-  updateRisk(hr, spo2);
-}
-
-/* SERVER CONNECTION */
-let fetchInterval = null;
-
-function startFetching(ip) {
-  if (fetchInterval) clearInterval(fetchInterval);
-  const rate = parseInt(document.getElementById('refreshRate')?.value || 2) * 1000;
-  function doFetch() {
-    fetch(`http://${ip}/vitals`)
-      .then(r => r.json())
-      .then(d => {
-        if (d.hr !== undefined && d.spo2 !== undefined) {
-          pushReading(d.hr, d.spo2, d.patient || {});
-        }
-      })
-      .catch(() => {});
-  }
-  doFetch();
-  fetchInterval = setInterval(doFetch, rate);
-}
-
-function connectServer() {
-  const ip  = document.getElementById('serverIP').value.trim();
-  if (!ip) return;
-  const dot = document.getElementById('simDot');
-  document.getElementById('simLabel').textContent = 'Connecting...';
-  dot.style.background = 'var(--warn)';
-  dot.style.boxShadow  = '0 0 8px var(--warn)';
-  fetch(`http://${ip}/vitals`)
-    .then(r => r.json())
-    .then(d => {
-      document.getElementById('simLabel').textContent = 'Connected';
-      dot.style.background = 'var(--accent)';
-      dot.style.boxShadow  = '0 0 8px var(--accent)';
-      startFetching(ip);
-    })
-    .catch(() => {
-      document.getElementById('simLabel').textContent = 'Failed';
-      dot.style.background = 'var(--danger)';
-      dot.style.boxShadow  = '0 0 8px var(--danger)';
-    });
-}
-
-/* AUDIO */
-let spkOn = false, micOn = false, micStream = null;
-
-function setAudio(type, state) {
-  if (type === 'spk') {
-    spkOn = state;
-    document.getElementById('spkState').textContent = state ? 'ON' : 'OFF';
-    document.getElementById('spkState').className   = 'audio-state-badge' + (state ? ' on-spk' : '');
-    document.getElementById('spkIcon').className    = state ? 'fas fa-volume-up' : 'fas fa-volume-mute';
-    document.getElementById('spkOnBtn').className   = 'btn-audio-on' + (state ? ' active-spk' : '');
-  } else {
-    micOn = state;
-    document.getElementById('micState').textContent = state ? 'ON' : 'OFF';
-    document.getElementById('micState').className   = 'audio-state-badge' + (state ? ' on-mic' : '');
-    document.getElementById('micIcon').className    = state ? 'fas fa-microphone' : 'fas fa-microphone-slash';
-    document.getElementById('micOnBtn').className   = 'btn-audio-on' + (state ? ' active-mic' : '');
-    if (state) {
-      navigator.mediaDevices?.getUserMedia({ audio: true })
-        .then(s => { micStream = s; }).catch(() => {});
-    } else {
-      if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
-    }
-  }
-  const ip = document.getElementById('serverIP').value.trim();
-  if (ip) fetch(`http://${ip}/${type === 'spk' ? 'speaker' : 'mic'}?state=${state ? 1 : 0}`).catch(() => {});
-}
-
-/* JOYSTICK */
-let joystickActive = false, currentDir = 'S';
-
-function getJoystickDir(rx, ry, radius) {
-  if (Math.sqrt(rx*rx + ry*ry) < radius*0.25) return 'S';
-  const a = Math.atan2(-ry, rx) * 180 / Math.PI;
-  if (a >= -45 && a < 45)  return 'R';
-  if (a >= 45  && a < 135) return 'F';
-  if (a >= 135 || a < -135) return 'L';
-  return 'B';
-}
-function highlightJoystick(dir) {
-  ['jTop','jBot','jLft','jRgt'].forEach(id => document.getElementById(id).classList.remove('active'));
-  const map = { F:'jTop', B:'jBot', L:'jLft', R:'jRgt' };
-  if (map[dir]) document.getElementById(map[dir]).classList.add('active');
-  document.getElementById('joystickKnob').classList.toggle('active', dir !== 'S');
-}
-function updateKnobPos(rx, ry, radius) {
-  const dist = Math.sqrt(rx*rx + ry*ry);
-  const cap  = Math.min(dist, radius*0.38) / (dist || 1);
-  document.getElementById('joystickKnob').style.transform =
-    `translate(calc(-50% + ${rx*cap}px), calc(-50% + ${ry*cap}px))`;
-}
-function resetKnob() {
-  document.getElementById('joystickKnob').style.transform = 'translate(-50%,-50%)';
-  highlightJoystick('S');
-}
-function joystickStart(e) {
-  joystickActive = true;
-  const outer = document.getElementById('joystickOuter');
-  const rect  = outer.getBoundingClientRect();
-  const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
-  function onMove(me) {
-    if (!joystickActive) return;
-    const px = me.clientX !== undefined ? me.clientX : me.touches[0].clientX;
-    const py = me.clientY !== undefined ? me.clientY : me.touches[0].clientY;
-    const rx = px - cx, ry = py - cy;
-    updateKnobPos(rx, ry, rect.width/2);
-    const dir = getJoystickDir(rx, ry, rect.width/2);
-    if (dir !== currentDir) { currentDir = dir; move(dir); highlightJoystick(dir); }
-  }
-  function onEnd() {
-    joystickActive = false; currentDir = 'S'; move('S'); resetKnob();
-    document.removeEventListener('mousemove', onMove);
-    document.removeEventListener('mouseup', onEnd);
-  }
-  document.addEventListener('mousemove', onMove);
-  document.addEventListener('mouseup', onEnd);
-  onMove(e);
-}
-function joystickTouchStart(e) {
-  e.preventDefault(); joystickStart(e.touches[0]);
-  const outer = document.getElementById('joystickOuter');
-  const rect  = outer.getBoundingClientRect();
-  const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
-  function onMove(me) {
-    if (!joystickActive) return;
-    const rx = me.touches[0].clientX - cx, ry = me.touches[0].clientY - cy;
-    updateKnobPos(rx, ry, rect.width/2);
-    const dir = getJoystickDir(rx, ry, rect.width/2);
-    if (dir !== currentDir) { currentDir = dir; move(dir); highlightJoystick(dir); }
-  }
-  function onEnd() {
-    joystickActive = false; currentDir = 'S'; move('S'); resetKnob();
-    document.removeEventListener('touchmove', onMove);
-    document.removeEventListener('touchend', onEnd);
-  }
-  document.addEventListener('touchmove', onMove, { passive: false });
-  document.addEventListener('touchend', onEnd);
-}
-function stopRobot() { move('S'); resetKnob(); joystickActive = false; currentDir = 'S'; }
-function move(dir) {
-  const speed = document.getElementById('speedSlider').value;
-  const ip    = document.getElementById('serverIP').value.trim();
-  if (ip) fetch(`http://${ip}/move?dir=${dir}&speed=${speed}`).catch(() => {});
-}
-document.addEventListener('keydown', e => {
-  const map = { ArrowUp:'F', ArrowDown:'B', ArrowLeft:'L', ArrowRight:'R' };
-  if (map[e.key]) { e.preventDefault(); move(map[e.key]); highlightJoystick(map[e.key]); }
-});
-document.addEventListener('keyup', e => {
-  if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) { move('S'); highlightJoystick('S'); }
-});
-
-/* CAMERA */
-function connectCam() {
-  const ip = document.getElementById('camIP').value.trim(); if (!ip) return;
-  const img = document.getElementById('camStream');
-  img.src = `http://${ip}:81/stream`; img.style.display = 'block';
-  document.getElementById('camNoStream').style.display = 'none';
-}
-function disconnectCam() {
-  document.getElementById('camStream').src = '';
-  document.getElementById('camStream').style.display = 'none';
-  document.getElementById('camNoStream').style.display = 'flex';
-}
-
-/* BUZZER */
-function soundBuzzer() {
-  const ip  = document.getElementById('serverIP').value.trim();
-  const btn = document.getElementById('buzzerBtn');
-  btn.style.background = 'rgba(255,183,0,0.3)';
-  btn.style.boxShadow  = '0 0 24px rgba(255,183,0,0.5)';
-  setTimeout(() => { btn.style.background = ''; btn.style.boxShadow = ''; }, 1000);
-  if (ip) fetch(`http://${ip}/buzzer`).catch(() => {});
-}
-
-/* INIT */
-function initDashboard() {
-  hrChartObj   = makeLineChart('hrChart',   '#ff4060');
-  spo2ChartObj = makeLineChart('spo2Chart', '#00e5a0');
-  setGauge(0);
-}
-</script>
 </body>
 </html>
