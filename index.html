@@ -886,7 +886,7 @@ function doLogin() {
   const pw  = document.getElementById('doctorPass').value;
   const err = document.getElementById('loginError');
   if (!id || !pw) { err.textContent = 'Please enter both Doctor ID and password.'; return; }
-  if (id === 'DOCTOR1' && pw === 'admin123') {
+  if (id === 'DOC01' && pw === 'admin123') {
     document.getElementById('loginOverlay').style.display = 'none';
     if (typeof initDashboard === 'function') initDashboard();
   } else {
