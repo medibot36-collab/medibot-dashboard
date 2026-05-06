@@ -931,7 +931,16 @@ function initAdminProfile() {
   if (nameEl)  nameEl.textContent  = 'Dr. Administrator';
   if (emailEl) emailEl.textContent = `${loggedInDoctorId} · admin@medbot.in`;
 }
-
+// ── Clear active patient card back to skeleton state ──────────────
+function clearPatientDisplay() {
+  document.getElementById('patientAwaiting').style.display = 'flex';
+  document.getElementById('patientActive').style.display   = 'none';
+  ['piName','piID','piAge','piGender','piEmail','piDate']
+    .forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = '—';
+    });
+}
 function toggleNotifications(checked) {
   notificationsEnabled = checked;
   if (checked) {
