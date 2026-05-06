@@ -473,15 +473,39 @@ function renderPatientsTable(snapshot) {
       <td class="td-pid">${pid.toUpperCase()}</td>
       <td class="td-name">${info.name || '—'}</td>
       <td class="td-action">
-        <button class="btn-view-report" onclick="openPatientReport('${pid}')">
-          <i class="fas fa-file-pdf"></i> View Report
-        </button>
-      </td>
+  <button class="btn-view-report" onclick="openPatientReport('${pid}')">
+    <i class="fas fa-file-pdf"></i> View Report
+  </button>
+  <button class="btn-delete-patient" onclick="deletePatient('${pid}')">
+    <i class="fas fa-trash-alt"></i> Delete
+  </button>
+</td>
     `;
     tbody.appendChild(tr);
     serial++;
   });
+// ── Delete a patient and all their data from Firebase ────────────
+async function deletePatient(patientId) {
+  if (!confirm(`Delete patient ${patientId.toUpperCase()} and all their data?\nThis cannot be undone.`)) return;
 
+  try {
+    // Remove all data nodes for this patient in parallel
+    await Promise.all([
+      db.ref(`patients/${patientId}`).remove(),
+      db.ref(`vitals/${patientId}`).remove(),
+      db.ref(`reports/${patientId}`).remove(),
+      db.ref(`patientLogs/${patientId}`).remove()
+    ]);
+
+    // If the deleted patient was the active one, clear the dashboard card
+    if (patientId === activePatientId) {
+      clearPatientDisplay();
+    }
+
+  } catch (err) {
+    alert(`Failed to delete patient: ${err.message}`);
+  }
+}
   if (countEl) countEl.textContent = `${serial - 1} patient${serial - 1 !== 1 ? 's' : ''}`;
 }
 
