@@ -514,7 +514,7 @@
       font-family: var(--mono); font-size: 0.72rem; color: var(--muted);
       letter-spacing: 2px; text-transform: uppercase;
       padding: 14px 20px; text-align: left; font-weight: 400;
-    }
+    }  
     .patients-table th:first-child { width: 60px; }
     .patients-table th:nth-child(2) { width: 120px; }
     .patients-table td { padding: 15px 20px; border-bottom: 1px solid rgba(30,36,56,0.6); vertical-align: middle; }
@@ -537,6 +537,14 @@
     }
     .btn-view-report:hover { background: rgba(10,191,255,0.16); box-shadow: 0 0 12px rgba(10,191,255,0.2); }
     .btn-view-report i { color: var(--danger); margin-right: 5px; }
+    .btn-delete-patient {
+  background: rgba(255,64,96,0.07); border: 1px solid rgba(255,64,96,0.28);
+  color: var(--danger); border-radius: 8px;
+  font-family: var(--head); font-weight: 700; font-size: 0.82rem;
+  letter-spacing: 1px; padding: 8px 14px; cursor: pointer; margin-left: 8px;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.btn-delete-patient:hover { background: rgba(255,64,96,0.18); box-shadow: 0 0 12px rgba(255,64,96,0.25); }
     .table-empty {
       text-align: center; padding: 40px; font-family: var(--mono);
       font-size: 0.82rem; color: var(--muted); letter-spacing: 2px;
