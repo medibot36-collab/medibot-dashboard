@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MedBot Dashboard — Project PRAKALP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700;900&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+  <style>
+    :root {
+      --bg:var(--_bg);--surface:var(--_surface);--card:var(--_card);--card2:var(--_card2);
+      --border:var(--_border);--text:var(--_text);--text2:var(--_text2);--muted:var(--_muted);
+      --accent:#00e5a0;--accent2:#0abfff;--warn:#ffb700;--danger:#ff4060;
+      --mono:'Share Tech Mono',monospace;--head:'Rajdhani',sans-serif;--body:'Exo 2',sans-serif;
+    }
+    [data-theme="dark"]{--_bg:#080a10;--_surface:#0e1119;--_card:#111520;--_card2:#131826;--_border:#1e2438;--_text:#ffffff;--_text2:#e8eeff;--_muted:#8090b8;}
+    [data-theme="light"]{--_bg:#f0f4f8;--_surface:#e4eaf4;--_card:#ffffff;--_card2:#f5f8fc;--_border:#ccd5e8;--_text:#0d1117;--_text2:#1a2440;--_muted:#5868a0;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{transition:background .3s;}
+    body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:17px;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s;}
+    [data-theme="light"] body{background-image:radial-gradient(ellipse 80% 60% at 10% 0%,rgba(10,191,255,.05) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 90% 100%,rgba(0,229,160,.05) 0%,transparent 60%);}
+    [data-theme="light"] .login-overlay{background:rgba(220,228,245,.98);}
+    [data-theme="light"] .login-box{box-shadow:0 0 70px rgba(10,191,255,.08);}
+    [data-theme="light"] .login-field input{background:rgba(210,220,240,.85);color:var(--text);}
+    [data-theme="light"] .login-field input::placeholder{color:#8090b8;}
+    [data-theme="light"] .pf-row{background:rgba(200,215,235,.55);}
+    [data-theme="light"] .pf-row-await{background:rgba(200,215,235,.4);}
+    [data-theme="light"] .stat-box{background:rgba(200,215,235,.6);}
+    [data-theme="light"] .audio-device-row{background:rgba(200,215,235,.55);}
+    [data-theme="light"] .path-indicator{background:rgba(200,215,235,.55);}
+    [data-theme="light"] .cam-wrap{background:#d8e4f0;}
+    [data-theme="light"] .cam-ip{background:rgba(200,215,235,.8);color:var(--text);}
+    [data-theme="light"] .modal-field input,[data-theme="light"] .modal-field select{background:rgba(210,220,240,.85);color:var(--text);}
+    [data-theme="light"] .modal-field input::placeholder{color:#8090b8;}
+    [data-theme="light"] .joystick-outer{background:radial-gradient(circle at 35% 35%,#d8e4f4,#c4d4e8);}
+    [data-theme="light"] .joystick-knob{background:radial-gradient(circle at 35% 35%,#b8ccee,#8aabda);border-color:rgba(10,191,255,.5);}
+    [data-theme="light"] .active-patient-row{background:rgba(10,191,255,.07);}
+    [data-theme="light"] .patient-status-row{background:rgba(200,215,235,.5);}
+    [data-theme="light"] .help-card{box-shadow:0 2px 12px rgba(0,0,0,.07);}
+    [data-theme="light"] .patients-table thead tr{background:rgba(10,191,255,.06);}
+    [data-theme="light"] .patient-row:hover{background:rgba(10,191,255,.06);}
+    [data-theme="light"] .health-summary.normal{background:rgba(0,229,160,.06);}
+    [data-theme="light"] .health-summary.warning{background:rgba(255,183,0,.07);}
+    [data-theme="light"] .health-summary.danger{background:rgba(255,64,96,.06);}
+    [data-theme="light"] .risk-meter-track{background:linear-gradient(90deg,rgba(0,229,160,.15) 0%,rgba(0,229,160,.15) 33%,rgba(255,183,0,.15) 33%,rgba(255,183,0,.15) 66%,rgba(255,64,96,.15) 66%,rgba(255,64,96,.15) 100%);}
+    [data-theme="light"] .topbar,[data-theme="light"] .nav-tabs{box-shadow:0 1px 12px rgba(0,0,0,.07);}
+    [data-theme="light"] .settings-card{box-shadow:0 2px 12px rgba(0,0,0,.06);}
+    [data-theme="light"] .card{box-shadow:0 2px 18px rgba(0,0,0,.07);}
+    [data-theme="dark"] body{background-image:radial-gradient(ellipse 80% 60% at 10% 0%,rgba(10,191,255,.04) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 90% 100%,rgba(0,229,160,.04) 0%,transparent 60%);}
+
+    /* LOGIN */
+    .login-overlay{position:fixed;inset:0;z-index:9999;background:rgba(8,10,16,.98);backdrop-filter:blur(24px);display:flex;align-items:center;justify-content:center;}
+    .login-box{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid rgba(10,191,255,.28);border-radius:20px;padding:46px 54px;min-width:420px;text-align:center;box-shadow:0 0 70px rgba(10,191,255,.1);position:relative;overflow:hidden;}
+    .login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent2),var(--accent),transparent);}
+    .login-logo{font-family:var(--head);font-size:2.4rem;font-weight:900;letter-spacing:5px;margin-bottom:4px;}
+    .login-logo .med{color:var(--text);}.login-logo .bot{color:var(--accent);}
+    .login-sub{font-family:var(--mono);font-size:.68rem;color:var(--muted);letter-spacing:5px;margin-bottom:34px;text-transform:uppercase;}
+    .login-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin-bottom:28px;}
+    .login-field{margin-bottom:18px;text-align:left;}
+    .login-field label{display:block;font-family:var(--mono);font-size:.72rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+    .login-field input{width:100%;background:rgba(13,15,22,.85);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:var(--mono);font-size:.98rem;padding:13px 16px;outline:none;transition:border-color .2s,box-shadow .2s;}
+    .login-field input:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(10,191,255,.1);}
+    .login-field input::placeholder{color:#2a3450;}
+    .btn-login{width:100%;margin-top:10px;background:linear-gradient(135deg,var(--accent2),#007acc);border:none;border-radius:9px;color:#fff;font-family:var(--head);font-weight:700;font-size:1.05rem;letter-spacing:2.5px;padding:14px;cursor:pointer;box-shadow:0 0 24px rgba(10,191,255,.35);transition:opacity .2s,box-shadow .2s;}
+    .btn-login:hover{opacity:.9;box-shadow:0 0 38px rgba(10,191,255,.55);}
+    .login-error{margin-top:14px;color:var(--danger);font-family:var(--mono);font-size:.8rem;min-height:20px;}
+
+    /* TOPBAR */
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:66px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);transition:background .3s,border-color .3s;}
+    .brand{display:flex;align-items:center;gap:14px;}
+    .brand-pill{display:flex;align-items:center;gap:9px;background:linear-gradient(135deg,rgba(0,229,160,.07),rgba(10,191,255,.07));border:1.5px solid rgba(10,191,255,.45);border-radius:13px;padding:7px 20px;box-shadow:0 0 26px rgba(10,191,255,.12);font-family:var(--head);font-size:1.95rem;font-weight:900;letter-spacing:4px;position:relative;overflow:hidden;}
+    .brand-pill::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(10,191,255,.6),var(--accent),transparent);}
+    .brand-pill .brand-icon{color:var(--accent);font-size:1.25rem;margin-right:2px;}
+    .brand-pill .med{color:var(--text);}.brand-pill .bot{color:var(--accent);text-shadow:0 0 20px rgba(0,229,160,.4);}
+    .brand-meta .b-title{font-family:var(--head);font-size:.82rem;font-weight:700;color:var(--text2);letter-spacing:4px;text-transform:uppercase;}
+    .brand-meta .b-sub{font-family:var(--mono);font-size:.58rem;color:rgba(10,191,255,.5);letter-spacing:3px;text-transform:uppercase;}
+    .topbar-right{display:flex;align-items:center;gap:12px;}
+    .sim-badge{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--muted);font-family:var(--mono);}
+    .sim-dot{width:8px;height:8px;border-radius:50%;background:var(--warn);box-shadow:0 0 8px var(--warn);animation:pulse-dot 1.5s infinite;}
+    .btn-logout{background:transparent;border:1px solid rgba(255,64,96,.35);color:var(--danger);border-radius:7px;font-family:var(--head);font-weight:600;font-size:.84rem;letter-spacing:1px;padding:8px 15px;cursor:pointer;transition:background .2s,box-shadow .2s;}
+    .btn-logout:hover{background:rgba(255,64,96,.1);box-shadow:0 0 12px rgba(255,64,96,.2);}
+
+    /* NAV TABS */
+    .nav-tabs{display:flex;align-items:center;justify-content:center;gap:4px;padding:0 28px;background:var(--surface);border-bottom:1px solid var(--border);transition:background .3s,border-color .3s;}
+    .tab-btn{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-family:var(--head);font-size:.95rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:15px 24px;cursor:pointer;transition:color .2s,border-color .2s;}
+    .tab-btn:hover{color:var(--text2);}.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+    .tab-panel{display:none;}.tab-panel.active{display:block;}
+
+    /* CARD */
+    .card{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:14px;padding:22px 24px;position:relative;overflow:hidden;animation:fadeUp .45s ease both;transition:background .3s,border-color .3s,box-shadow .4s;}
+    .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent2),transparent);opacity:.5;}
+    .card-label{font-family:var(--head);font-size:.92rem;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:9px;}
+    .lbl-hr{color:var(--danger);}.lbl-spo2{color:var(--accent);}.lbl-ai{color:#b080ff;}.lbl-rob{color:var(--accent2);}.lbl-cam{color:var(--warn);}.lbl-pat{color:var(--accent2);}
+
+    /* RISK BORDERS */
+    .risk-border-safe{box-shadow:0 0 0 1.5px rgba(0,229,160,.5),0 0 18px rgba(0,229,160,.12)!important;border-color:rgba(0,229,160,.4)!important;}
+    .risk-border-moderate{box-shadow:0 0 0 1.5px rgba(255,183,0,.5),0 0 18px rgba(255,183,0,.12)!important;border-color:rgba(255,183,0,.4)!important;}
+    .risk-border-critical{box-shadow:0 0 0 1.5px rgba(255,64,96,.55),0 0 20px rgba(255,64,96,.15)!important;border-color:rgba(255,64,96,.45)!important;}
+
+    /* DASHBOARD GRID */
+    .dashboard{padding:22px 28px;display:grid;grid-template-columns:280px 1fr 1fr;gap:18px;}
+
+    /* PATIENT CARD */
+    .patient-info-card{grid-column:1;grid-row:1;min-height:280px;display:flex;flex-direction:column;}
+    .patient-info-card::before{background:linear-gradient(90deg,transparent,var(--accent),transparent);}
+    .patient-awaiting{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:10px 0;}
+    .patient-await-icon{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#1a2040,#0e1530);border:2px dashed rgba(10,191,255,.25);display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:rgba(10,191,255,.25);}
+    .patient-await-text{font-family:var(--mono);font-size:.76rem;color:var(--accent2);letter-spacing:2px;text-transform:uppercase;animation:pulse-dot 2s infinite;text-align:center;}
+    .patient-fields-await{display:flex;flex-direction:column;gap:9px;width:100%;margin-top:4px;}
+    .pf-row-await{display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(10,12,20,.4);border:1px dashed rgba(30,36,56,.7);border-radius:8px;opacity:.55;}
+    .pf-row-await i{font-size:.8rem;width:14px;text-align:center;color:rgba(10,191,255,.3);flex-shrink:0;}
+    .pf-row-await .pf-label{font-family:var(--mono);font-size:.64rem;color:rgba(128,144,184,.6);letter-spacing:1.5px;text-transform:uppercase;min-width:42px;flex-shrink:0;}
+    .pf-row-await .pf-skeleton{height:10px;border-radius:4px;flex:1;background:linear-gradient(90deg,rgba(30,36,56,.8) 25%,rgba(40,50,72,.5) 50%,rgba(30,36,56,.8) 75%);background-size:200% 100%;animation:shimmer 2s infinite;}
+    .patient-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#1a2040,#0e1530);border:2px solid var(--accent2);box-shadow:0 0 16px rgba(10,191,255,.2);display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:var(--accent2);margin-bottom:14px;flex-shrink:0;}
+    .patient-name-row{font-family:var(--head);font-size:1.4rem;font-weight:700;color:var(--text);margin-bottom:3px;}
+    .patient-sub{font-family:var(--mono);font-size:.72rem;color:var(--accent2);letter-spacing:2px;margin-bottom:16px;}
+    .patient-fields{display:flex;flex-direction:column;gap:9px;flex:1;}
+    .pf-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(10,12,20,.55);border:1px solid var(--border);border-radius:8px;}
+    .pf-row i{font-size:.8rem;width:14px;text-align:center;color:var(--accent2);flex-shrink:0;}
+    .pf-row .pf-label{font-family:var(--mono);font-size:.64rem;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;min-width:42px;flex-shrink:0;}
+    .pf-row .pf-val{font-family:var(--head);font-size:.98rem;font-weight:600;color:var(--text);word-break:break-all;}
+    .patient-status-row{display:flex;align-items:center;gap:8px;margin-top:14px;padding:9px 12px;border:1px solid rgba(30,36,56,.7);border-radius:8px;background:rgba(10,12,20,.4);}
+    .patient-status-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);}
+    .patient-status-txt{font-family:var(--head);font-size:.88rem;font-weight:600;letter-spacing:1.5px;color:var(--muted);}
+    .patient-status-row-active{display:flex;align-items:center;gap:8px;margin-top:10px;padding:9px 12px;background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2);border-radius:8px;}
+    .patient-status-dot-active{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent);animation:pulse-dot 1.8s infinite;}
+    .patient-status-txt-active{font-family:var(--head);font-size:.88rem;font-weight:600;letter-spacing:1.5px;color:var(--accent);}
+    .patient-btn-row{display:flex;gap:8px;margin-top:14px;}
+    .btn-add-patient{flex:1;padding:10px;background:linear-gradient(135deg,rgba(10,191,255,.08),rgba(0,229,160,.08));border:1px solid rgba(10,191,255,.35);border-radius:9px;color:var(--accent2);font-family:var(--head);font-weight:700;font-size:.82rem;letter-spacing:1px;cursor:pointer;transition:background .2s,box-shadow .2s;}
+    .btn-add-patient:hover{background:rgba(10,191,255,.16);box-shadow:0 0 14px rgba(10,191,255,.25);}
+    .btn-add-patient:active{transform:scale(.97);}
+    .btn-clear-patient{flex:0 0 auto;padding:10px 14px;background:linear-gradient(135deg,rgba(255,64,96,.08),rgba(180,0,30,.08));border:1px solid rgba(255,64,96,.35);border-radius:9px;color:var(--danger);font-family:var(--head);font-weight:700;font-size:.82rem;letter-spacing:1px;cursor:pointer;transition:background .2s,box-shadow .2s;}
+    .btn-clear-patient:hover{background:rgba(255,64,96,.16);box-shadow:0 0 14px rgba(255,64,96,.25);}
+    .btn-clear-patient:active{transform:scale(.97);}
+
+    /* VITAL CARDS */
+    .vital-card{min-height:280px;}.hr-card{grid-column:2;grid-row:1;}.spo2-card{grid-column:3;grid-row:1;}
+    .card-value{font-family:var(--head);font-size:5rem;font-weight:700;color:var(--text);line-height:1;transition:color .3s;}
+    .card-value.hr-val{text-shadow:0 0 30px rgba(255,64,96,.4);}.card-value.spo2-val{text-shadow:0 0 30px rgba(0,229,160,.4);}
+    .card-unit{font-size:.88rem;color:var(--muted);font-family:var(--mono);margin-top:5px;letter-spacing:1px;}
+    .card-baseline{font-size:.8rem;color:var(--text2);font-family:var(--mono);margin-top:6px;min-height:18px;}
+    .connecting-msg{font-family:var(--mono);font-size:.78rem;color:var(--accent2);letter-spacing:2px;margin-top:8px;animation:pulse-dot 2s infinite;}
+    .chart-wrap{margin-top:16px;height:80px;position:relative;}
+    .vital-timestamp{font-family:var(--mono);font-size:.66rem;letter-spacing:1.5px;margin-top:8px;display:flex;align-items:center;gap:6px;}
+    .vital-timestamp.fresh{color:var(--accent);}.vital-timestamp.stale{color:var(--warn);}.vital-timestamp.dead{color:var(--danger);}
+    .ts-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;}
+
+    /* AI CARD */
+    .ai-card{grid-column:1/-1;}
+    .ai-inner{display:flex;align-items:flex-start;gap:36px;flex-wrap:wrap;}
+    .risk-meter-section{flex-shrink:0;width:260px;padding-top:6px;}
+    .risk-score-row{display:flex;align-items:baseline;gap:8px;margin-bottom:12px;}
+    .risk-score-num{font-family:var(--head);font-size:3rem;font-weight:700;color:var(--text);line-height:1;}
+    .risk-score-lbl{font-family:var(--mono);font-size:.64rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+    .risk-meter-track{width:100%;height:18px;border-radius:9px;position:relative;background:linear-gradient(90deg,rgba(0,229,160,.12) 0%,rgba(0,229,160,.12) 33%,rgba(255,183,0,.12) 33%,rgba(255,183,0,.12) 66%,rgba(255,64,96,.12) 66%,rgba(255,64,96,.12) 100%);border:1px solid var(--border);overflow:hidden;}
+    .risk-meter-fill{height:100%;width:0%;background:var(--accent);border-radius:9px;transition:width .6s cubic-bezier(.4,0,.2,1),background .4s;}
+    .risk-meter-dividers{position:absolute;inset:0;pointer-events:none;}
+    .rm-div{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,255,255,.12);}
+    .risk-zone-labels{display:flex;justify-content:space-between;margin-top:7px;font-family:var(--mono);font-size:.62rem;letter-spacing:1.5px;text-transform:uppercase;}
+    .risk-zone-labels span:nth-child(1){color:var(--accent);}.risk-zone-labels span:nth-child(2){color:var(--warn);}.risk-zone-labels span:nth-child(3){color:var(--danger);}
+    .ai-details{flex:1;min-width:220px;}
+    .risk-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 20px;border-radius:24px;font-family:var(--head);font-size:1.02rem;font-weight:700;letter-spacing:3px;margin-bottom:14px;}
+    .risk-badge.normal{background:rgba(0,229,160,.12);color:var(--accent);border:1px solid rgba(0,229,160,.35);}
+    .risk-badge.warning{background:rgba(255,183,0,.12);color:var(--warn);border:1px solid rgba(255,183,0,.35);}
+    .risk-badge.danger{background:rgba(255,64,96,.12);color:var(--danger);border:1px solid rgba(255,64,96,.35);}
+    .risk-badge .dot{width:9px;height:9px;border-radius:50%;background:currentColor;box-shadow:0 0 6px currentColor;}
+    .confidence-label{font-family:var(--mono);font-size:.74rem;color:var(--muted);margin-bottom:12px;}
+    .stats-row{display:flex;gap:12px;flex-wrap:wrap;}
+    .stat-box{flex:1;min-width:80px;background:rgba(13,15,20,.6);border:1px solid var(--border);border-radius:9px;padding:12px;text-align:center;}
+    .stat-box .s-label{font-size:.68rem;color:var(--muted);font-family:var(--mono);letter-spacing:1px;}
+    .stat-box .s-val{font-size:1.1rem;font-family:var(--head);font-weight:700;color:var(--text);margin:3px 0;}
+    .danger-pulse{animation:danger-glow 1.2s infinite alternate;}
+    @keyframes danger-glow{from{box-shadow:inset 0 0 0 1px transparent;}to{box-shadow:inset 0 0 0 1px rgba(255,64,96,.3),0 0 30px rgba(255,64,96,.06);}}
+    .health-summary{margin-top:16px;padding:12px 16px;border-radius:10px;display:flex;align-items:center;gap:10px;transition:background .3s,border-color .3s;}
+    .health-summary.normal{background:rgba(0,229,160,.04);border:1px solid rgba(0,229,160,.25);}
+    .health-summary.warning{background:rgba(255,183,0,.05);border:1px solid rgba(255,183,0,.3);}
+    .health-summary.danger{background:rgba(255,64,96,.05);border:1px solid rgba(255,64,96,.3);}
+    .health-summary-icon{font-size:1rem;flex-shrink:0;}
+    .health-summary-text{font-family:var(--mono);font-size:.76rem;color:var(--text2);letter-spacing:1px;line-height:1.5;}
+
+    /* BOTTOM ROW */
+    .bottom-row{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:960px;margin:0 auto;width:100%;}
+
+    /* CAMERA */
+    .cam-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+    .cam-card-header .card-label{margin-bottom:0;}
+    .btn-fullscreen{background:rgba(255,183,0,.08);border:1px solid rgba(255,183,0,.3);color:var(--warn);border-radius:7px;font-family:var(--head);font-weight:700;font-size:.76rem;letter-spacing:1px;padding:5px 12px;cursor:pointer;transition:background .2s;}
+    .btn-fullscreen:hover{background:rgba(255,183,0,.16);}
+    .cam-wrap{background:#050710;border:1px dashed var(--border);border-radius:10px;height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);font-family:var(--mono);font-size:.78rem;margin-bottom:12px;position:relative;overflow:hidden;}
+    .cam-wrap img{width:100%;height:100%;object-fit:cover;display:none;border-radius:10px;}
+    .cam-no-stream{text-align:center;line-height:2;}
+    .cam-controls{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+    .cam-ip{flex:1;min-width:120px;background:rgba(13,15,20,.8);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:.8rem;padding:8px 12px;border-radius:7px;outline:none;}
+    .cam-ip::placeholder{color:var(--muted);}
+    .btn-cam{border:none;border-radius:7px;font-family:var(--head);font-weight:700;font-size:.8rem;letter-spacing:1px;padding:8px 14px;cursor:pointer;transition:box-shadow .2s;}
+    .btn-cam.connect{background:var(--accent);color:#000;box-shadow:0 0 10px rgba(0,229,160,.3);}
+    .btn-cam.connect:hover{box-shadow:0 0 20px rgba(0,229,160,.5);}
+    .btn-cam.disconnect{background:transparent;border:1px solid var(--danger);color:var(--danger);}
+    .audio-section{display:flex;flex-direction:column;gap:10px;}
+    .audio-device-row{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:rgba(10,12,20,.65);border:1px solid var(--border);border-radius:10px;}
+    .audio-device-info{display:flex;align-items:center;gap:12px;}
+    .audio-device-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;}
+    .audio-device-icon.spk{background:rgba(10,191,255,.1);color:var(--accent2);}
+    .audio-device-icon.mic{background:rgba(176,128,255,.1);color:#b080ff;}
+    .audio-device-name{font-family:var(--head);font-size:1rem;font-weight:600;color:var(--text);letter-spacing:1px;}
+    .audio-state-badge{display:inline-block;margin-top:3px;font-family:var(--mono);font-size:.64rem;letter-spacing:2px;padding:2px 9px;border-radius:10px;background:rgba(13,15,22,.8);border:1px solid var(--border);color:var(--muted);}
+    .audio-state-badge.on-spk{color:var(--accent2);border-color:rgba(10,191,255,.5);background:rgba(10,191,255,.08);}
+    .audio-state-badge.on-mic{color:#b080ff;border-color:rgba(176,128,255,.5);background:rgba(176,128,255,.08);}
+    .audio-btn-group{display:flex;gap:8px;}
+    .btn-audio-on,.btn-audio-off{border:none;border-radius:7px;font-family:var(--head);font-weight:700;font-size:.78rem;letter-spacing:1px;padding:7px 14px;cursor:pointer;transition:all .2s;}
+    .btn-audio-on{background:rgba(13,15,22,.9);border:1px solid var(--border);color:var(--muted);}
+    .btn-audio-off{background:rgba(255,64,96,.08);border:1px solid rgba(255,64,96,.2);color:rgba(255,64,96,.7);}
+    .btn-audio-on.active-spk{background:rgba(10,191,255,.15);border-color:var(--accent2);color:var(--accent2);}
+    .btn-audio-on.active-mic{background:rgba(176,128,255,.15);border-color:#b080ff;color:#b080ff;}
+
+    /* ROBOT CARD */
+    .active-patient-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:9px 14px;background:rgba(10,191,255,.05);border:1px solid rgba(10,191,255,.2);border-radius:9px;}
+    .active-patient-row .ap-label{font-family:var(--mono);font-size:.68rem;color:var(--muted);letter-spacing:2px;}
+    .active-patient-row .ap-val{font-family:var(--head);font-size:1rem;font-weight:700;color:var(--accent2);letter-spacing:2px;}
+    .path-indicator{width:100%;background:rgba(10,12,20,.6);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+    .path-dir-display{display:flex;align-items:center;gap:10px;}
+    .path-arrow{width:36px;height:36px;border-radius:50%;background:rgba(10,191,255,.08);border:1px solid rgba(10,191,255,.2);display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--accent2);transition:background .2s,border-color .2s,transform .15s;}
+    .path-arrow.moving{background:rgba(10,191,255,.2);border-color:var(--accent2);box-shadow:0 0 10px rgba(10,191,255,.3);}
+    .path-label-col{display:flex;flex-direction:column;gap:2px;}
+    .path-dir-text{font-family:var(--head);font-size:.95rem;font-weight:700;color:var(--accent2);letter-spacing:2px;}
+    .path-last-cmd{font-family:var(--mono);font-size:.62rem;color:var(--muted);letter-spacing:1px;}
+    .path-status-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:background .3s,box-shadow .3s;}
+    .path-status-dot.moving{background:var(--accent2);box-shadow:0 0 8px var(--accent2);animation:pulse-dot 1s infinite;}
+    .keyboard-row{display:flex;align-items:center;gap:10px;width:100%;margin-bottom:10px;}
+    .btn-keyboard{flex:1;padding:8px 12px;background:rgba(176,128,255,.07);border:1px solid rgba(176,128,255,.3);color:#b080ff;border-radius:8px;font-family:var(--head);font-weight:700;font-size:.8rem;letter-spacing:1px;cursor:pointer;transition:background .2s;display:flex;align-items:center;gap:7px;justify-content:center;}
+    .btn-keyboard:hover{background:rgba(176,128,255,.14);}
+    .btn-keyboard.kb-on{background:rgba(176,128,255,.18);border-color:#b080ff;box-shadow:0 0 10px rgba(176,128,255,.25);}
+    .kb-indicator{width:7px;height:7px;border-radius:50%;background:#b080ff;animation:pulse-dot 1s infinite;display:none;}
+    .btn-keyboard.kb-on .kb-indicator{display:inline-block;}
+    .joystick-area{display:flex;flex-direction:column;align-items:center;gap:10px;}
+    .joystick-outer{width:160px;height:160px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#1e2540,#0c0f18);border:2px solid var(--border);box-shadow:0 0 20px rgba(10,191,255,.08),inset 0 2px 8px rgba(0,0,0,.5);position:relative;cursor:pointer;user-select:none;touch-action:none;transition:box-shadow .2s;}
+    .joystick-outer:hover{box-shadow:0 0 28px rgba(10,191,255,.18),inset 0 2px 8px rgba(0,0,0,.5);}
+    .jzone{position:absolute;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.9rem;transition:color .15s;pointer-events:none;}
+    .jzone.top{top:10px;left:50%;transform:translateX(-50%);}
+    .jzone.bottom{bottom:10px;left:50%;transform:translateX(-50%);}
+    .jzone.left{left:10px;top:50%;transform:translateY(-50%);}
+    .jzone.right{right:10px;top:50%;transform:translateY(-50%);}
+    .jzone.active{color:var(--accent2);text-shadow:0 0 8px var(--accent2);}
+    .joystick-knob{width:58px;height:58px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#2a3060,#131830);border:2px solid rgba(10,191,255,.4);box-shadow:0 0 16px rgba(10,191,255,.25),inset 0 1px 4px rgba(255,255,255,.08);position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);transition:box-shadow .15s;pointer-events:none;}
+    .joystick-knob.active{box-shadow:0 0 24px rgba(10,191,255,.5);border-color:var(--accent2);}
+    .joystick-knob::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:radial-gradient(circle,var(--accent2),rgba(10,191,255,.3));box-shadow:0 0 10px var(--accent2);}
+    .stop-btn{background:linear-gradient(135deg,rgba(255,64,96,.1),rgba(180,0,30,.15));border:1px solid rgba(255,64,96,.5);color:var(--danger);border-radius:9px;font-family:var(--head);font-weight:700;letter-spacing:2px;font-size:.9rem;padding:9px 30px;cursor:pointer;transition:background .2s,box-shadow .2s;}
+    .stop-btn:hover{background:rgba(255,64,96,.2);box-shadow:0 0 14px rgba(255,64,96,.3);}
+    .stop-btn:active{transform:scale(.96);}
+    .speed-row{display:flex;align-items:center;gap:12px;width:100%;}
+    .speed-row label{font-size:.72rem;font-family:var(--mono);color:var(--muted);white-space:nowrap;}
+    .speed-row input[type=range]{flex:1;accent-color:var(--accent2);height:4px;}
+    .speed-val{font-family:var(--mono);font-size:1rem;color:var(--accent2);min-width:20px;}
+    .move-hint{font-size:.7rem;color:var(--muted);font-family:var(--mono);text-align:center;}
+
+    /* PATIENTS TABLE */
+    .patients-section{padding:28px;}
+    .patients-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+    .patients-header h2{font-family:var(--head);font-size:1.4rem;font-weight:900;letter-spacing:4px;color:var(--text2);}
+    .patient-count{font-family:var(--mono);font-size:.78rem;color:var(--muted);background:rgba(10,191,255,.07);border:1px solid rgba(10,191,255,.2);border-radius:20px;padding:4px 14px;letter-spacing:1px;}
+    .patients-table-wrap{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+    .patients-table{width:100%;border-collapse:collapse;}
+    .patients-table thead tr{background:rgba(10,191,255,.04);border-bottom:1px solid var(--border);}
+    .patients-table th{font-family:var(--mono);font-size:.72rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;padding:14px 20px;text-align:left;font-weight:400;}
+    .patients-table th:first-child{width:60px;}.patients-table th:nth-child(2){width:120px;}
+    .patients-table td{padding:15px 20px;border-bottom:1px solid rgba(30,36,56,.6);vertical-align:middle;}
+    .patients-table tbody tr:last-child td{border-bottom:none;}
+    .patient-row{transition:background .15s;}.patient-row:hover{background:rgba(10,191,255,.04);}
+    .td-serial{font-family:var(--mono);font-size:.82rem;color:var(--muted);}
+    .td-pid{font-family:var(--mono);font-size:.9rem;color:var(--accent2);letter-spacing:2px;font-weight:600;}
+    .td-name{font-family:var(--head);font-size:1.05rem;font-weight:600;color:var(--text);letter-spacing:.5px;}
+    .td-action{text-align:right;}
+    .btn-view-report{background:rgba(10,191,255,.07);border:1px solid rgba(10,191,255,.25);color:var(--accent2);border-radius:8px;font-family:var(--head);font-weight:700;font-size:.82rem;letter-spacing:1px;padding:8px 16px;cursor:pointer;transition:background .2s,box-shadow .2s;}
+    .btn-view-report:hover{background:rgba(10,191,255,.16);box-shadow:0 0 12px rgba(10,191,255,.2);}
+    .btn-view-report i{color:var(--danger);margin-right:5px;}
+    .btn-delete-patient{background:rgba(255,64,96,.07);border:1px solid rgba(255,64,96,.28);color:var(--danger);border-radius:8px;font-family:var(--head);font-weight:700;font-size:.82rem;letter-spacing:1px;padding:8px 14px;cursor:pointer;margin-left:8px;transition:background .2s,box-shadow .2s;}
+    .btn-delete-patient:hover{background:rgba(255,64,96,.18);box-shadow:0 0 12px rgba(255,64,96,.25);}
+    .table-empty{text-align:center;padding:40px;font-family:var(--mono);font-size:.82rem;color:var(--muted);letter-spacing:2px;}
+
+    /* SETTINGS */
+    .settings-wrap{padding:28px;max-width:600px;margin:0 auto;}
+    .settings-title{font-family:var(--head);font-size:1.4rem;font-weight:900;letter-spacing:4px;color:var(--text2);margin-bottom:22px;}
+    .settings-card{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:14px;animation:fadeUp .4s ease both;transition:background .3s,border-color .3s;}
+    .settings-card-label{font-family:var(--mono);font-size:.68rem;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;}
+    .admin-profile{display:flex;align-items:center;gap:16px;}
+    .admin-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,rgba(10,191,255,.2),rgba(0,229,160,.1));border:2px solid rgba(10,191,255,.4);display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:var(--accent2);flex-shrink:0;}
+    .admin-name{font-family:var(--head);font-size:1.15rem;font-weight:700;color:var(--text);letter-spacing:1px;}
+    .admin-email{font-family:var(--mono);font-size:.74rem;color:var(--muted);margin-top:3px;letter-spacing:1px;}
+    .setting-row-new{display:flex;align-items:center;justify-content:space-between;gap:20px;}
+    .setting-row-new-label{font-family:var(--head);font-size:1rem;font-weight:600;color:var(--text);letter-spacing:.5px;}
+    .setting-row-new-desc{font-family:var(--mono);font-size:.72rem;color:var(--muted);margin-top:3px;letter-spacing:1px;}
+    .sync-status{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.8rem;color:var(--muted);}
+    .sync-dot{width:9px;height:9px;border-radius:50%;background:var(--warn);box-shadow:0 0 6px var(--warn);animation:pulse-dot 1.5s infinite;}
+    .btn-logout-settings{width:100%;padding:13px;background:linear-gradient(135deg,rgba(255,64,96,.08),rgba(180,0,30,.1));border:1px solid rgba(255,64,96,.4);color:var(--danger);border-radius:9px;font-family:var(--head);font-weight:700;font-size:1rem;letter-spacing:2px;cursor:pointer;transition:background .2s,box-shadow .2s;}
+    .btn-logout-settings:hover{background:rgba(255,64,96,.18);box-shadow:0 0 16px rgba(255,64,96,.25);}
+    .toggle{position:relative;display:inline-block;width:48px;height:26px;flex-shrink:0;}
+    .toggle input{opacity:0;width:0;height:0;}
+    .toggle-slider{position:absolute;cursor:pointer;inset:0;background:rgba(30,36,56,.8);border:1px solid var(--border);border-radius:26px;transition:background .3s;}
+    .toggle-slider::before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:var(--muted);border-radius:50%;transition:transform .3s,background .3s;}
+    .toggle input:checked+.toggle-slider{background:rgba(0,229,160,.2);border-color:rgba(0,229,160,.4);}
+    .toggle input:checked+.toggle-slider::before{transform:translateX(22px);background:var(--accent);}
+
+    /* HELP */
+    .help-section{padding:28px;}
+    .help-section h2{font-family:var(--head);font-size:1.4rem;font-weight:900;letter-spacing:4px;color:var(--text2);margin-bottom:22px;}
+    .help-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    .help-card{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:14px;padding:22px 24px;}
+    .help-card h3{font-family:var(--head);font-size:1.05rem;font-weight:700;color:var(--text2);margin-bottom:12px;letter-spacing:1px;}
+    .help-card ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+    .help-card ul li{font-family:var(--mono);font-size:.78rem;color:var(--muted);line-height:1.7;padding-left:16px;position:relative;}
+    .help-card ul li::before{content:'›';position:absolute;left:0;color:var(--accent2);}
+    .help-card ul li b{color:var(--text2);}
+
+    /* MODAL */
+    .modal-overlay{position:fixed;inset:0;z-index:9998;background:rgba(8,10,16,.88);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;}
+    .modal-box{background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid rgba(10,191,255,.3);border-radius:18px;padding:0;width:100%;max-width:440px;overflow:hidden;box-shadow:0 0 80px rgba(10,191,255,.08);animation:fadeUp .25s ease;}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 26px;border-bottom:1px solid var(--border);background:rgba(10,191,255,.04);}
+    .modal-header h3{font-family:var(--head);font-size:1.15rem;font-weight:900;letter-spacing:3px;color:var(--text2);}
+    .modal-close{background:none;border:none;color:var(--muted);font-size:1.5rem;cursor:pointer;line-height:1;padding:0 4px;transition:color .2s;}
+    .modal-close:hover{color:var(--danger);}
+    .modal-body{padding:24px 26px;display:flex;flex-direction:column;gap:16px;}
+    .modal-field{display:flex;flex-direction:column;gap:7px;}
+    .modal-field label{font-family:var(--mono);font-size:.7rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+    .modal-field input,.modal-field select{background:rgba(10,12,20,.8);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:var(--body);font-size:.95rem;padding:11px 14px;outline:none;transition:border-color .2s;}
+    .modal-field input:focus,.modal-field select:focus{border-color:var(--accent2);}
+    .modal-field input::placeholder{color:#2a3450;}
+    .modal-field select{cursor:pointer;}.modal-field select option{background:var(--surface);}
+    .modal-error{font-family:var(--mono);font-size:.78rem;color:var(--danger);min-height:16px;text-align:center;}
+    .modal-footer{display:flex;gap:10px;padding:0 26px 24px;}
+    .btn-modal-cancel{flex:1;padding:12px;background:transparent;border:1px solid var(--border);border-radius:9px;color:var(--muted);font-family:var(--head);font-weight:600;font-size:.92rem;letter-spacing:1px;cursor:pointer;transition:background .2s;}
+    .btn-modal-cancel:hover{background:rgba(255,255,255,.04);}
+    .btn-modal-submit{flex:2;padding:12px;background:linear-gradient(135deg,var(--accent2),#007acc);border:none;border-radius:9px;color:#fff;font-family:var(--head);font-weight:700;font-size:.95rem;letter-spacing:2px;cursor:pointer;box-shadow:0 0 20px rgba(10,191,255,.3);transition:opacity .2s;}
+    .btn-modal-submit:hover{opacity:.9;}.btn-modal-submit:disabled{opacity:.5;cursor:not-allowed;}
+
+    /* FULLSCREEN */
+    .fullscreen-overlay{display:none;position:fixed;inset:0;z-index:8000;background:#000;flex-direction:column;}
+    .fullscreen-overlay.active{display:flex;}
+    .fs-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(0,0,0,.85);border-bottom:1px solid rgba(255,255,255,.07);}
+    .fs-title{font-family:var(--head);font-size:1rem;font-weight:700;color:#fff;letter-spacing:3px;}
+    .btn-fs-close{background:rgba(255,64,96,.15);border:1px solid rgba(255,64,96,.4);color:#ff4060;border-radius:7px;font-family:var(--head);font-weight:700;font-size:.84rem;letter-spacing:1px;padding:7px 16px;cursor:pointer;}
+    .fs-body{flex:1;display:flex;overflow:hidden;}
+    .fs-cam{flex:1;position:relative;background:#000;}
+    .fs-cam img{width:100%;height:100%;object-fit:contain;}
+    .fs-cam-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.2);font-family:var(--mono);font-size:.85rem;letter-spacing:2px;flex-direction:column;gap:12px;}
+    .fs-controls{width:280px;background:rgba(8,10,16,.96);border-left:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;align-items:center;gap:12px;padding:18px 14px;overflow-y:auto;}
+    .fs-controls-title{font-family:var(--mono);font-size:.7rem;color:rgba(10,191,255,.6);letter-spacing:3px;text-transform:uppercase;align-self:flex-start;}
+
+    /* RESPONSIVE */
+    @media(max-width:900px){
+      .dashboard{grid-template-columns:1fr 1fr;padding:16px;}
+      .patient-info-card{grid-column:1/-1;}
+      .hr-card{grid-column:1;}.spo2-card{grid-column:2;}
+      .ai-card{grid-column:1/-1;}.bottom-row{grid-template-columns:1fr;}
+    }
+    @media(max-width:600px){
+      .dashboard{grid-template-columns:1fr;padding:12px;}
+      .hr-card,.spo2-card{grid-column:1;}
+      .topbar{padding:0 14px;}.brand-pill{font-size:1.4rem;padding:5px 14px;}
+      .nav-tabs{gap:0;}.tab-btn{padding:12px;font-size:.8rem;}
+      .login-box{min-width:unset;width:94vw;padding:32px 24px;}
+      .ai-inner{flex-direction:column;gap:18px;}.risk-meter-section{width:100%;}
+      .fs-body{flex-direction:column;}.fs-controls{width:100%;border-left:none;border-top:1px solid rgba(255,255,255,.07);max-height:280px;}
+      .help-grid{grid-template-columns:1fr;}
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes pulse-dot{0%,100%{opacity:1;}50%{opacity:.2;}}
+    @keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <div class="login-logo"><span class="med">MED</span><span class="bot">BOT</span></div>
+    <div class="login-sub">Project PRAKALP · Secure Access</div>
+    <div class="login-divider"></div>
+    <div class="login-field"><label>Doctor ID</label><input type="text" id="doctorID" placeholder="e.g. DOC001" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <div class="login-field"><label>Password</label><input type="password" id="doctorPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <button class="btn-login" onclick="doLogin()">SIGN IN</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-pill"><i class="fas fa-stethoscope brand-icon"></i><span class="med">MED</span><span class="bot">BOT</span></div>
+    <div class="brand-meta"><div class="b-title">Dashboard</div><div class="b-sub">Project PRAKALP</div></div>
+  </div>
+  <div class="topbar-right">
+    <div class="sim-badge"><div class="sim-dot" id="simDot"></div><span id="simLabel">Connecting...</span></div>
+    <button class="btn-logout" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav-tabs">
+  <button class="tab-btn active" onclick="switchTab('home',this)">🏠 Home</button>
+  <button class="tab-btn" onclick="switchTab('patients',this)">👥 Patients</button>
+  <button class="tab-btn" onclick="switchTab('help',this)">❓ Help</button>
+  <button class="tab-btn" onclick="switchTab('settings',this)">⚙ Settings</button>
+</nav>
+
+<!-- HOME TAB -->
+<div id="tab-home" class="tab-panel active">
+  <div class="dashboard">
+
+    <!-- PATIENT CARD -->
+    <div class="card patient-info-card" id="patientCard">
+      <div class="card-label"><i class="fas fa-id-card lbl-pat"></i> Current Patient</div>
+      <div id="patientAwaiting" class="patient-awaiting">
+        <div class="patient-await-icon"><i class="fas fa-user"></i></div>
+        <div class="patient-await-text">⬤ Awaiting patient data...</div>
+        <div class="patient-fields-await">
+          <div class="pf-row-await"><i class="fas fa-user"></i><span class="pf-label">Name</span><div class="pf-skeleton"></div></div>
+          <div class="pf-row-await"><i class="fas fa-hashtag"></i><span class="pf-label">Age</span><div class="pf-skeleton"></div></div>
+          <div class="pf-row-await"><i class="fas fa-venus-mars"></i><span class="pf-label">Gender</span><div class="pf-skeleton"></div></div>
+          <div class="pf-row-await"><i class="fas fa-envelope"></i><span class="pf-label">Email</span><div class="pf-skeleton"></div></div>
+          <div class="pf-row-await"><i class="fas fa-calendar-alt"></i><span class="pf-label">Date</span><div class="pf-skeleton"></div></div>
+        </div>
+      </div>
+      <div id="patientActive" style="display:none;flex:1;flex-direction:column;">
+        <div class="patient-avatar"><i class="fas fa-user"></i></div>
+        <div class="patient-name-row" id="piName">—</div>
+        <div class="patient-sub" id="piID">—</div>
+        <div class="patient-fields">
+          <div class="pf-row"><i class="fas fa-hashtag"></i><span class="pf-label">Age</span><span class="pf-val" id="piAge">—</span></div>
+          <div class="pf-row"><i class="fas fa-venus-mars"></i><span class="pf-label">Gender</span><span class="pf-val" id="piGender">—</span></div>
+          <div class="pf-row"><i class="fas fa-envelope"></i><span class="pf-label">Email</span><span class="pf-val" id="piEmail" style="font-size:.82rem;">—</span></div>
+          <div class="pf-row"><i class="fas fa-calendar-alt"></i><span class="pf-label">Date</span><span class="pf-val" id="piDate">—</span></div>
+        </div>
+        <div class="patient-status-row-active" style="margin-top:12px;">
+          <div class="patient-status-dot-active"></div>
+          <span class="patient-status-txt-active">MONITORING ACTIVE</span>
+        </div>
+      </div>
+      <div id="patientOfflineStatus" class="patient-status-row" style="margin-top:14px;">
+        <div class="patient-status-dot"></div>
+        <span class="patient-status-txt">NOT CONNECTED</span>
+      </div>
+      <div class="patient-btn-row">
+        <button class="btn-clear-patient" onclick="clearPatientDisplay()"><i class="fas fa-trash-alt"></i> &nbsp;Clear</button>
+        <button class="btn-add-patient" onclick="openAddPatientModal()"><i class="fas fa-user-plus"></i> &nbsp;Add Patient</button>
+      </div>
+    </div>
+
+    <!-- HR CARD -->
+    <div class="card vital-card hr-card" id="hrCard">
+      <div class="card-label"><i class="fas fa-heart lbl-hr"></i> Heart Rate</div>
+      <div class="card-value hr-val" id="hrVal">—</div>
+      <div class="card-unit">beats per minute</div>
+      <div class="card-baseline" id="hrBase"></div>
+      <div class="connecting-msg" id="hrConnect">⬤ Awaiting sensor data...</div>
+      <div class="vital-timestamp fresh" id="hrTimestamp" style="display:none;"><span class="ts-dot"></span><span id="hrTs">—</span></div>
+      <div class="chart-wrap"><canvas id="hrChart"></canvas></div>
+    </div>
+
+    <!-- SPO2 CARD -->
+    <div class="card vital-card spo2-card" id="spo2Card">
+      <div class="card-label"><i class="fas fa-lungs lbl-spo2"></i> SpO₂</div>
+      <div class="card-value spo2-val" id="spo2Val">—</div>
+      <div class="card-unit">% oxygen saturation</div>
+      <div class="card-baseline" id="spo2Base"></div>
+      <div class="connecting-msg" id="spo2Connect">⬤ Awaiting sensor data...</div>
+      <div class="vital-timestamp fresh" id="spo2Timestamp" style="display:none;"><span class="ts-dot"></span><span id="spo2Ts">—</span></div>
+      <div class="chart-wrap"><canvas id="spo2Chart"></canvas></div>
+    </div>
+
+    <!-- AI CARD -->
+    <div class="card ai-card" id="aiCard">
+      <div class="card-label"><i class="fas fa-brain lbl-ai"></i> AI Risk Assessment</div>
+      <div class="ai-inner">
+        <div class="risk-meter-section">
+          <div class="risk-score-row"><span class="risk-score-num" id="riskScore">0</span><span class="risk-score-lbl">/ 100<br/>RISK SCORE</span></div>
+          <div class="risk-meter-track">
+            <div class="risk-meter-fill" id="riskFill"></div>
+            <div class="risk-meter-dividers"><div class="rm-div" style="left:33.3%"></div><div class="rm-div" style="left:66.6%"></div></div>
+          </div>
+          <div class="risk-zone-labels"><span>● LOW</span><span>● MEDIUM</span><span>● HIGH</span></div>
+        </div>
+        <div class="ai-details">
+          <div class="risk-badge normal" id="riskBadge"><span class="dot"></span><span id="riskLabel">AWAITING DATA</span></div>
+          <div class="confidence-label" id="confLabel">Connect ESP32 to begin assessment</div>
+          <div class="stats-row">
+            <div class="stat-box"><div class="s-label">HR Z-score</div><div class="s-val" id="hrZ">—</div><div class="s-label">deviation</div></div>
+            <div class="stat-box"><div class="s-label">SpO₂ Z-score</div><div class="s-val" id="spo2Z">—</div><div class="s-label">deviation</div></div>
+            <div class="stat-box"><div class="s-label">Anomaly</div><div class="s-val" id="anomaly" style="font-size:.85rem;">—</div><div class="s-label">detected</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="health-summary normal" id="healthSummary">
+        <span class="health-summary-icon">🩺</span>
+        <span class="health-summary-text" id="healthSummaryText">Awaiting sensor data to generate health summary.</span>
+      </div>
+    </div>
+
+    <!-- BOTTOM ROW -->
+    <div class="bottom-row">
+      <!-- CAMERA -->
+      <div class="card cam-card">
+        <div class="cam-card-header">
+          <div class="card-label"><i class="fas fa-video lbl-cam"></i> Camera Feed (ESP32-CAM)</div>
+          <button class="btn-fullscreen" onclick="openFullscreen()"><i class="fas fa-expand"></i> Fullscreen</button>
+        </div>
+        <div class="cam-wrap" id="camWrap">
+          <img id="camStream" src="" alt="stream"/>
+          <div class="cam-no-stream" id="camNoStream"><i class="fas fa-camera" style="font-size:1.8rem;margin-bottom:8px;color:var(--border)"></i><br/>No stream connected<br/>Enter ESP32-CAM IP below</div>
+        </div>
+        <div class="cam-controls">
+          <input class="cam-ip" id="camIP" placeholder="ESP32-CAM IP  (e.g. 192.168.1.20)"/>
+          <button class="btn-cam connect" onclick="connectCam()">Connect</button>
+          <button class="btn-cam disconnect" onclick="disconnectCam()">Disconnect</button>
+        </div>
+        <div class="audio-section">
+          <div class="audio-device-row">
+            <div class="audio-device-info"><div class="audio-device-icon spk"><i class="fas fa-volume-mute" id="spkIcon"></i></div><div><div class="audio-device-name">Speaker</div><span class="audio-state-badge" id="spkState">OFF</span></div></div>
+            <div class="audio-btn-group"><button class="btn-audio-on" id="spkOnBtn" onclick="setAudio('spk',true)">ON</button><button class="btn-audio-off" onclick="setAudio('spk',false)">OFF</button></div>
+          </div>
+          <div class="audio-device-row">
+            <div class="audio-device-info"><div class="audio-device-icon mic"><i class="fas fa-microphone-slash" id="micIcon"></i></div><div><div class="audio-device-name">Microphone</div><span class="audio-state-badge" id="micState">OFF</span></div></div>
+            <div class="audio-btn-group"><button class="btn-audio-on" id="micOnBtn" onclick="setAudio('mic',true)">ON</button><button class="btn-audio-off" onclick="setAudio('mic',false)">OFF</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROBOT -->
+      <div class="card robot-card">
+        <div class="card-label"><i class="fas fa-robot lbl-rob"></i> Robot Control</div>
+        <div class="active-patient-row"><span class="ap-label">NAVIGATING TO</span><span class="ap-val" id="activePatientLabel">—</span></div>
+        <div class="path-indicator" id="pathIndicator">
+          <div class="path-dir-display">
+            <div class="path-arrow" id="pathArrow"><i id="pathArrowIcon" class="fas fa-minus"></i></div>
+            <div class="path-label-col">
+              <div class="path-dir-text" id="pathDirText">STOPPED</div>
+              <div class="path-last-cmd" id="pathLastCmd">Last: —</div>
+            </div>
+          </div>
+          <div class="path-status-dot" id="pathStatusDot"></div>
+        </div>
+        <div class="keyboard-row">
+          <button class="btn-keyboard" id="keyboardBtn" onclick="toggleKeyboardControl()">
+            <span class="kb-indicator"></span>
+            <i class="fas fa-keyboard"></i>&nbsp;Keyboard (WASD)
+          </button>
+        </div>
+        <div class="joystick-area">
+          <div class="joystick-outer" id="joystickOuter" onmousedown="joystickStart(event)" ontouchstart="joystickTouchStart(event)">
+            <span class="jzone top" id="jTop"><i class="fas fa-chevron-up"></i></span>
+            <span class="jzone bottom" id="jBot"><i class="fas fa-chevron-down"></i></span>
+            <span class="jzone left" id="jLft"><i class="fas fa-chevron-left"></i></span>
+            <span class="jzone right" id="jRgt"><i class="fas fa-chevron-right"></i></span>
+            <div class="joystick-knob" id="joystickKnob"></div>
+          </div>
+          <button class="stop-btn" onclick="stopRobot()"><i class="fas fa-stop-circle"></i> &nbsp;STOP</button>
+          <div class="speed-row">
+            <label>Speed</label>
+            <input type="range" min="1" max="10" value="5" id="speedSlider" oninput="document.getElementById('speedVal').textContent=this.value"/>
+            <span class="speed-val" id="speedVal">5</span>
+          </div>
+          <div class="move-hint" id="moveHint">Drag joystick or use arrow keys to move</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PATIENTS TAB -->
+<div id="tab-patients" class="tab-panel">
+  <div class="patients-section">
+    <div class="patients-header"><h2>PATIENTS LIST</h2><span class="patient-count" id="patientCount">Loading…</span></div>
+    <div class="patients-table-wrap">
+      <table class="patients-table">
+        <thead><tr><th>S.No</th><th>Patient ID</th><th>Name</th><th style="text-align:right;padding-right:24px;">Actions</th></tr></thead>
+        <tbody id="patientsTableBody"><tr><td colspan="4" class="table-empty">Sign in to load patients list.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- HELP TAB -->
+<div id="tab-help" class="tab-panel">
+  <div class="help-section">
+    <h2>HELP &amp; DOCUMENTATION</h2>
+    <div class="help-grid">
+      <div class="help-card"><h3>🔌 Firebase Schema</h3><ul><li>Vitals: <b>vitals/{patientId}/hr, spo2, timestamp</b></li><li>Patient: <b>patients/{patientId}/name, age, gender, email</b></li><li>Reports: <b>reports/{patientId}/pdfUrl</b></li><li>Active: <b>Commands/activePatient</b></li></ul></div>
+      <div class="help-card"><h3>📄 PDF Report Flow</h3><ul><li>Backend generates PDF → uploads to Firebase Storage.</li><li>Writes URL to <b>reports/{patientId}/pdfUrl</b>.</li><li>Dashboard listener fires immediately — no refresh.</li><li>Click <b>View Report</b> to open latest PDF.</li></ul></div>
+      <div class="help-card"><h3>❤️ Sensor Readings</h3><ul><li>MAX30102 provides HR and SpO₂ data.</li><li>ESP32 writes to <b>vitals/{patientId}/</b>.</li><li>Z-score &gt; 2 → Warning; threshold breach → Danger.</li><li>Risk meter color-codes severity in real time.</li></ul></div>
+      <div class="help-card"><h3>🤖 Robot Control</h3><ul><li>Drag joystick or use <b>Arrow keys</b> to move.</li><li>Enable <b>Keyboard (WASD)</b> for W/A/S/D + Space control.</li><li>Commands write to <b>Commands/robot/</b> in real-time.</li><li>Path indicator shows current movement direction.</li></ul></div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS TAB -->
+<div id="tab-settings" class="tab-panel">
+  <div class="settings-wrap">
+    <h2 class="settings-title">SETTINGS</h2>
+    <div class="settings-card"><div class="settings-card-label">Admin Profile</div><div class="admin-profile"><div class="admin-avatar"><i class="fas fa-user-md"></i></div><div><div class="admin-name" id="adminName">Dr. Administrator</div><div class="admin-email" id="adminEmail">DOC001 · admin@medbot.in</div></div></div></div>
+    <div class="settings-card"><div class="setting-row-new"><div><div class="setting-row-new-label">Theme</div><div class="setting-row-new-desc">Switch between Dark and Light mode</div></div><label class="toggle"><input type="checkbox" id="themeToggle" onchange="toggleTheme(this.checked)"/><span class="toggle-slider"></span></label></div></div>
+    <div class="settings-card"><div class="setting-row-new"><div><div class="setting-row-new-label">Notifications</div><div class="setting-row-new-desc">Browser push alerts for HIGH RISK events</div></div><label class="toggle"><input type="checkbox" id="notifToggle" onchange="toggleNotifications(this.checked)"/><span class="toggle-slider"></span></label></div></div>
+    <div class="settings-card"><div class="setting-row-new"><div><div class="setting-row-new-label">Firebase Sync</div><div class="setting-row-new-desc">Real-time database connection status</div></div><div class="sync-status"><span class="sync-dot" id="syncDot"></span><span id="syncLabel">Checking...</span></div></div></div>
+    <div class="settings-card"><button class="btn-logout-settings" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> &nbsp;Logout</button></div>
+  </div>
+</div>
+
+<!-- ADD PATIENT MODAL -->
+<div class="modal-overlay" id="addPatientModal" style="display:none">
+  <div class="modal-box">
+    <div class="modal-header"><h3>ADD NEW PATIENT</h3><button class="modal-close" onclick="closeAddPatientModal()">×</button></div>
+    <div class="modal-body">
+      <div class="modal-field"><label>Full Name <span style="color:var(--danger)">*</span></label><input type="text" id="newPatName" placeholder="Patient full name"/></div>
+      <div class="modal-field"><label>Age</label><input type="number" id="newPatAge" placeholder="Age" min="0" max="150"/></div>
+      <div class="modal-field"><label>Gender</label><select id="newPatGender"><option value="">Select gender</option><option>Male</option><option>Female</option><option>Other</option></select></div>
+      <div class="modal-field"><label>Email</label><input type="email" id="newPatEmail" placeholder="patient@email.com"/></div>
+      <div class="modal-error" id="modalError"></div>
+    </div>
+    <div class="modal-footer"><button class="btn-modal-cancel" onclick="closeAddPatientModal()">Cancel</button><button class="btn-modal-submit" id="modalSubmitBtn" onclick="submitAddPatient()"><i class="fas fa-user-plus"></i> Add Patient</button></div>
+  </div>
+</div>
+
+<!-- FULLSCREEN OVERLAY -->
+<div class="fullscreen-overlay" id="fullscreenOverlay">
+  <div class="fs-topbar">
+    <div class="fs-title"><i class="fas fa-video" style="color:var(--warn);margin-right:8px;"></i>LIVE FEED — ESP32-CAM</div>
+    <button class="btn-fs-close" onclick="closeFullscreen()"><i class="fas fa-compress"></i> Exit</button>
+  </div>
+  <div class="fs-body">
+    <div class="fs-cam">
+      <img id="fsStream" src="" alt="fs-stream" style="display:none;"/>
+      <div class="fs-cam-placeholder" id="fsPlaceholder"><i class="fas fa-camera" style="font-size:2.5rem;"></i><span>No stream connected</span></div>
+    </div>
+    <div class="fs-controls">
+      <div class="fs-controls-title">Robot Control</div>
+      <div class="active-patient-row" style="width:100%;margin-bottom:0;"><span class="ap-label">TO</span><span class="ap-val" id="fsActiveLabel">—</span></div>
+      <div class="path-indicator" style="width:100%;margin-bottom:0;">
+        <div class="path-dir-display"><div class="path-arrow" id="fsPathArrow"><i id="fsPathArrowIcon" class="fas fa-minus"></i></div><div class="path-label-col"><div class="path-dir-text" id="fsPathDirText">STOPPED</div></div></div>
+        <div class="path-status-dot" id="fsPathDot"></div>
+      </div>
+      <div class="joystick-area" style="width:100%;">
+        <div class="joystick-outer" id="fsJoystickOuter" onmousedown="fsJoystickStart(event)" ontouchstart="fsJoystickTouchStart(event)">
+          <span class="jzone top" id="fsJTop"><i class="fas fa-chevron-up"></i></span>
+          <span class="jzone bottom" id="fsJBot"><i class="fas fa-chevron-down"></i></span>
+          <span class="jzone left" id="fsJLft"><i class="fas fa-chevron-left"></i></span>
+          <span class="jzone right" id="fsJRgt"><i class="fas fa-chevron-right"></i></span>
+          <div class="joystick-knob" id="fsJoystickKnob"></div>
+        </div>
+        <button class="stop-btn" onclick="stopRobot()"><i class="fas fa-stop-circle"></i> &nbsp;STOP</button>
+        <div class="speed-row" style="width:100%;"><label>Speed</label><input type="range" min="1" max="10" value="5" id="fsSpeedSlider" oninput="syncFsSpeed(this.value)"/><span class="speed-val" id="fsSpeedVal">5</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="medbot_firebase.js"></script>
+</body>
+</html>
